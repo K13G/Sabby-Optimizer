@@ -290,8 +290,8 @@ public partial class App : Application
             // Keep process-heavy CIM/PowerShell work completely out of the first interaction window.
             // Give the first frame a short interaction grace period, then start capability discovery quickly.
             // Navigation never waits for this work, and tweak states remain lazy/on-demand.
-            await Task.Delay(1200);
-            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromMilliseconds(8000));
+            await Task.Delay(3500);
+            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromSeconds(30));
 
             var hardware = await Task.Run(hardwareInfo.GetHardwareInfo);
             dashboard.UpdateHardware(hardware);
@@ -316,10 +316,10 @@ public partial class App : Application
 
             // Replace only factories/cached pages that depend on the full hardware/tweak graph.
             // If the user is currently on one of them it refreshes in place; every other page is untouched.
-            navigation.Replace(AppPage.Tweaks, () => new TweaksViewModel(fullEngine, selfCheck, hardware, backupService), refreshIfCurrent: true);
-            navigation.Replace(AppPage.Ping, () => new PingViewModel(pingService, fullEngine), refreshIfCurrent: true);
-            navigation.Replace(AppPage.GpuDriver, () => new GpuDriverViewModel(gpuDriverService), refreshIfCurrent: true);
-            navigation.Replace(AppPage.Fixify, () => new FixifyViewModel(new FixifyService(maintenanceService, gpuDriverService, _logger!)), refreshIfCurrent: true);
+            navigation.Replace(AppPage.Tweaks, () => new TweaksViewModel(fullEngine, selfCheck, hardware, backupService), refreshIfCurrent: false);
+            navigation.Replace(AppPage.Ping, () => new PingViewModel(pingService, fullEngine), refreshIfCurrent: false);
+            navigation.Replace(AppPage.GpuDriver, () => new GpuDriverViewModel(gpuDriverService), refreshIfCurrent: false);
+            navigation.Replace(AppPage.Fixify, () => new FixifyViewModel(new FixifyService(maintenanceService, gpuDriverService, _logger!)), refreshIfCurrent: false);
             navigation.Replace(AppPage.Presets, () =>
             {
                 var vm = new PresetsViewModel(presetService, fullEngine);
@@ -333,7 +333,7 @@ public partial class App : Application
                 return vm;
             }, refreshIfCurrent: false);
             navigation.Replace(AppPage.ConfigStudio, () => new GameConfigStudioViewModel(gameProfileService, gameConfigStudioService), refreshIfCurrent: false);
-            navigation.Replace(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, hardware, pingService, _logger!), monitoringService, settings), refreshIfCurrent: true);
+            navigation.Replace(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, hardware, pingService, _logger!), monitoringService, settings), refreshIfCurrent: false);
             navigation.Replace(AppPage.Monitoring, () => new MonitoringViewModel(monitoringService, settings, gameDetection, gameProfileService, presetService), refreshIfCurrent: false);
             navigation.Replace(AppPage.Backups, () =>
             {

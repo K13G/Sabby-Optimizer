@@ -294,15 +294,10 @@ public partial class MainWindow : Window
 
     private void UpdateResponsiveLayoutResources()
     {
-        // Keep dense tweak cards large enough to remain readable. The user's CardColumns value is
-        // treated as a maximum, while the current window width sets a safe visual cap.
+        // CardColumns is an explicit user preference. Do not silently change 4 to 3 because
+        // of DPI scaling or maximized-window device-independent width.
         var requested = Math.Clamp(_settings.Current.CardColumns, 1, 4);
-        var width = ActualWidth > 0 ? ActualWidth : Width;
-        // WPF reports device-independent pixels, so 125-150% scaling can make a
-        // 1920px fullscreen window look much narrower to layout code. Respect four
-        // columns on normal maximized desktop widths instead of silently falling to three.
-        var visualCap = width >= 1180 ? 4 : width >= 900 ? 3 : width >= 700 ? 2 : 1;
-        Application.Current.Resources["CardColumns"] = Math.Min(requested, visualCap);
+        Application.Current.Resources["CardColumns"] = requested;
     }
 
     private void PersistWindowState()
@@ -795,27 +790,10 @@ public partial class MainWindow : Window
 
     private void MainContentHost_TargetUpdated(object sender, DataTransferEventArgs e)
     {
-        if (!IsLoaded) return;
-
-        try
-        {
-            // A short cross-fade keeps navigation polished without translating a large text tree.
-            // Translating text by fractional pixels is a common source of temporary softness.
-            MainContentHost.BeginAnimation(
-                OpacityProperty,
-                new DoubleAnimation(0.96, 1, TimeSpan.FromMilliseconds(85))
-                {
-                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-                    FillBehavior = FillBehavior.Stop
-                },
-                HandoffBehavior.SnapshotAndReplace);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.Warning($"Page transition animation was skipped: {ex.Message}");
-            MainContentHost.BeginAnimation(OpacityProperty, null);
-            MainContentHost.Opacity = 1;
-        }
+        // Kept for compatibility with older cached XAML. Current navigation swaps content
+        // without animating the entire page tree, which avoids tab-click stutter/crashes.
+        MainContentHost.BeginAnimation(OpacityProperty, null);
+        MainContentHost.Opacity = 1;
     }
 
     private static void ApplyMonitorWorkArea(IntPtr hwnd, IntPtr lParam)

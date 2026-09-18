@@ -328,18 +328,18 @@
 
         <!-- Settings/Credits live outside the clipped hover rail so both stay visible at every window size. -->
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                Panel.ZIndex="920"
-                Width="104" Height="56"
-                Margin="7,0,0,10"
+                Panel.ZIndex="2000"
+                Width="96" Height="48"
+                Margin="8,0,0,22"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
-                Background="#F20D0F12"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="18">
+                Background="Transparent"
+                BorderThickness="0"
+                CornerRadius="0"
+                ClipToBounds="False">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Command="{Binding OpenSettingsCommand}"
-                        Width="40" Height="40" MinHeight="40" Padding="0"
+                        Width="42" Height="42" MinHeight="42" Padding="0"
                         Background="Transparent" BorderThickness="0"
                         ToolTip="Settings"
                         shell:WindowChrome.IsHitTestVisibleInChrome="True">
@@ -369,7 +369,7 @@
                 </Button>
 
                 <Button Command="{Binding OpenCreditsCommand}"
-                        Width="40" Height="40" MinHeight="40" Padding="0" Margin="6,0,0,0"
+                        Width="42" Height="42" MinHeight="42" Padding="0" Margin="8,0,0,0"
                         Background="Transparent" BorderThickness="0"
                         ToolTip="Credits"
                         shell:WindowChrome.IsHitTestVisibleInChrome="True">
@@ -485,8 +485,7 @@
                         <Style TargetType="ScrollBar" BasedOn="{StaticResource AppVerticalScrollBarStyle}" />
                     </ScrollViewer.Resources>
                     <ContentControl x:Name="MainContentHost"
-                                    Content="{Binding CurrentViewModel, NotifyOnTargetUpdated=True}"
-                                    TargetUpdated="MainContentHost_TargetUpdated"
+                                    Content="{Binding CurrentViewModel, Mode=OneWay}"
                                     Margin="22,18,22,24"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Stretch"

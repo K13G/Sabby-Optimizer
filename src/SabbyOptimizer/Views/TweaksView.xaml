@@ -70,16 +70,16 @@
 
             <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Apply best for this PC" Command="{Binding ApplyBestForPcCommand}" Height="38" MinWidth="132" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Style="{StaticResource PrimaryButtonStyle}" />
-                    <Button Content="Refresh all" Command="{Binding RefreshAllCommand}" Height="38" MinWidth="96" Margin="8,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                    <Button Content="Apply best for this PC" Command="{Binding ApplyBestForPcCommand}" Height="40" MinWidth="136" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Style="{StaticResource PrimaryButtonStyle}" />
+                    <Button Content="Refresh all" Command="{Binding RefreshAllCommand}" Height="40" MinWidth="100" Margin="8,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
                 </StackPanel>
-                <Border Margin="0,8,0,0" Padding="10,0" Height="44" CornerRadius="8" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Border Margin="0,8,0,0" Padding="10,0" Height="40" CornerRadius="9" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" Foreground="{DynamicResource AccentBrush}" FontSize="12" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="Safety &amp; Privacy" FontSize="10.5" LineHeight="14" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" VerticalAlignment="Center" />
-                            <TextBlock FontSize="9.5" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center">
+                            <TextBlock Text="Safety &amp; Privacy" FontSize="10.5" FontWeight="SemiBold" Margin="0,1,0,0" VerticalAlignment="Center" />
+                            <TextBlock FontSize="9.5" Margin="0,1,0,0" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center">
                                 <Run Text="{Binding PrivacyControlCountText, Mode=OneWay}"/><Run Text="  •  "/><Run Text="{Binding NetworkControlCountText, Mode=OneWay}"/>
                             </TextBlock>
                         </StackPanel>
@@ -211,7 +211,7 @@
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                     <Border Height="26" Padding="8,0" Margin="0,0,6,0" CornerRadius="7" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                                        <TextBlock Text="{Binding CategoryLabel}" FontSize="8.5" LineHeight="12" LineStackingStrategy="BlockLineHeight" TextAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding CategoryLabel}" FontSize="8.5" Margin="0,1,0,0" TextAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
                                     </Border>
                                     <Border Height="26" Padding="8,0" CornerRadius="7">
                                         <Border.Style>
@@ -231,7 +231,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock Text="{Binding SafetyLabel}" FontSize="8.5" LineHeight="12" LineStackingStrategy="BlockLineHeight" TextAlignment="Center" FontWeight="SemiBold" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SafetyLabel}" FontSize="8.5" Margin="0,1,0,0" TextAlignment="Center" FontWeight="SemiBold" VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
