@@ -257,11 +257,13 @@ public partial class MainWindow : Window
         {
             _lastNonMinimizedState = WindowState.Maximized;
             ResetRevealScale();
+            Dispatcher.BeginInvoke(new Action(UpdateResponsiveLayoutResources), DispatcherPriority.Loaded);
             Dispatcher.BeginInvoke(new Action(RestartEventAnimations), DispatcherPriority.Background);
         }
         else if (WindowState == WindowState.Normal)
         {
             _lastNonMinimizedState = WindowState.Normal;
+            Dispatcher.BeginInvoke(new Action(UpdateResponsiveLayoutResources), DispatcherPriority.Loaded);
             Dispatcher.BeginInvoke(new Action(RestartEventAnimations), DispatcherPriority.Background);
         }
         else if (WindowState == WindowState.Minimized && _settings.Current.MinimizeToTray && !_handlingTrayMinimize)
@@ -296,7 +298,10 @@ public partial class MainWindow : Window
         // treated as a maximum, while the current window width sets a safe visual cap.
         var requested = Math.Clamp(_settings.Current.CardColumns, 1, 4);
         var width = ActualWidth > 0 ? ActualWidth : Width;
-        var visualCap = width >= 1540 ? 4 : width >= 1080 ? 3 : width >= 820 ? 2 : 1;
+        // WPF uses device-independent pixels, so a 1920px monitor at 125-150% scaling can
+        // report a much smaller ActualWidth. Keep the user's requested 4-column layout usable
+        // on normal maximized desktop widths instead of silently falling back to three.
+        var visualCap = width >= 1180 ? 4 : width >= 900 ? 3 : width >= 700 ? 2 : 1;
         Application.Current.Resources["CardColumns"] = Math.Min(requested, visualCap);
     }
 
@@ -828,10 +833,13 @@ public partial class MainWindow : Window
 
             var work = monitorInfo.rcWork;
             var monitorRect = monitorInfo.rcMonitor;
-            info.ptMaxPosition.X = Math.Abs(work.Left - monitorRect.Left);
-            info.ptMaxPosition.Y = Math.Abs(work.Top - monitorRect.Top);
-            info.ptMaxSize.X = Math.Abs(work.Right - work.Left);
-            info.ptMaxSize.Y = Math.Abs(work.Bottom - work.Top);
+            // Preserve the signed monitor offset. Math.Abs breaks maximized placement on
+            // monitors positioned left/above the primary display and can push Sabby under
+            // the taskbar, hiding the bottom-left utility controls.
+            info.ptMaxPosition.X = work.Left - monitorRect.Left;
+            info.ptMaxPosition.Y = work.Top - monitorRect.Top;
+            info.ptMaxSize.X = work.Right - work.Left;
+            info.ptMaxSize.Y = work.Bottom - work.Top;
             info.ptMaxTrackSize = info.ptMaxSize;
             Marshal.StructureToPtr(info, lParam, true);
         }
