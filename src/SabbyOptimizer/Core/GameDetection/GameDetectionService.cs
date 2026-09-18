@@ -79,7 +79,7 @@ public sealed class GameDetectionService : IGameDetectionService
 
     private async Task MonitorLoopAsync(CancellationToken cancellationToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1200));
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(2500));
         while (!cancellationToken.IsCancellationRequested)
         {
             try
@@ -141,7 +141,7 @@ public sealed class GameDetectionService : IGameDetectionService
 
     private async Task<IReadOnlyList<GameProfileDefinition>> GetProfilesAsync(CancellationToken cancellationToken)
     {
-        if (_cachedProfiles.Count > 0 && DateTime.UtcNow - _profilesLoadedAtUtc < TimeSpan.FromSeconds(4))
+        if (_cachedProfiles.Count > 0 && DateTime.UtcNow - _profilesLoadedAtUtc < TimeSpan.FromSeconds(10))
             return _cachedProfiles;
 
         _cachedProfiles = await _profiles.GetAllAsync(cancellationToken).ConfigureAwait(false);

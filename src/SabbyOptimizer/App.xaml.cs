@@ -54,14 +54,15 @@ public partial class App : Application
 
             var settings = new JsonSettingsService(paths, _logger);
             await settings.LoadAsync();
-            if (string.IsNullOrWhiteSpace(settings.Current.StableUpdateFeedUrl))
+            var builtInFeed = SabbyUpdateDefaults.GetBuiltInStableFeedUrl();
+            if (!string.IsNullOrWhiteSpace(builtInFeed) &&
+                (string.IsNullOrWhiteSpace(settings.Current.StableUpdateFeedUrl) || IsLegacyLocalUpdateFeed(settings.Current.StableUpdateFeedUrl)))
             {
-                var builtInFeed = SabbyUpdateDefaults.GetBuiltInStableFeedUrl();
-                if (!string.IsNullOrWhiteSpace(builtInFeed))
-                {
-                    settings.Current.StableUpdateFeedUrl = builtInFeed;
-                    await settings.SaveAsync();
-                }
+                settings.Current.SabbyUpdateChannel = SabbyUpdateChannel.Stable;
+                settings.Current.StableUpdateFeedUrl = builtInFeed;
+                settings.Current.AutoCheckSabbyUpdates = true;
+                await settings.SaveAsync();
+                _logger.Info("Repaired Sabby update feed to the official GitHub stable channel.");
             }
             Current.Resources["CardColumns"] = settings.Current.CardColumns;
 
@@ -204,6 +205,15 @@ public partial class App : Application
         }
     }
 
+    private static bool IsLegacyLocalUpdateFeed(string? feed)
+    {
+        if (string.IsNullOrWhiteSpace(feed)) return false;
+        if (feed.Contains("127.0.0.1", StringComparison.OrdinalIgnoreCase) ||
+            feed.Contains("localhost", StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return Uri.TryCreate(feed, UriKind.Absolute, out var uri) && uri.IsLoopback;
+    }
     private async Task RunReleaseMigrationAsync(IAppPaths paths, ISettingsService settings)
     {
         try
@@ -237,9 +247,7 @@ public partial class App : Application
     private static async Task WaitForCapabilityDemandAsync(NavigationService navigation, TimeSpan idleTimeout)
     {
         static bool NeedsFullCapabilities(AppPage page) => page is
-            AppPage.Tweaks or AppPage.Ping or AppPage.GpuDriver or AppPage.Fixify or
-            AppPage.Presets or AppPage.GameProfiles or AppPage.ConfigStudio or
-            AppPage.Benchmark or AppPage.Monitoring or AppPage.Backups;
+            AppPage.GpuDriver or AppPage.GameProfiles;
 
         if (NeedsFullCapabilities(navigation.CurrentPage))
             return;
@@ -282,8 +290,8 @@ public partial class App : Application
             // Keep process-heavy CIM/PowerShell work completely out of the first interaction window.
             // Give the first frame a short interaction grace period, then start capability discovery quickly.
             // Navigation never waits for this work, and tweak states remain lazy/on-demand.
-            await Task.Delay(650);
-            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromMilliseconds(1200));
+            await Task.Delay(1200);
+            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromMilliseconds(8000));
 
             var hardware = await Task.Run(hardwareInfo.GetHardwareInfo);
             dashboard.UpdateHardware(hardware);
@@ -308,35 +316,34 @@ public partial class App : Application
 
             // Replace only factories/cached pages that depend on the full hardware/tweak graph.
             // If the user is currently on one of them it refreshes in place; every other page is untouched.
-            navigation.Replace(AppPage.Tweaks, () => new TweaksViewModel(fullEngine, selfCheck, hardware, backupService), refreshIfCurrent: navigation.CurrentPage == AppPage.Tweaks);
-            navigation.Replace(AppPage.Ping, () => new PingViewModel(pingService, fullEngine), refreshIfCurrent: navigation.CurrentPage == AppPage.Ping);
-            navigation.Replace(AppPage.GpuDriver, () => new GpuDriverViewModel(gpuDriverService), refreshIfCurrent: navigation.CurrentPage == AppPage.GpuDriver);
-            navigation.Replace(AppPage.Fixify, () => new FixifyViewModel(new FixifyService(maintenanceService, gpuDriverService, _logger!)), refreshIfCurrent: navigation.CurrentPage == AppPage.Fixify);
+            navigation.Replace(AppPage.Tweaks, () => new TweaksViewModel(fullEngine, selfCheck, hardware, backupService), refreshIfCurrent: false);
+            navigation.Replace(AppPage.Ping, () => new PingViewModel(pingService, fullEngine), refreshIfCurrent: false);
+            navigation.Replace(AppPage.GpuDriver, () => new GpuDriverViewModel(gpuDriverService), refreshIfCurrent: false);
+            navigation.Replace(AppPage.Fixify, () => new FixifyViewModel(new FixifyService(maintenanceService, gpuDriverService, _logger!)), refreshIfCurrent: false);
             navigation.Replace(AppPage.Presets, () =>
             {
                 var vm = new PresetsViewModel(presetService, fullEngine);
                 _ = vm.InitializeAsync();
                 return vm;
-            }, refreshIfCurrent: navigation.CurrentPage == AppPage.Presets);
+            }, refreshIfCurrent: false);
             navigation.Replace(AppPage.GameProfiles, () =>
             {
                 var vm = new GameProfilesViewModel(gameScanService, gameProfileService, presetService, gameDetection);
                 _ = vm.InitializeAsync();
                 return vm;
-            }, refreshIfCurrent: navigation.CurrentPage == AppPage.GameProfiles);
-            navigation.Replace(AppPage.ConfigStudio, () => new GameConfigStudioViewModel(gameProfileService, gameConfigStudioService), refreshIfCurrent: navigation.CurrentPage == AppPage.ConfigStudio);
-            navigation.Replace(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, hardware, pingService, _logger!), monitoringService, settings), refreshIfCurrent: navigation.CurrentPage == AppPage.Benchmark);
-            navigation.Replace(AppPage.Monitoring, () => new MonitoringViewModel(monitoringService, settings, gameDetection, gameProfileService, presetService), refreshIfCurrent: navigation.CurrentPage == AppPage.Monitoring);
+            }, refreshIfCurrent: false);
+            navigation.Replace(AppPage.ConfigStudio, () => new GameConfigStudioViewModel(gameProfileService, gameConfigStudioService), refreshIfCurrent: false);
+            navigation.Replace(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, hardware, pingService, _logger!), monitoringService, settings), refreshIfCurrent: false);
+            navigation.Replace(AppPage.Monitoring, () => new MonitoringViewModel(monitoringService, settings, gameDetection, gameProfileService, presetService), refreshIfCurrent: false);
             navigation.Replace(AppPage.Backups, () =>
             {
                 var vm = new BackupsViewModel(backupService);
                 _ = vm.InitializeAsync();
                 return vm;
-            }, refreshIfCurrent: navigation.CurrentPage == AppPage.Backups);
+            }, refreshIfCurrent: false);
 
-            gameDetection.Start();
-            if (settings.Current.MonitoringEnabled)
-                monitoringService.Start(settings.Current.MonitoringRefreshIntervalMs);
+            if (settings.Current.GameDetectionEnabled)
+                gameDetection.Start();
 
             // No all-tweaks scan runs automatically. Detection is lazy/per-card and Refresh All is
             // explicit, preventing dozens of PowerShell/registry probes from turning startup into a
@@ -478,15 +485,13 @@ public partial class App : Application
         // control/template path. Do not require InvalidOperationException for the legacy
         // NetworkControlContext binding signature: current Sabby templates do not consume that
         // compatibility value, so this is safe to treat as a non-fatal presentation fault.
-        var legacyReadOnlyDisplayBindingFault =
-            message.Contains("TwoWay or OneWayToSource binding cannot work", StringComparison.OrdinalIgnoreCase) &&
-            (message.Contains("NetworkControlContext", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("NetworkControlCountText", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("PrivacyControlCountText", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("SizeText", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("ModifiedText", StringComparison.OrdinalIgnoreCase));
+        // A WPF read-only binding mistake is presentation-only. Treat the whole class of
+        // TwoWay/OneWayToSource read-only binding failures as recoverable instead of showing
+        // a modal error or destabilizing navigation.
+        var readOnlyBindingFault =
+            message.Contains("TwoWay or OneWayToSource binding cannot work", StringComparison.OrdinalIgnoreCase);
 
-        var recoverablePresentationError = legacyReadOnlyDisplayBindingFault ||
+        var recoverablePresentationError = readOnlyBindingFault ||
             (e.Exception is InvalidOperationException &&
              (message.Contains("read-only state", StringComparison.OrdinalIgnoreCase) ||
               message.Contains("frozen", StringComparison.OrdinalIgnoreCase) ||

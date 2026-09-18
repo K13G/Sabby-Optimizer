@@ -15,6 +15,7 @@ namespace PCTweaker;
 
 public partial class MainWindow : Window
 {
+    private const uint WmGetMinMaxInfo = 0x0024;
     private const uint WmAppTray = 0x8001;
     private const uint WmLButtonUp = 0x0202;
     private const uint WmLButtonDblClk = 0x0203;
@@ -195,6 +196,13 @@ public partial class MainWindow : Window
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (msg == WmGetMinMaxInfo)
+        {
+            ApplyMonitorWorkArea(hwnd, lParam);
+            handled = true;
+            return IntPtr.Zero;
+        }
+
         if (msg != WmAppTray)
             return IntPtr.Zero;
 
@@ -288,7 +296,7 @@ public partial class MainWindow : Window
         // treated as a maximum, while the current window width sets a safe visual cap.
         var requested = Math.Clamp(_settings.Current.CardColumns, 1, 4);
         var width = ActualWidth > 0 ? ActualWidth : Width;
-        var visualCap = width >= 2200 ? 4 : width >= 1160 ? 3 : width >= 900 ? 2 : 1;
+        var visualCap = width >= 1540 ? 4 : width >= 1080 ? 3 : width >= 820 ? 2 : 1;
         Application.Current.Resources["CardColumns"] = Math.Min(requested, visualCap);
     }
 
@@ -575,10 +583,8 @@ public partial class MainWindow : Window
         // Sidebar droplets are intentionally not animated: that canvas is collapsed and
         // running invisible animation clocks wastes composition/dispatcher time. Four subtle
         // content drops are enough to communicate the style without making the UI feel busy.
-        StartDropAnimation(MainDrop1, startY, endY, 10.8, 0.6);
-        StartDropAnimation(MainDrop2, startY, endY, 12.0, 3.1);
-        StartDropAnimation(MainDrop3, startY, endY, 11.3, 5.5);
-        StartDropAnimation(MainDrop4, startY, endY, 12.8, 7.8);
+        StartDropAnimation(MainDrop1, startY, endY, 11.2, 0.5);
+        StartDropAnimation(MainDrop2, startY, endY, 12.6, 4.0);
         UpdateEventAnimationSpeed(_appearance.AnimationSpeed);
     }
 
@@ -720,7 +726,6 @@ public partial class MainWindow : Window
     private void SetSidebarExpanded(bool expanded)
     {
         var targetWidth = expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth;
-        var oldColumnWidth = SidebarColumn.Width.Value;
         var currentClipWidth = SidebarClipGeometry.Rect.Width;
         if (_sidebarExpanded == expanded && Math.Abs(currentClipWidth - targetWidth) < 0.5)
             return;
@@ -729,19 +734,15 @@ public partial class MainWindow : Window
         SidebarHost.Tag = expanded ? "True" : "False";
         AnimateSidebarBranding(expanded);
 
-        // Preserve the workspace's on-screen position across the one-time column layout change,
-        // then animate only its TranslateTransform back to zero. This removes the old per-frame
-        // GridLength mutation that caused stutter on complex pages.
-        var currentShift = WorkspaceShift.X;
+        // Overlay the expanded rail instead of resizing the whole window layout. This keeps dense
+        // pages perfectly still and removes the expensive measure/arrange pass on every hover.
+        SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
+        WorkspaceShift.X = 0;
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
-        var layoutDelta = targetWidth - oldColumnWidth;
-        SidebarColumn.Width = new GridLength(targetWidth);
-        WorkspaceShift.X = currentShift - layoutDelta;
-        SidebarClipGeometry.Rect = new Rect(0, 0, currentClipWidth, 10000);
 
         var distance = Math.Abs(targetWidth - currentClipWidth);
-        var durationMs = Math.Clamp(95d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 95d), 95d, 190d);
+        var durationMs = Math.Clamp(85d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 65d), 85d, 150d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
         var generation = ++_sidebarAnimationGeneration;
@@ -754,22 +755,14 @@ public partial class MainWindow : Window
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
         };
-        var shift = new DoubleAnimation(WorkspaceShift.X, 0, duration)
-        {
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-        shift.Completed += (_, _) =>
+        clip.Completed += (_, _) =>
         {
             if (generation != _sidebarAnimationGeneration) return;
-            WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
             SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
-            WorkspaceShift.X = 0;
             SidebarClipGeometry.Rect = new Rect(0, 0, targetWidth, 10000);
         };
 
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, clip, HandoffBehavior.SnapshotAndReplace);
-        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, shift, HandoffBehavior.SnapshotAndReplace);
     }
 
     private void AnimateSidebarBranding(bool expanded)
@@ -805,7 +798,7 @@ public partial class MainWindow : Window
             // Translating text by fractional pixels is a common source of temporary softness.
             MainContentHost.BeginAnimation(
                 OpacityProperty,
-                new DoubleAnimation(0.86, 1, TimeSpan.FromMilliseconds(80))
+                new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(55))
                 {
                     EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
                     FillBehavior = FillBehavior.Stop
@@ -820,6 +813,33 @@ public partial class MainWindow : Window
         }
     }
 
+    private static void ApplyMonitorWorkArea(IntPtr hwnd, IntPtr lParam)
+    {
+        if (lParam == IntPtr.Zero) return;
+
+        try
+        {
+            var info = Marshal.PtrToStructure<MinMaxInfo>(lParam);
+            var monitor = MonitorFromWindow(hwnd, MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero) return;
+
+            var monitorInfo = new MonitorInfo { cbSize = Marshal.SizeOf<MonitorInfo>() };
+            if (!GetMonitorInfo(monitor, ref monitorInfo)) return;
+
+            var work = monitorInfo.rcWork;
+            var monitorRect = monitorInfo.rcMonitor;
+            info.ptMaxPosition.X = Math.Abs(work.Left - monitorRect.Left);
+            info.ptMaxPosition.Y = Math.Abs(work.Top - monitorRect.Top);
+            info.ptMaxSize.X = Math.Abs(work.Right - work.Left);
+            info.ptMaxSize.Y = Math.Abs(work.Bottom - work.Top);
+            info.ptMaxTrackSize = info.ptMaxSize;
+            Marshal.StructureToPtr(info, lParam, false);
+        }
+        catch
+        {
+            // Windows will fall back to its normal maximize behavior if monitor metrics are unavailable.
+        }
+    }
     public void RecoverPresentationAnimations()
     {
         try
@@ -870,6 +890,32 @@ public partial class MainWindow : Window
     [StructLayout(LayoutKind.Sequential)]
     private struct NativePoint { public int X; public int Y; }
 
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect { public int Left; public int Top; public int Right; public int Bottom; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MinMaxInfo
+    {
+        public NativePoint ptReserved;
+        public NativePoint ptMaxSize;
+        public NativePoint ptMaxPosition;
+        public NativePoint ptMinTrackSize;
+        public NativePoint ptMaxTrackSize;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorInfo
+    {
+        public int cbSize;
+        public NativeRect rcMonitor;
+        public NativeRect rcWork;
+        public uint dwFlags;
+    }
+
+    private const uint MonitorDefaultToNearest = 0x00000002;
+
+    [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+    [DllImport("user32.dll", CharSet = CharSet.Auto)] private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfo lpmi);
     [DllImport("dwmapi.dll")] private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)] private static extern bool Shell_NotifyIcon(uint dwMessage, ref NotifyIconData lpData);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);

@@ -8,8 +8,8 @@
         <Grid Margin="0,0,0,16">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="PHASE 21" Style="{StaticResource EyebrowTextStyle}" />
-                <TextBlock Text="Update &amp; Extension System" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0" />
+                <TextBlock Text="SABBY SYSTEM" Style="{StaticResource EyebrowTextStyle}" />
+                <TextBlock Text="Updates &amp; extensions" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0" />
                 <TextBlock Text="Separate Sabby's own update channel from Windows/app updates, and extend the tweak catalog with validated declarative rule packs instead of arbitrary scripts."
                            Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
             </StackPanel>
@@ -20,7 +20,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
-                        <TextBlock Text="Sabby update channel" FontSize="17" FontWeight="SemiBold" />
+                        <TextBlock Text="Sabby updates" FontSize="17" FontWeight="SemiBold" />
                         <TextBlock Text="{Binding ChannelHelp}" Margin="0,5,24,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                     <CheckBox Grid.Column="1" Content="Auto-check on launch" IsChecked="{Binding AutoCheck, Mode=TwoWay}" VerticalAlignment="Top" />
@@ -39,11 +39,11 @@
                         <ComboBox ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel, Mode=TwoWay}" Margin="0,6,0,0" />
                     </StackPanel>
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Manifest URL or local JSON file" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
-                        <TextBox Text="{Binding FeedUrl, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0" Padding="10,8" ToolTip="A channel manifest contains version, downloadUrl, optional sha256, releaseNotes, and publishedAt." />
+                        <TextBlock Text="Official update feed" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                        <TextBox Text="{Binding FeedUrl, Mode=OneWay}" IsReadOnly="True" Margin="0,6,0,0" Padding="10,8" ToolTip="Sabby uses its official GitHub release manifest for normal updates." />
                     </StackPanel>
                     <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Button Content="Check channel" Command="{Binding CheckChannelCommand}" MinWidth="112" />
+                        <Button Content="Check for update" Command="{Binding CheckChannelCommand}" MinWidth="122" />
                         <Button Content="{Binding UpdateButtonText}" Command="{Binding StageUpdateCommand}" Style="{StaticResource PrimaryButtonStyle}" MinWidth="126" Margin="8,0,0,0" />
                     </StackPanel>
                 </Grid>
