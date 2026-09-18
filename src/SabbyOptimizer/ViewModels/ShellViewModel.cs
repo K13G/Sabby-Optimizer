@@ -41,9 +41,22 @@ public sealed class ShellViewModel : ViewModelBase
         get => _selectedSidebarItem;
         set
         {
-            if (!SetProperty(ref _selectedSidebarItem, value) || value is null)
+            if (value is null || ReferenceEquals(_selectedSidebarItem, value))
                 return;
-            _navigation.NavigateTo(value.Page);
+
+            var previous = _selectedSidebarItem;
+            _selectedSidebarItem = value;
+            OnPropertyChanged();
+            try
+            {
+                _navigation.NavigateTo(value.Page);
+            }
+            catch (Exception ex)
+            {
+                _selectedSidebarItem = previous;
+                OnPropertyChanged();
+                UiNotificationHub.Publish("Page could not open", $"{value.Label} stayed closed: {ex.Message}", UiNotificationKind.Warning);
+            }
         }
     }
 
@@ -129,18 +142,25 @@ public sealed class ShellViewModel : ViewModelBase
         SelectedSidebarItem = NavigationItems.FirstOrDefault(x => x.Page == _requestedStartupPage) ?? NavigationItems[0];
     }
 
-    private void OpenSettings()
-    {
-        _selectedSidebarItem = null;
-        OnPropertyChanged(nameof(SelectedSidebarItem));
-        _navigation.NavigateTo(AppPage.Settings);
-    }
+    private void OpenSettings() => TryOpenUtilityPage(AppPage.Settings, "Settings");
 
-    private void OpenCredits()
+    private void OpenCredits() => TryOpenUtilityPage(AppPage.Credits, "Credits");
+
+    private void TryOpenUtilityPage(AppPage page, string label)
     {
+        var previous = _selectedSidebarItem;
         _selectedSidebarItem = null;
         OnPropertyChanged(nameof(SelectedSidebarItem));
-        _navigation.NavigateTo(AppPage.Credits);
+        try
+        {
+            _navigation.NavigateTo(page);
+        }
+        catch (Exception ex)
+        {
+            _selectedSidebarItem = previous;
+            OnPropertyChanged(nameof(SelectedSidebarItem));
+            UiNotificationHub.Publish("Page could not open", $"{label} stayed closed: {ex.Message}", UiNotificationKind.Warning);
+        }
     }
 
     private void OnNavigated(object? sender, EventArgs e)
