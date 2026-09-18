@@ -54,15 +54,19 @@ public partial class App : Application
 
             var settings = new JsonSettingsService(paths, _logger);
             await settings.LoadAsync();
-            var builtInFeed = SabbyUpdateDefaults.GetBuiltInStableFeedUrl();
-            if (!string.IsNullOrWhiteSpace(builtInFeed) &&
-                (string.IsNullOrWhiteSpace(settings.Current.StableUpdateFeedUrl) || IsLegacyLocalUpdateFeed(settings.Current.StableUpdateFeedUrl)))
+            var stableFeed = SabbyUpdateDefaults.NormalizeStableFeed(settings.Current.StableUpdateFeedUrl);
+            var updateSettingsChanged =
+                settings.Current.SabbyUpdateChannel != SabbyUpdateChannel.Stable ||
+                !settings.Current.AutoCheckSabbyUpdates ||
+                !string.Equals(settings.Current.StableUpdateFeedUrl, stableFeed, StringComparison.Ordinal);
+
+            settings.Current.SabbyUpdateChannel = SabbyUpdateChannel.Stable;
+            settings.Current.StableUpdateFeedUrl = stableFeed;
+            settings.Current.AutoCheckSabbyUpdates = true;
+            if (updateSettingsChanged)
             {
-                settings.Current.SabbyUpdateChannel = SabbyUpdateChannel.Stable;
-                settings.Current.StableUpdateFeedUrl = builtInFeed;
-                settings.Current.AutoCheckSabbyUpdates = true;
                 await settings.SaveAsync();
-                _logger.Info("Repaired Sabby update feed to the official GitHub stable channel.");
+                _logger.Info("Sabby update settings migrated to the permanent K13G stable channel with automatic checks enabled.");
             }
             Current.Resources["CardColumns"] = settings.Current.CardColumns;
 
@@ -121,7 +125,6 @@ public partial class App : Application
             navigation.Register(AppPage.Ping, () => new PingViewModel(pingService, quickEngine));
             navigation.Register(AppPage.GpuDriver, () => new GpuDriverViewModel(quickGpuDriverService));
             navigation.Register(AppPage.Updates, () => new UpdateCenterViewModel(updateService, settings));
-            navigation.Register(AppPage.Extensions, () => new ExtensionsViewModel(updateExtensions, settings));
             navigation.Register(AppPage.Presets, () =>
             {
                 var vm = new PresetsViewModel(quickPresetService, quickEngine);
@@ -145,7 +148,7 @@ public partial class App : Application
                 return vm;
             });
             navigation.Register(AppPage.PcRestore, () => new PcRestoreViewModel(systemRestoreService));
-            navigation.Register(AppPage.Settings, () => new SettingsViewModel(settings, theme, appearance, startupService));
+            navigation.Register(AppPage.Settings, () => new SettingsViewModel(settings, theme, appearance, startupService, updateExtensions));
             navigation.Register(AppPage.Credits, () => new CreditsViewModel());
 
             var shell = new ShellViewModel(navigation, settings);

@@ -3,7 +3,7 @@ namespace PCTweaker.Core.Services;
 public static class SabbyUpdateDefaults
 {
     public const string OfficialStableFeedUrl =
-        "https://raw.githubusercontent.com/mrcoem/mrcoem/main/update/SabbyOptimizer-Stable-manifest.json";
+        "https://raw.githubusercontent.com/K13G/Sabby-Optimizer/main/update/SabbyOptimizer-Stable-manifest.json";
 
     public static string GetBuiltInStableFeedUrl()
     {
@@ -22,23 +22,22 @@ public static class SabbyUpdateDefaults
             }
         }
         catch { }
-
         return OfficialStableFeedUrl;
     }
 
     public static bool IsLegacyLocalFeed(string? value)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value)) return true;
+        var trimmed = value.Trim();
+        if (trimmed.Contains("mrcoem/mrcoem", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("mrcoem%2Fmrcoem", StringComparison.OrdinalIgnoreCase))
             return true;
-
-        if (!Uri.TryCreate(value.Trim(), UriKind.Absolute, out var uri))
-            return false;
-
+        if (!Uri.TryCreate(trimmed, UriKind.Absolute, out var uri)) return false;
         return uri.IsLoopback ||
                uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                uri.Host.Equals("127.0.0.1", StringComparison.OrdinalIgnoreCase);
     }
 
     public static string NormalizeStableFeed(string? value) =>
-        IsLegacyLocalFeed(value) ? GetBuiltInStableFeedUrl() : value!.Trim();
+        IsLegacyLocalFeed(value) ? OfficialStableFeedUrl : value!.Trim();
 }

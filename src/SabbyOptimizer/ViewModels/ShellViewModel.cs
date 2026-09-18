@@ -24,7 +24,6 @@ public sealed class ShellViewModel : ViewModelBase
         new(AppPage.Ping, "Ping", "\uE968"),
         new(AppPage.GpuDriver, "GPU Drivers", "\uE7F4"),
         new(AppPage.Updates, "Updates", "\uE895"),
-        new(AppPage.Extensions, "Extensions", "\uE943"),
         new(AppPage.GameProfiles, "Game Profiles", "\uE7FC"),
         new(AppPage.Benchmark, "Benchmarks", "\uE9D2"),
         new(AppPage.Backups, "Backups", "\uE8B7"),
@@ -72,7 +71,6 @@ public sealed class ShellViewModel : ViewModelBase
         AppPage.Ping => "Ping",
         AppPage.GpuDriver => "GPU Drivers",
         AppPage.Updates => "Updates",
-        AppPage.Extensions => "Update & Extensions",
         AppPage.GameProfiles => "Game Profiles",
         AppPage.Benchmark => "Benchmarks",
         AppPage.Backups => "Backups",
@@ -92,12 +90,11 @@ public sealed class ShellViewModel : ViewModelBase
         AppPage.Ping => "Local latency diagnostics and supported network optimization",
         AppPage.GpuDriver => "Supported NVIDIA, AMD, and Intel driver integrations",
         AppPage.Updates => "Windows, drivers, and installed application updates",
-        AppPage.Extensions => "Phase 21 Sabby update channels and validated tweak-rule extensions",
         AppPage.GameProfiles => "Per-game tuning profiles linked to individual executables",
         AppPage.Benchmark => "Phase 19 before/after benchmarking and noise-aware validation",
         AppPage.Backups => "Tracked originals, snapshots, and rollback protection",
         AppPage.PcRestore => "Windows restore points and system-level rollback protection",
-        AppPage.Settings => "Appearance and application preferences",
+        AppPage.Settings => "Appearance, application preferences, and Sabby updates",
         AppPage.Credits => "People behind Sabby Optimizer",
         _ => string.Empty
     };
@@ -136,6 +133,12 @@ public sealed class ShellViewModel : ViewModelBase
         if (_requestedStartupPage == AppPage.Credits)
         {
             OpenCredits();
+            return;
+        }
+
+        if (_requestedStartupPage == AppPage.Extensions)
+        {
+            OpenSettings();
             return;
         }
 

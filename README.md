@@ -1,21 +1,48 @@
+<div align="center">
+
 # Sabby Optimizer
 
-Sabby Optimizer uses this repository for its permanent update pipeline.
+**Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-## Normal update flow
+![Version](https://img.shields.io/badge/stable-0.23.13-b00020?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
+![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
-1. Sabby checks `update/SabbyOptimizer-Stable-manifest.json` when it opens.
-2. If the online version is newer, Sabby shows an update prompt.
-3. Sabby downloads the matching Setup.exe from GitHub Releases.
-4. It verifies SHA-256, backs up user data, runs the update, and reopens.
-5. Settings under `%LOCALAPPDATA%\SabbyOptimizer\UserData` are preserved.
+</div>
 
-## One-time source bootstrap
+## Latest update — 0.23.13
 
-Upload the compact `SabbySource.zip` once to:
+### Settings & navigation
+🟢 **+** Sabby update controls now live directly inside **Settings** with installed version, available version, status, check-now, and install/restart controls.  
+🔴 **−** Removed the **Extensions** tab from the sidebar to reduce clutter.  
+🩷 **✓** Old localhost and pre-rename `mrcoem/mrcoem` update feeds automatically migrate to `K13G/Sabby-Optimizer`.
 
-`bootstrap/SabbySource.zip`
+### Updates
+🟢 **+** Automatic Stable-channel checks use one permanent GitHub manifest URL.  
+🟢 **+** Settings can download, verify, install, close the old build, and reopen the updated app.  
+🩷 **✓** Silent in-app installs explicitly relaunch Sabby after Setup finishes.
 
-The GitHub Actions workflow imports it into `src/`, deletes the bootstrap ZIP from the repository, builds the Windows installer, creates a GitHub Release, and updates the stable manifest.
+### GitHub / release system
+🟢 **+** Releases now publish from **K13G/Sabby-Optimizer**.  
+🟢 **+** Release notes are grouped by the exact Sabby area that changed.  
+🔴 **−** Removed the old bootstrap/update-pipeline explanation from the project front page.
 
-After that, normal source edits under `src/` automatically build and publish the next Sabby update.
+## Change legend
+
+🟢 **+** Added or improved  
+🔴 **−** Removed  
+🩷 **✓** Bug fix
+
+See **[CHANGELOG.md](CHANGELOG.md)** for version history.
+
+## Automatic updates
+
+Stable manifest:
+
+`https://raw.githubusercontent.com/K13G/Sabby-Optimizer/main/update/SabbyOptimizer-Stable-manifest.json`
+
+This URL stays constant; each release updates the manifest contents and points it at the newest verified installer.
+
+## Owner
+
+**K13G** — Developer / Owner

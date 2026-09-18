@@ -12,6 +12,8 @@ public sealed class SettingsViewModel : ViewModelBase
     private readonly IAppearanceService _appearance;
     private readonly IAppStartupService _startupService;
 
+    public AppUpdateViewModel UpdateManager { get; }
+
     private ThemeMode _selectedTheme;
     private VisualStyle _selectedVisualStyle;
     private double _styleIntensity;
@@ -339,12 +341,18 @@ public sealed class SettingsViewModel : ViewModelBase
     public ICommand CancelResetCommand { get; }
     public ICommand ConfirmResetCommand { get; }
 
-    public SettingsViewModel(ISettingsService settings, IThemeService theme, IAppearanceService appearance, IAppStartupService startupService)
+    public SettingsViewModel(
+        ISettingsService settings,
+        IThemeService theme,
+        IAppearanceService appearance,
+        IAppStartupService startupService,
+        IPhase21UpdateExtensionService updateService)
     {
         _settings = settings;
         _theme = theme;
         _appearance = appearance;
         _startupService = startupService;
+        UpdateManager = new AppUpdateViewModel(updateService, settings);
         _selectedTheme = settings.Current.Theme;
         _selectedVisualStyle = settings.Current.VisualStyle;
         _styleIntensity = settings.Current.StyleIntensity;

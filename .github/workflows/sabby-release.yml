@@ -1,65 +1,31 @@
-name: Build and Publish Sabby Optimizer
-
+name: Sabby Optimizer Release
 on:
   push:
     branches: [main]
     paths:
-      - "bootstrap/SabbySource.zip"
       - "src/**"
   workflow_dispatch:
-
 permissions:
   contents: write
-
 concurrency:
   group: sabby-release
   cancel-in-progress: true
-
 jobs:
   build-release:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Import one-time bootstrap source
-        shell: pwsh
-        run: |
-          if (Test-Path "bootstrap/SabbySource.zip") {
-            Write-Host "Importing Sabby source from bootstrap ZIP..."
-            Remove-Item "src" -Recurse -Force -ErrorAction SilentlyContinue
-            New-Item "src" -ItemType Directory -Force | Out-Null
-            Expand-Archive -LiteralPath "bootstrap/SabbySource.zip" -DestinationPath "src" -Force
-
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src
-            git rm -f "bootstrap/SabbySource.zip"
-            git commit -m "Import Sabby Optimizer source" || exit 0
-            git push
-          }
-
-      - name: Verify source exists
-        shell: pwsh
-        run: |
-          if (-not (Test-Path "src/SabbyOptimizer/SabbyOptimizer.csproj")) {
-            throw "Sabby source is not initialized. Upload SabbySource.zip to bootstrap/SabbySource.zip once."
-          }
-
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
-
       - name: Install Inno Setup
         shell: pwsh
-        run: |
-          choco install innosetup -y --no-progress
-
-      - name: Read version
+        run: choco install innosetup -y --no-progress
+      - name: Read Sabby version
         id: version
         shell: pwsh
         run: |
@@ -67,40 +33,31 @@ jobs:
           $version = [string]$project.Project.PropertyGroup.Version
           if ([string]::IsNullOrWhiteSpace($version)) { throw "Could not read Sabby version." }
           "version=$version" >> $env:GITHUB_OUTPUT
-          Write-Host "Building Sabby Optimizer $version"
-
-      - name: Build installer and manifest
+      - name: Build and verify installer
         shell: pwsh
         run: |
           $version = "${{ steps.version.outputs.version }}"
           $downloadBase = "https://github.com/${{ github.repository }}/releases/download/v$version"
           & "src/Release/Build-Release.ps1" -RequireInstaller -DownloadBaseUrl $downloadBase
-
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
           name: Sabby Optimizer ${{ steps.version.outputs.version }}
-          body: |
-            Sabby Optimizer ${{ steps.version.outputs.version }}
-
-            Installed copies of Sabby Optimizer will detect this release automatically through the stable update feed.
+          body_path: RELEASE_NOTES.md
           make_latest: true
           overwrite_files: true
           files: |
             src/artifacts/installer/SabbyOptimizer-${{ steps.version.outputs.version }}-Setup.exe
-
       - name: Publish stable update manifest
         shell: pwsh
         run: |
           New-Item "update" -ItemType Directory -Force | Out-Null
           Copy-Item "src/artifacts/packages/SabbyOptimizer-Stable-manifest.json" "update/SabbyOptimizer-Stable-manifest.json" -Force
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "update/SabbyOptimizer-Stable-manifest.json"
-
           if (-not (git diff --cached --quiet)) {
-            git commit -m "Publish Sabby ${{ steps.version.outputs.version }} update manifest"
+            git commit -m "Publish Sabby ${{ steps.version.outputs.version }} stable manifest"
             git push
           }
