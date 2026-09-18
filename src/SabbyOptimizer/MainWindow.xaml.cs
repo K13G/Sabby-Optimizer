@@ -15,6 +15,7 @@ namespace PCTweaker;
 
 public partial class MainWindow : Window
 {
+    private const uint WmGetMinMaxInfo = 0x0024;
     private const uint WmAppTray = 0x8001;
     private const uint WmLButtonUp = 0x0202;
     private const uint WmLButtonDblClk = 0x0203;
@@ -288,7 +289,7 @@ public partial class MainWindow : Window
         // treated as a maximum, while the current window width sets a safe visual cap.
         var requested = Math.Clamp(_settings.Current.CardColumns, 1, 4);
         var width = ActualWidth > 0 ? ActualWidth : Width;
-        var visualCap = width >= 2200 ? 4 : width >= 1160 ? 3 : width >= 900 ? 2 : 1;
+        var visualCap = width >= 1540 ? 4 : width >= 1080 ? 3 : width >= 820 ? 2 : 1;
         Application.Current.Resources["CardColumns"] = Math.Min(requested, visualCap);
     }
 
@@ -575,10 +576,8 @@ public partial class MainWindow : Window
         // Sidebar droplets are intentionally not animated: that canvas is collapsed and
         // running invisible animation clocks wastes composition/dispatcher time. Four subtle
         // content drops are enough to communicate the style without making the UI feel busy.
-        StartDropAnimation(MainDrop1, startY, endY, 10.8, 0.6);
-        StartDropAnimation(MainDrop2, startY, endY, 12.0, 3.1);
-        StartDropAnimation(MainDrop3, startY, endY, 11.3, 5.5);
-        StartDropAnimation(MainDrop4, startY, endY, 12.8, 7.8);
+        StartDropAnimation(MainDrop1, startY, endY, 11.2, 0.5);
+        StartDropAnimation(MainDrop2, startY, endY, 12.6, 4.0);
         UpdateEventAnimationSpeed(_appearance.AnimationSpeed);
     }
 
@@ -805,7 +804,7 @@ public partial class MainWindow : Window
             // Translating text by fractional pixels is a common source of temporary softness.
             MainContentHost.BeginAnimation(
                 OpacityProperty,
-                new DoubleAnimation(0.86, 1, TimeSpan.FromMilliseconds(80))
+                new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(55))
                 {
                     EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
                     FillBehavior = FillBehavior.Stop
