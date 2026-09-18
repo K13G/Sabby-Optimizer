@@ -485,15 +485,13 @@ public partial class App : Application
         // control/template path. Do not require InvalidOperationException for the legacy
         // NetworkControlContext binding signature: current Sabby templates do not consume that
         // compatibility value, so this is safe to treat as a non-fatal presentation fault.
-        var legacyReadOnlyDisplayBindingFault =
-            message.Contains("TwoWay or OneWayToSource binding cannot work", StringComparison.OrdinalIgnoreCase) &&
-            (message.Contains("NetworkControlContext", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("NetworkControlCountText", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("PrivacyControlCountText", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("SizeText", StringComparison.OrdinalIgnoreCase) ||
-             message.Contains("ModifiedText", StringComparison.OrdinalIgnoreCase));
+        // A WPF read-only binding mistake is presentation-only. Treat the whole class of
+        // TwoWay/OneWayToSource read-only binding failures as recoverable instead of showing
+        // a modal error or destabilizing navigation.
+        var readOnlyBindingFault =
+            message.Contains("TwoWay or OneWayToSource binding cannot work", StringComparison.OrdinalIgnoreCase);
 
-        var recoverablePresentationError = legacyReadOnlyDisplayBindingFault ||
+        var recoverablePresentationError = readOnlyBindingFault ||
             (e.Exception is InvalidOperationException &&
              (message.Contains("read-only state", StringComparison.OrdinalIgnoreCase) ||
               message.Contains("frozen", StringComparison.OrdinalIgnoreCase) ||
