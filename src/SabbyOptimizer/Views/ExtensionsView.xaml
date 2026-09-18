@@ -9,8 +9,8 @@
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="SABBY SYSTEM" Style="{StaticResource EyebrowTextStyle}" />
-                <TextBlock Text="Updates &amp; extensions" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0" />
-                <TextBlock Text="Separate Sabby's own update channel from Windows/app updates, and extend the tweak catalog with validated declarative rule packs instead of arbitrary scripts."
+                <TextBlock Text="Sabby updates" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0" />
+                <TextBlock Text="Sabby checks the official GitHub release channel automatically. Advanced tweak-rule extensions remain available below."
                            Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
@@ -26,27 +26,26 @@
                     <CheckBox Grid.Column="1" Content="Auto-check on launch" IsChecked="{Binding AutoCheck, Mode=TwoWay}" VerticalAlignment="Top" />
                 </Grid>
 
-                <Grid Margin="0,15,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="170" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="Channel" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
-                        <ComboBox ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel, Mode=TwoWay}" Margin="0,6,0,0" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="Official update feed" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
-                        <TextBox Text="{Binding FeedUrl, Mode=OneWay}" IsReadOnly="True" Margin="0,6,0,0" Padding="10,8" ToolTip="Sabby uses its official GitHub release manifest for normal updates." />
-                    </StackPanel>
-                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Button Content="Check for update" Command="{Binding CheckChannelCommand}" MinWidth="122" />
-                        <Button Content="{Binding UpdateButtonText}" Command="{Binding StageUpdateCommand}" Style="{StaticResource PrimaryButtonStyle}" MinWidth="126" Margin="8,0,0,0" />
-                    </StackPanel>
-                </Grid>
+                <Border Margin="0,15,0,0" Padding="14,12" CornerRadius="10"
+                        Background="{DynamicResource SurfaceHoverBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="OFFICIAL STABLE CHANNEL" Style="{StaticResource EyebrowTextStyle}" />
+                            <TextBlock Text="GitHub • automatic verified updates" Margin="0,4,0,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="Check now" Command="{Binding CheckChannelCommand}" MinWidth="100" />
+                            <Button Content="{Binding UpdateButtonText}" Command="{Binding StageUpdateCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" MinWidth="126" Margin="8,0,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
                 <Grid Margin="0,15,0,0">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
