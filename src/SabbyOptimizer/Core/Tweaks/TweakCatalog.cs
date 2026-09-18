@@ -36,7 +36,7 @@ public static class TweakCatalog
         return handlers;
     }
 
-    public static IReadOnlyList<ITweakHandler> CreatePhase16Catalog(IAppPaths paths, HardwareInfo hardware)
+    public static IReadOnlyList<ITweakHandler> CreateCatalog(IAppPaths paths, HardwareInfo hardware)
     {
         // Prime the PowerShell command capability cache in one process instead of launching a
         // separate powershell.exe for every handler's Get-Command check.
@@ -54,14 +54,14 @@ public static class TweakCatalog
         {
             new InMemorySelfTestTweakHandler(),
 
-            // Phase 8: real Windows/gaming handlers.
+            // real Windows/gaming handlers.
             new GameModeTweakHandler(),
             new GameCaptureTweakHandler(),
             new HighPerformancePowerPlanTweakHandler(paths),
             new WindowsAnimationsTweakHandler()
         };
 
-        // Phase 9: hardware-aware options. These are added only when this PC exposes the
+        // hardware-aware options. These are added only when this PC exposes the
         // underlying Windows capability instead of showing unsupported controls as dead rows.
         if (HardwareAcceleratedGpuSchedulingTweakHandler.IsSupported(hardware))
             handlers.Add(new HardwareAcceleratedGpuSchedulingTweakHandler(paths));
@@ -74,7 +74,7 @@ public static class TweakCatalog
 
         AddFpsProcessorPolicies(handlers, paths);
 
-        // Phase 10: only expose networking controls when the Windows networking cmdlets
+        // only expose networking controls when the Windows networking cmdlets
         // used by the handler are actually available on this PC.
         if (TcpAutoTuningTweakHandler.IsSupported())
             handlers.Add(new TcpAutoTuningTweakHandler(paths));
@@ -106,7 +106,7 @@ public static class TweakCatalog
         if (PowerThrottlingRegistryTweakHandler.IsSupported())
             handlers.Add(new PowerThrottlingRegistryTweakHandler(paths));
 
-        // Phase 14: hardware/driver-specific controls are only included after an explicit
+        // hardware/driver-specific controls are only included after an explicit
         // capability check. Their handlers also implement a second compatibility gate before apply.
         if (EnergyEfficientEthernetTweakHandler.IsSupported())
             handlers.Add(new EnergyEfficientEthernetTweakHandler(paths));
@@ -114,7 +114,7 @@ public static class TweakCatalog
         if (InputDevicePowerGuardTweakHandler.IsSupported())
             handlers.Add(new InputDevicePowerGuardTweakHandler(paths));
 
-        // Phase 16: small, documented controls that are reversible and capability-gated.
+        // small, documented controls that are reversible and capability-gated.
         if (ControllerGameBarShortcutTweakHandler.IsSupported())
             handlers.Add(new ControllerGameBarShortcutTweakHandler(paths));
 
@@ -133,12 +133,12 @@ public static class TweakCatalog
         if (UsbSelectiveSuspendTweakHandler.IsSupported())
             handlers.Add(new UsbSelectiveSuspendTweakHandler(paths));
 
-        // Phase 22.1: expand Ethernet/network controls using standardized NDIS properties only.
+        // expand Ethernet/network controls using standardized NDIS properties only.
         // These are deliberately NOT part of Apply Best: wake/offload behavior is situational and
         // can trade power-management functionality for a simpler always-on desktop NIC profile.
         AddAdvancedNetworkControls(handlers, paths);
 
-        // Phase 22.1: privacy/security controls use documented Windows policies or Defender APIs.
+        // privacy/security controls use documented Windows policies or Defender APIs.
         // They live in their own category and never get silently mixed into performance presets.
         AddPrivacyAndSafetyControls(handlers, paths);
 
@@ -447,24 +447,24 @@ public static class TweakCatalog
             paths, definition, restoreFile, appliedLabel, notAppliedLabel, targets);
     }
 
-    public static IReadOnlyList<ITweakHandler> CreatePhase14Catalog(IAppPaths paths, HardwareInfo hardware) =>
-        CreatePhase16Catalog(paths, hardware);
+    public static IReadOnlyList<ITweakHandler> CreateCompatibleCatalog(IAppPaths paths, HardwareInfo hardware) =>
+        CreateCatalog(paths, hardware);
 
     public static IReadOnlyList<ITweakHandler> CreatePhase12Catalog(IAppPaths paths, HardwareInfo hardware) =>
-        CreatePhase16Catalog(paths, hardware);
+        CreateCatalog(paths, hardware);
 
     public static IReadOnlyList<ITweakHandler> CreatePhase10Catalog(IAppPaths paths, HardwareInfo hardware) =>
-        CreatePhase16Catalog(paths, hardware);
+        CreateCatalog(paths, hardware);
 
     // Compatibility aliases for older internal call sites. New startup code uses Phase 10.
     public static IReadOnlyList<ITweakHandler> CreatePhase9Catalog(IAppPaths paths, HardwareInfo hardware) =>
-        CreatePhase16Catalog(paths, hardware);
+        CreateCatalog(paths, hardware);
 
     public static IReadOnlyList<ITweakHandler> CreatePhase8Catalog(IAppPaths paths, HardwareInfo hardware) =>
-        CreatePhase16Catalog(paths, hardware);
+        CreateCatalog(paths, hardware);
 
     public static IReadOnlyList<ITweakHandler> CreatePhase3Catalog(IAppPaths paths, HardwareInfo hardware) =>
-        CreatePhase16Catalog(paths, hardware);
+        CreateCatalog(paths, hardware);
 
     private static UnavailableTweakHandler Placeholder(
         string id,

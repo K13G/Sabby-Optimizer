@@ -221,7 +221,7 @@ public sealed class TweaksViewModel : ViewModelBase
 
     public async Task PrewarmAsync()
     {
-        // Phase 23.5: do not sweep every tweak in the background. Many hardware-aware cards
+        // do not sweep every tweak in the background. Many hardware-aware cards
         // invoke PowerShell/CIM/driver reads; a delayed full scan still competes with the user
         // several seconds after launch and was a major source of "random" UI stutter. Cards
         // stay Ready and perform their targeted compatibility/read-back only when used.
@@ -453,8 +453,8 @@ public sealed class TweaksViewModel : ViewModelBase
 
         query = SelectedSort switch
         {
-            "Newest" => query.OrderByDescending(x => x.IntroducedPhase).ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase),
-            "Oldest" => query.OrderBy(x => x.IntroducedPhase).ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase),
+            "Newest" => query.OrderByDescending(x => x.IntroducedOrder).ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase),
+            "Oldest" => query.OrderBy(x => x.IntroducedOrder).ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase),
             "A–Z" => query.OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase),
             _ => query.OrderByDescending(x => x.EvidenceScore).ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
         };

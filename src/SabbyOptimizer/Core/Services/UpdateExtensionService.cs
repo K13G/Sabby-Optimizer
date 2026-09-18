@@ -11,7 +11,7 @@ using PCTweaker.Models;
 
 namespace PCTweaker.Core.Services;
 
-public sealed class Phase21UpdateExtensionService : IPhase21UpdateExtensionService
+public sealed class UpdateExtensionService : IUpdateExtensionService
 {
     private sealed class ReleaseManifest
     {
@@ -32,7 +32,7 @@ public sealed class Phase21UpdateExtensionService : IPhase21UpdateExtensionServi
     public string ExtensionsDirectory { get; }
     public string StagedUpdatesDirectory { get; }
 
-    public Phase21UpdateExtensionService(IAppPaths paths, IAppLogger logger)
+    public UpdateExtensionService(IAppPaths paths, IAppLogger logger)
     {
         _paths = paths;
         _logger = logger;
@@ -178,7 +178,7 @@ public sealed class Phase21UpdateExtensionService : IPhase21UpdateExtensionServi
                 Name = "Example Safe Rule",
                 Version = "1.0.0",
                 Author = "Sabby Optimizer",
-                Description = "Disabled example showing the Phase 21 declarative extension format. It writes only a harmless current-user example value when explicitly enabled and applied.",
+                Description = "Disabled example showing the Sabby declarative extension format. It writes only a harmless current-user example value when explicitly enabled and applied.",
                 Enabled = false,
                 Rules =
                 [

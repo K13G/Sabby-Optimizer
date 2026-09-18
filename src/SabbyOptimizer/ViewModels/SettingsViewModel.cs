@@ -346,7 +346,7 @@ public sealed class SettingsViewModel : ViewModelBase
         IThemeService theme,
         IAppearanceService appearance,
         IAppStartupService startupService,
-        IPhase21UpdateExtensionService updateService)
+        IUpdateExtensionService updateService)
     {
         _settings = settings;
         _theme = theme;

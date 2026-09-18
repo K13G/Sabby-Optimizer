@@ -9,7 +9,7 @@ namespace PCTweaker.ViewModels;
 
 public sealed class TweakExtensionItemViewModel : ViewModelBase
 {
-    private readonly IPhase21UpdateExtensionService _service;
+    private readonly IUpdateExtensionService _service;
     private bool _enabled;
     private bool _isBusy;
     private string _status;
@@ -43,7 +43,7 @@ public sealed class TweakExtensionItemViewModel : ViewModelBase
     public AsyncRelayCommand RemoveCommand { get; }
     public event EventHandler? Changed;
 
-    public TweakExtensionItemViewModel(IPhase21UpdateExtensionService service, InstalledTweakExtensionInfo model)
+    public TweakExtensionItemViewModel(IUpdateExtensionService service, InstalledTweakExtensionInfo model)
     {
         _service = service;
         Model = model;
@@ -84,7 +84,7 @@ public sealed class TweakExtensionItemViewModel : ViewModelBase
 
 public sealed class ExtensionsViewModel : ViewModelBase
 {
-    private readonly IPhase21UpdateExtensionService _service;
+    private readonly IUpdateExtensionService _service;
     private readonly ISettingsService _settings;
     private bool _isBusy;
     private SabbyUpdateChannel _selectedChannel;
@@ -168,7 +168,7 @@ public sealed class ExtensionsViewModel : ViewModelBase
     public AsyncRelayCommand CreateExampleCommand { get; }
     public RelayCommand OpenExtensionsFolderCommand { get; }
 
-    public ExtensionsViewModel(IPhase21UpdateExtensionService service, ISettingsService settings)
+    public ExtensionsViewModel(IUpdateExtensionService service, ISettingsService settings)
     {
         _service = service;
         _settings = settings;

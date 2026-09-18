@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace PCTweaker.Core.Services;
 
 /// <summary>
-/// Phase 22 release migration. It snapshots the small, migration-sensitive parts of Sabby's
+/// Release migration. It snapshots the small, migration-sensitive parts of Sabby's
 /// persistent user data before a version/schema transition and records the version that last
 /// completed migration successfully. Large game-config backup payloads are deliberately left
 /// untouched rather than copied on every upgrade.
@@ -57,7 +57,7 @@ public sealed class ReleaseMigrationService
         var sourceLabel = string.IsNullOrWhiteSpace(previous?.Version) ? "legacy" : previous!.Version;
         var backup = CreateCriticalMigrationBackup(sourceLabel, currentVersion);
         if (!string.IsNullOrWhiteSpace(backup))
-            _logger.Info($"Phase 22 migration backup created: {backup}");
+            _logger.Info($"Migration backup created: {backup}");
 
         // Normalize/save through the real settings service so schema defaults are applied using
         // the same atomic-write path as normal application settings.

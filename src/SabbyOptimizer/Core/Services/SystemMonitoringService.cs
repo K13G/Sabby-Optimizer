@@ -49,7 +49,7 @@ public sealed class SystemMonitoringService : IAsyncDisposable
             _loop = Task.Run(() => LoopAsync(_cts.Token));
         }
         RunningStateChanged?.Invoke(this, true);
-        _logger.Info($"Phase 20 monitoring started at {_intervalMs} ms refresh.");
+        _logger.Info($"Monitoring started at {_intervalMs} ms refresh.");
     }
 
     public async Task RestartAsync(int intervalMs, CancellationToken cancellationToken = default)
@@ -85,7 +85,7 @@ public sealed class SystemMonitoringService : IAsyncDisposable
         catch (TimeoutException) { }
         finally { cts.Dispose(); }
         RunningStateChanged?.Invoke(this, false);
-        _logger.Info("Phase 20 monitoring stopped.");
+        _logger.Info("Monitoring stopped.");
     }
 
     public async Task<SystemMonitorSnapshot> SampleNowAsync(CancellationToken cancellationToken = default)

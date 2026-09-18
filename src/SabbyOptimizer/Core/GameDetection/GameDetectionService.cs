@@ -49,7 +49,7 @@ public sealed class GameDetectionService : IGameDetectionService
         _cts = new CancellationTokenSource();
         _monitorTask = Task.Run(() => MonitorLoopAsync(_cts.Token));
         RaiseState(new GameRuntimeState(Guid.Empty, false, "Monitoring", "Launch detection is active. Waiting for an enabled saved game to start."));
-        _logger.Info("Phase 7 game detection monitor started.");
+        _logger.Info("Game detection monitor started.");
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
@@ -72,7 +72,7 @@ public sealed class GameDetectionService : IGameDetectionService
         }
 
         await RestoreAllSessionsAsync(cancellationToken).ConfigureAwait(false);
-        _logger.Info("Phase 7 game detection monitor stopped.");
+        _logger.Info("Game detection monitor stopped.");
     }
 
     public async ValueTask DisposeAsync() => await StopAsync().ConfigureAwait(false);

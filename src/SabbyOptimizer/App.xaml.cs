@@ -83,7 +83,7 @@ public partial class App : Application
 
             // Build only the cheap, dependency-light shell before first paint. Expensive CIM,
             // PowerShell and driver capability probes are never awaited by navigation again.
-            var updateExtensions = new Phase21UpdateExtensionService(paths, _logger);
+            var updateExtensions = new UpdateExtensionService(paths, _logger);
             var startupService = new AppStartupService(_logger);
             var hardwareInfo = new HardwareInfoService(_logger);
             var hardwareTask = Task.Run(hardwareInfo.GetHardwareInfo);
@@ -231,7 +231,7 @@ public partial class App : Application
 
     private async Task RunStartupUpdateCheckAsync(
         Window owner,
-        Phase21UpdateExtensionService updateExtensions,
+        UpdateExtensionService updateExtensions,
         ISettingsService settings,
         IAppPaths paths)
     {
@@ -293,7 +293,7 @@ public partial class App : Application
 
             // Keep one tiny render grace period, not the old 3.5s + up-to-30s intentional wait.
             await Task.Delay(180);
-            var fullCatalog = await Task.Run(() => TweakCatalog.CreatePhase16Catalog(paths, hardware));
+            var fullCatalog = await Task.Run(() => TweakCatalog.CreateCatalog(paths, hardware));
 
             var fullEngine = new TweakEngine(fullCatalog, _logger!, backupRepository);
             var selfCheck = await Task.Run(async () => await TweakEngineSelfCheck.RunAsync(fullEngine, _logger!));
@@ -403,8 +403,8 @@ public partial class App : Application
             var hardwareService = new HardwareInfoService(_logger);
             var hardware = hardwareService.GetHardwareInfo();
             var backupRepository = new BackupRepository(paths, _logger);
-            var extensionService = new Phase21UpdateExtensionService(paths, _logger);
-            var elevatedCatalog = TweakCatalog.CreatePhase16Catalog(paths, hardware).Concat(extensionService.LoadEnabledHandlers()).ToArray();
+            var extensionService = new UpdateExtensionService(paths, _logger);
+            var elevatedCatalog = TweakCatalog.CreateCatalog(paths, hardware).Concat(extensionService.LoadEnabledHandlers()).ToArray();
             var engine = new TweakEngine(elevatedCatalog, _logger, backupRepository);
 
             var result = action.Equals("undo", StringComparison.OrdinalIgnoreCase)

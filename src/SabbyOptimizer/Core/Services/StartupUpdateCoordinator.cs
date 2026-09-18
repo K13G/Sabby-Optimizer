@@ -5,11 +5,11 @@ namespace PCTweaker.Core.Services;
 
 public sealed class StartupUpdateCoordinator
 {
-    private readonly IPhase21UpdateExtensionService _service;
+    private readonly IUpdateExtensionService _service;
     private readonly ISettingsService _settings;
     private readonly IAppLogger _logger;
 
-    public StartupUpdateCoordinator(IPhase21UpdateExtensionService service, ISettingsService settings, IAppLogger logger)
+    public StartupUpdateCoordinator(IUpdateExtensionService service, ISettingsService settings, IAppLogger logger)
     {
         _service = service;
         _settings = settings;

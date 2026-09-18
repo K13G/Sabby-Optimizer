@@ -3,7 +3,7 @@ using PCTweaker.Models;
 
 namespace PCTweaker.Core.Services;
 
-public interface IPhase21UpdateExtensionService
+public interface IUpdateExtensionService
 {
     string ExtensionsDirectory { get; }
     string StagedUpdatesDirectory { get; }

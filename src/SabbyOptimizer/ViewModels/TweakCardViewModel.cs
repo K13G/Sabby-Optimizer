@@ -93,7 +93,7 @@ public sealed class TweakCardViewModel : ViewModelBase
     // situational or mostly cosmetic; a high score means the underlying Windows behavior
     // has strong technical justification. It is not an FPS guarantee.
     public int EvidenceScore => GetEvidenceScore(Definition.Id);
-    public int IntroducedPhase => GetIntroducedPhase(Definition.Id);
+    public int IntroducedOrder => GetIntroducedOrder(Definition.Id);
     public string EvidenceLabel => EvidenceScore switch
     {
         >= 100 => "BEST",
@@ -464,7 +464,7 @@ public sealed class TweakCardViewModel : ViewModelBase
         _ => 50
     };
 
-    private static int GetIntroducedPhase(string id) => id switch
+    private static int GetIntroducedOrder(string id) => id switch
     {
         "gaming.capture" or "gaming.game-mode" or "windows.visual-effects" => 8,
         "cpu.boost-mode" or "cpu.performance-floor" or "power.active-plan" or "graphics.hags" => 9,

@@ -6,7 +6,7 @@ namespace PCTweaker.ViewModels;
 
 public sealed class AppUpdateViewModel : ViewModelBase
 {
-    private readonly IPhase21UpdateExtensionService _service;
+    private readonly IUpdateExtensionService _service;
     private readonly ISettingsService _settings;
     private bool _isBusy;
     private double _downloadProgress;
@@ -14,7 +14,7 @@ public sealed class AppUpdateViewModel : ViewModelBase
     private string _releaseNotes = "Sabby uses the official K13G stable channel.";
     private SabbyReleaseInfo? _release;
 
-    public AppUpdateViewModel(IPhase21UpdateExtensionService service, ISettingsService settings)
+    public AppUpdateViewModel(IUpdateExtensionService service, ISettingsService settings)
     {
         _service = service;
         _settings = settings;
