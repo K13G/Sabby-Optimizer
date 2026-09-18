@@ -4,22 +4,27 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.16-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.17-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.16
+## Latest update — 0.23.17
 
-### Update screen
-🟢 **+** Updating now dims the whole screen and shows a centered Sabby update card.  
-🟢 **+** Real **Downloading → Verifying → Installing** status is shown, including download percentage when available.  
-🩷 **✓** Failed updates now show a visible error state and reopen Sabby instead of silently leaving it closed.
+### Full UI revamp
+🟢 **+** Unified cards, buttons, fields, selectors, tooltips, scrollbars, spacing, and typography into a cleaner visual system.  
+🟢 **+** Refreshed all three base themes with clearer surfaces and less harsh contrast.  
+🟢 **+** Rebalanced Dashboard and Tweaks layouts to show more useful content with less empty space.
 
-### Performance
-🟢 **+** The update overlay is a tiny helper UI with opacity-only animation, so the full optimizer stays closed while the update downloads.  
-🟢 **+** Existing startup and animation performance improvements from 0.23.15 remain.
+### Sidebar & navigation
+🩷 **✓** Added a reliable left-edge hover detector and delayed collapse so the expanding sidebar works consistently again.  
+🟢 **+** Cleaner navigation hover/selected states, icon spacing, workspace header, and title-bar chrome.
+
+### Layout
+🟢 **+** Dashboard hardware cards now use a compact 4 × 2 grid.  
+🟢 **+** Tweak cards, badges, toolbars, and status panels are denser and more consistent.  
+🩷 **✓** Existing performance/stability work remains intact; no heavy page-transition animations were added back.
 
 ## Change legend
 

@@ -21,36 +21,36 @@
         TextOptions.TextRenderingMode="ClearType"
         TextOptions.TextHintingMode="Fixed">
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="40"
+        <shell:WindowChrome CaptionHeight="42"
                             ResizeBorderThickness="6"
-                            CornerRadius="12"
+                            CornerRadius="14"
                             GlassFrameThickness="0"
                             UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
-    <Grid x:Name="RootLayout" MouseLeave="RootLayout_MouseLeave">
+    <Grid x:Name="RootLayout" PreviewMouseMove="RootLayout_PreviewMouseMove" MouseLeave="RootLayout_MouseLeave">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="SidebarColumn" Width="54" />
+            <ColumnDefinition x:Name="SidebarColumn" Width="58" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition Height="42" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Crisp custom chrome: vector glyphs avoid font-dependent/squashed caption icons. -->
         <Border Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="1000"
-                Background="#0D0F12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
+                Background="{DynamicResource SidebarBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
                 MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Margin="14,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                <StackPanel Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
                     <TextBlock Text="S" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrandAccentBrush}"/>
                     <TextBlock Text="O" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="Sabby Optimizer" Margin="10,0,0,0" FontSize="11.5"
+                    <TextBlock Text="Sabby Optimizer" Margin="9,0,0,0" FontSize="11.5" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
 
@@ -125,7 +125,7 @@
         <Border x:Name="SidebarEdgeHotspot"
                 Grid.Row="1" Grid.Column="0"
                 Panel.ZIndex="2100"
-                Width="10"
+                Width="16"
                 HorizontalAlignment="Left"
                 Background="Transparent"
                 MouseEnter="SidebarEdgeHotspot_MouseEnter" />
@@ -145,7 +145,7 @@
                 ClipToBounds="True"
                 Tag="False">
             <Border.Clip>
-                <RectangleGeometry x:Name="SidebarClipGeometry" Rect="0,0,54,10000" />
+                <RectangleGeometry x:Name="SidebarClipGeometry" Rect="0,0,58,10000" />
             </Border.Clip>
             <Grid>
                 <!-- Blood Bath lives over nav icons, but under the Settings control. Every drop starts above the clipped rail. -->
@@ -185,7 +185,7 @@
 
                     <!-- Phase 22: both brand states occupy the same fixed anchor. The sidebar
                          can expand/collapse without the SO/SABBY baseline jumping vertically. -->
-                    <Grid Grid.Row="0" Panel.ZIndex="50" Margin="16,20,12,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
+                    <Grid Grid.Row="0" Panel.ZIndex="50" Margin="17,18,12,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
                         <StackPanel x:Name="CollapsedBrandPanel" Orientation="Horizontal" VerticalAlignment="Top" Opacity="1">
                             <TextBlock Text="S" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource BrandAccentBrush}" />
                             <TextBlock Text="O" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
@@ -211,21 +211,22 @@
                              Style="{StaticResource SidebarListBoxStyle}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="44">
+                                <Grid Height="46">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="54" />
+                                        <ColumnDefinition Width="58" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{Binding Glyph}"
                                                FontFamily="Segoe MDL2 Assets"
-                                               FontSize="15"
+                                               FontSize="16"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                ToolTip="{Binding Label}" />
                                     <TextBlock Grid.Column="1"
                                                Text="{Binding Label}"
-                                               Margin="7,0,12,0"
+                                               Margin="8,0,14,0"
                                                VerticalAlignment="Center"
+                                               FontSize="12.5"
                                                FontWeight="Medium"
                                                TextTrimming="CharacterEllipsis"
                                                IsHitTestVisible="False"
@@ -419,17 +420,17 @@
 
             <Grid Panel.ZIndex="10">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="78" />
+                    <RowDefinition Height="72" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Background="{DynamicResource AppBackgroundBrush}" MinHeight="78">
+                <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" MinHeight="72" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
                     <Grid>
-                        <Grid Margin="28,0" VerticalAlignment="Center">
+                        <Grid Margin="24,0" VerticalAlignment="Center">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Center" Margin="0,2,0,0">
-                                <TextBlock Text="{Binding CurrentPageTitle}" FontSize="22" FontWeight="SemiBold" />
-                                <TextBlock Text="{Binding CurrentPageSubtitle}" Margin="0,4,0,0" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding CurrentPageTitle}" FontSize="20" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding CurrentPageSubtitle}" Margin="0,3,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" />
                             </StackPanel>
                             <Border Grid.Column="1"
                                     Padding="11,0"
@@ -446,7 +447,7 @@
                                 </StackPanel>
                             </Border>
                         </Grid>
-                        <Rectangle Height="1" VerticalAlignment="Bottom" Fill="{DynamicResource AccentBrush}" SnapsToDevicePixels="True" UseLayoutRounding="True" />
+                        <Rectangle Height="2" Width="84" HorizontalAlignment="Left" Margin="24,0,0,0" VerticalAlignment="Bottom" Fill="{DynamicResource AccentBrush}" RadiusX="1" RadiusY="1" />
                     </Grid>
                 </Border>
 
@@ -463,7 +464,7 @@
                     </ScrollViewer.Resources>
                     <ContentControl x:Name="MainContentHost"
                                     Content="{Binding CurrentViewModel, Mode=OneWay}"
-                                    Margin="22,18,22,24"
+                                    Margin="20,16,20,22"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Stretch"
                                     VerticalContentAlignment="Stretch" />
@@ -472,15 +473,15 @@
 
             <Border x:Name="ToastHost"
                     Panel.ZIndex="100"
-                    Width="360"
-                    Margin="0,92,22,0"
-                    Padding="14,12"
+                    Width="380"
+                    Margin="0,86,20,0"
+                    Padding="16,13"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Background="{DynamicResource SurfaceBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="11"
+                    CornerRadius="13"
                     Visibility="Collapsed"
                     Opacity="0">
                 <Border.RenderTransform><TranslateTransform X="24" /></Border.RenderTransform>

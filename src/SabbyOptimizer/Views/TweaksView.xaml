@@ -78,7 +78,7 @@
                     <Button Content="Apply best for this PC" Command="{Binding ApplyBestForPcCommand}" Height="40" MinWidth="136" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Style="{StaticResource PrimaryButtonStyle}" />
                     <Button Content="Refresh all" Command="{Binding RefreshAllCommand}" Height="40" MinWidth="100" Margin="8,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
                 </StackPanel>
-                <Border Margin="0,8,0,0" Padding="10,0" Height="40" CornerRadius="9" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Border Margin="0,8,0,0" Padding="11,0" Height="38" CornerRadius="10" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" Foreground="{DynamicResource AccentBrush}" FontSize="12" VerticalAlignment="Center" />
@@ -98,7 +98,7 @@
                          Style="{StaticResource TweakCategoryListStyle}" />
             </ScrollViewer>
 
-            <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,12,0,0">
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,0,0">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -147,7 +147,7 @@
                 <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Border Style="{StaticResource SubtlePanelStyle}" Padding="13,10">
+            <Border Style="{StaticResource SubtlePanelStyle}" Padding="12,9">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{Binding ActiveCountText}" FontWeight="SemiBold" />
                     <TextBlock Text="  •  " Foreground="{DynamicResource TextMutedBrush}" />
@@ -166,7 +166,7 @@
             </StackPanel>
         </Grid>
 
-        <Border Margin="0,0,0,14" Padding="15,13" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
+        <Border Margin="0,0,0,12" Padding="14,12" CornerRadius="12" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -189,7 +189,7 @@
             </Grid>
         </Border>
 
-        <ItemsControl ItemsSource="{Binding VisibleTweaks}" Margin="-5">
+        <ItemsControl ItemsSource="{Binding VisibleTweaks}" Margin="-4">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="{DynamicResource CardColumns}" />
@@ -198,10 +198,10 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Style="{StaticResource TweakCardMotionStyle}"
-                            Margin="5"
-                            MinHeight="218"
-                            Padding="14"
-                            CornerRadius="11"
+                            Margin="4"
+                            MinHeight="204"
+                            Padding="15"
+                            CornerRadius="12"
                             Background="{DynamicResource SurfaceBrush}"
                             BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="1">
@@ -215,10 +215,10 @@
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <Border Height="26" Padding="8,0" Margin="0,0,6,0" CornerRadius="7" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                    <Border Height="25" Padding="8,0" Margin="0,0,6,0" CornerRadius="8" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                         <TextBlock Text="{Binding CategoryLabel}" FontSize="8.5" Margin="0" LineHeight="12" LineStackingStrategy="BlockLineHeight" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
                                     </Border>
-                                    <Border Height="26" Padding="8,0" CornerRadius="7">
+                                    <Border Height="25" Padding="8,0" CornerRadius="8">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="{StaticResource WarningSubtleBrush}"/>
@@ -254,7 +254,7 @@
                                 </Button>
                             </Grid>
 
-                            <Grid Grid.Row="1" Margin="0,12,0,10">
+                            <Grid Grid.Row="1" Margin="0,11,0,9">
                                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap" />
                                 <TextBlock Grid.Row="1" Text="{Binding Description}" Margin="0,6,0,0" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" TextWrapping="Wrap" LineHeight="16" MaxHeight="50" />

@@ -22,19 +22,19 @@
     </Style>
 
     <Style x:Key="PageHeadingTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontSize" Value="23" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
     <Style x:Key="PageDescriptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
         <Setter Property="TextWrapping" Value="Wrap" />
-        <Setter Property="LineHeight" Value="19" />
+        <Setter Property="LineHeight" Value="18" />
     </Style>
 
     <Style x:Key="CardTitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="14.5" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
@@ -69,8 +69,8 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="CornerRadius" Value="10" />
-        <Setter Property="Padding" Value="16" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="18" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
     </Style>
 
@@ -80,8 +80,9 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentSubtleBrush}" />
-        <Setter Property="Padding" Value="10,7" />
+        <Setter Property="Padding" Value="11,8" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinHeight" Value="38" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
@@ -90,7 +91,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="9"
+                            CornerRadius="10"
                             SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       Padding="{TemplateBinding Padding}"
@@ -150,8 +151,8 @@
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="13,8" />
-        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="MinHeight" Value="38" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="Cursor" Value="Hand" />
@@ -164,31 +165,31 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="9"
+                                CornerRadius="10"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter Margin="0" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="True" />
                         </Border>
                         <Border x:Name="HoverOverlay"
                                 Background="{DynamicResource AccentSubtleBrush}"
-                                CornerRadius="9"
+                                CornerRadius="10"
                                 Opacity="0"
                                 IsHitTestVisible="False" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.22" />
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.18" />
                             <Trigger.EnterActions>
                                 <BeginStoryboard><Storyboard>
                                     <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity"
-                                                     From="0" To="0.22" Duration="0:0:0.09" FillBehavior="Stop" />
+                                                     From="0" To="0.18" Duration="0:0:0.10" FillBehavior="Stop" />
                                 </Storyboard></BeginStoryboard>
                             </Trigger.EnterActions>
                             <Trigger.ExitActions>
                                 <BeginStoryboard><Storyboard>
                                     <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity"
-                                                     From="0.22" To="0" Duration="0:0:0.10" FillBehavior="Stop" />
+                                                     From="0.18" To="0" Duration="0:0:0.12" FillBehavior="Stop" />
                                 </Storyboard></BeginStoryboard>
                             </Trigger.ExitActions>
                         </Trigger>
@@ -223,7 +224,8 @@
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="10,7" />
+        <Setter Property="Padding" Value="11,8" />
+        <Setter Property="MinHeight" Value="38" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
@@ -232,7 +234,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="7"
+                            CornerRadius="9"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
@@ -253,13 +255,13 @@
     <!-- Thin theme-matched scrollbars. Tracks stay visually quiet and never become the
          bright native Windows bars seen in earlier fullscreen builds. -->
     <Style x:Key="PopupVerticalScrollBarStyle" TargetType="ScrollBar">
-        <Setter Property="Width" Value="7" />
-        <Setter Property="MinWidth" Value="7" />
+        <Setter Property="Width" Value="6" />
+        <Setter Property="MinWidth" Value="6" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
-                    <Grid Width="7" Background="Transparent">
+                    <Grid Width="6" Background="Transparent">
                         <Track x:Name="PART_Track"
                                IsDirectionReversed="True"
                                Orientation="Vertical"
@@ -270,14 +272,14 @@
                                 </RepeatButton>
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb MinHeight="28" Width="5">
+                                <Thumb MinHeight="34" Width="4">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
                                             <Border x:Name="ThumbRoot"
                                                     Margin="1,0"
                                                     Background="{DynamicResource TextMutedBrush}"
                                                     Opacity="0.72"
-                                                    CornerRadius="2.5" />
+                                                    CornerRadius="2" />
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter TargetName="ThumbRoot" Property="Background" Value="{DynamicResource AccentBrush}" />
@@ -453,7 +455,7 @@
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="BorderThickness" Value="0" />
                     <Setter Property="Padding" Value="0" />
-                    <Setter Property="Margin" Value="0,2" />
+                    <Setter Property="Margin" Value="5,2" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Cursor" Value="Hand" />
                     <Setter Property="Template">
@@ -581,6 +583,29 @@
         </Setter>
     </Style>
 
+    <Style TargetType="ToolTip">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="10,7" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Placement" Value="Mouse" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="9"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="SidebarListBoxStyle" TargetType="ListBox">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -601,14 +626,14 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBoxItem">
-                                <Border x:Name="Root" Background="Transparent" CornerRadius="9" SnapsToDevicePixels="True">
+                                <Border x:Name="Root" Background="Transparent" CornerRadius="11" SnapsToDevicePixels="True">
                                     <Grid>
-                                        <Border x:Name="HoverGlow" CornerRadius="9" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" Opacity="0" />
-                                        <Border x:Name="SelectedGlow" CornerRadius="9" Background="{DynamicResource AccentSubtleBrush}" Opacity="0" />
+                                        <Border x:Name="HoverGlow" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" Opacity="0" />
+                                        <Border x:Name="SelectedGlow" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}" Opacity="0" />
                                         <ContentPresenter x:Name="NavContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                         <Border x:Name="Indicator"
                                                 Width="3"
-                                                Margin="0,8,0,8"
+                                                Margin="2,9,0,9"
                                                 HorizontalAlignment="Left"
                                                 CornerRadius="2"
                                                 Background="{DynamicResource AccentBrush}"
@@ -617,17 +642,17 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="HoverGlow" Property="Opacity" Value="0.56" />
+                                        <Setter TargetName="HoverGlow" Property="Opacity" Value="0.42" />
                                         <Trigger.EnterActions>
                                             <BeginStoryboard><Storyboard>
                                                 <DoubleAnimation Storyboard.TargetName="HoverGlow" Storyboard.TargetProperty="Opacity"
-                                                                 From="0" To="0.56" Duration="0:0:0.08" FillBehavior="Stop" />
+                                                                 From="0" To="0.42" Duration="0:0:0.10" FillBehavior="Stop" />
                                             </Storyboard></BeginStoryboard>
                                         </Trigger.EnterActions>
                                         <Trigger.ExitActions>
                                             <BeginStoryboard><Storyboard>
                                                 <DoubleAnimation Storyboard.TargetName="HoverGlow" Storyboard.TargetProperty="Opacity"
-                                                                 From="0.56" To="0" Duration="0:0:0.10" FillBehavior="Stop" />
+                                                                 From="0.42" To="0" Duration="0:0:0.12" FillBehavior="Stop" />
                                             </Storyboard></BeginStoryboard>
                                         </Trigger.ExitActions>
                                     </Trigger>
@@ -647,24 +672,24 @@
 
 
     <Style x:Key="SectionHeadingTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="17" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
     <Style x:Key="EyebrowTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontSize" Value="9.5" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
     </Style>
 
     <Style x:Key="FeatureCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
         <Setter Property="Padding" Value="16" />
-        <Setter Property="MinHeight" Value="228" />
+        <Setter Property="MinHeight" Value="210" />
     </Style>
 
     <Style x:Key="MetricCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
         <Setter Property="Padding" Value="15" />
-        <Setter Property="MinHeight" Value="104" />
+        <Setter Property="MinHeight" Value="96" />
     </Style>
 
     <Style x:Key="IconTileStyle" TargetType="Border">
@@ -686,7 +711,7 @@
 
     <Style x:Key="SubtlePanelStyle" TargetType="Border">
         <Setter Property="Padding" Value="16" />
-        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="CornerRadius" Value="11" />
         <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />

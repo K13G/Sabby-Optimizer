@@ -82,19 +82,19 @@ public sealed class ShellViewModel : ViewModelBase
 
     public string CurrentPageSubtitle => _navigation.CurrentPage switch
     {
-        AppPage.Dashboard => "System overview and local hardware information",
-        AppPage.Tweaks => "State-aware detection, apply, verification, undo, and explanations",
-        AppPage.Maintenance => "Services, startup controls, and safe temporary-file cleanup",
-        AppPage.Fixify => "Verified Windows repair and recovery tools",
-        AppPage.Debloat => "Conservative Windows app debloating with verified removal",
-        AppPage.Ping => "Local latency diagnostics and supported network optimization",
-        AppPage.GpuDriver => "Supported NVIDIA, AMD, and Intel driver integrations",
-        AppPage.Updates => "Windows, drivers, and installed application updates",
-        AppPage.GameProfiles => "Per-game tuning profiles linked to individual executables",
-        AppPage.Benchmark => "Phase 19 before/after benchmarking and noise-aware validation",
-        AppPage.Backups => "Tracked originals, snapshots, and rollback protection",
-        AppPage.PcRestore => "Windows restore points and system-level rollback protection",
-        AppPage.Settings => "Appearance, application preferences, and Sabby updates",
+        AppPage.Dashboard => "Hardware overview and system readiness",
+        AppPage.Tweaks => "Verified performance, latency, Windows, and gaming controls",
+        AppPage.Maintenance => "Startup, services, cleanup, and maintenance tools",
+        AppPage.Fixify => "Windows repair and recovery tools",
+        AppPage.Debloat => "Verified app removal with safety checks",
+        AppPage.Ping => "Latency diagnostics and local network tuning",
+        AppPage.GpuDriver => "GPU driver status and supported integrations",
+        AppPage.Updates => "Windows, driver, and application updates",
+        AppPage.GameProfiles => "Per-game settings linked to real executables",
+        AppPage.Benchmark => "Before/after validation and performance testing",
+        AppPage.Backups => "Snapshots, originals, and rollback protection",
+        AppPage.PcRestore => "Windows restore points and system rollback",
+        AppPage.Settings => "Appearance, behavior, layout, and Sabby updates",
         AppPage.Credits => "People behind Sabby Optimizer",
         _ => string.Empty
     };

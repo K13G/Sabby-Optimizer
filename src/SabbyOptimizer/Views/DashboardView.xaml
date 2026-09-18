@@ -5,20 +5,20 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="16" />
-                <ColumnDefinition Width="340" />
+                <ColumnDefinition Width="14" />
+                <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="24">
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
                 <Grid>
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="SYSTEM OVERVIEW" Style="{StaticResource EyebrowTextStyle}" />
-                        <TextBlock Text="Your PC at a glance" Margin="0,7,0,0" FontSize="24" FontWeight="SemiBold" />
+                        <TextBlock Text="Your PC at a glance" Margin="0,6,0,0" FontSize="22" FontWeight="SemiBold" />
                         <TextBlock Text="Hardware-aware controls load without blocking the workspace. You can use Sabby while deeper capability detection finishes quietly in the background."
-                                   Margin="0,9,16,0" Style="{StaticResource PageDescriptionTextStyle}" />
+                                   Margin="0,7,16,0" Style="{StaticResource PageDescriptionTextStyle}" />
                         <TextBlock Text="{Binding HardwareStatus}" Margin="0,7,16,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" />
-                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
                             <Border Style="{StaticResource SoftPillStyle}">
                                 <StackPanel Orientation="Horizontal">
                                     <Ellipse Width="7" Height="7" Fill="#31C46D" VerticalAlignment="Center" />
@@ -30,8 +30,8 @@
                             </Border>
                         </StackPanel>
                     </StackPanel>
-                    <Border Grid.Column="1" Width="84" Height="84" CornerRadius="22" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
-                        <TextBlock Text="&#xE950;" FontFamily="Segoe MDL2 Assets" FontSize="35" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="1" Width="72" Height="72" CornerRadius="18" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                        <TextBlock Text="&#xE950;" FontFamily="Segoe MDL2 Assets" FontSize="30" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </Grid>
             </Border>
@@ -39,8 +39,8 @@
             <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="22">
                 <StackPanel>
                     <TextBlock Text="THIS DEVICE" Style="{StaticResource EyebrowTextStyle}" />
-                    <TextBlock Text="{Binding Hardware.DeviceName}" Margin="0,8,0,0" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />
-                    <Border Margin="0,17,0,0" Style="{StaticResource SubtlePanelStyle}">
+                    <TextBlock Text="{Binding Hardware.DeviceName}" Margin="0,7,0,0" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <Border Margin="0,13,0,0" Style="{StaticResource SubtlePanelStyle}">
                         <StackPanel>
                             <TextBlock Text="Windows" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
                             <TextBlock Text="{Binding Hardware.Windows}" Margin="0,5,0,0" FontWeight="SemiBold" TextWrapping="Wrap" />
@@ -51,61 +51,61 @@
             </Border>
         </Grid>
 
-        <Grid Margin="0,24,0,12">
+        <Grid Margin="0,20,0,10">
             <TextBlock Text="Hardware" Style="{StaticResource SectionHeadingTextStyle}" />
             <TextBlock Text="Detected system specifications and capabilities" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
         </Grid>
 
-        <UniformGrid Columns="3" Rows="3">
-            <Border Style="{StaticResource MetricCardStyle}" Margin="0,0,8,8">
+        <UniformGrid Columns="4" Rows="2" Margin="-4">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="PROCESSOR" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.Processor}" Style="{StaticResource SpecValueTextStyle}" />
                     <TextBlock Text="{Binding Hardware.ProcessorDetails}" Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="4,0,4,8">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="GRAPHICS" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.Graphics}" Style="{StaticResource SpecValueTextStyle}" />
                     <TextBlock Text="{Binding Hardware.GraphicsDetails}" Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="8,0,0,8">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="MEMORY" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.Memory}" Style="{StaticResource SpecValueTextStyle}" />
                     <TextBlock Text="{Binding Hardware.MemoryDetails}" Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="0,4,8,4">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="MOTHERBOARD" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.Motherboard}" Style="{StaticResource SpecValueTextStyle}" />
                     <TextBlock Text="{Binding Hardware.MotherboardDetails}" Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="4,4,4,4">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="NETWORK" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.Network}" Style="{StaticResource SpecValueTextStyle}" />
                     <TextBlock Text="{Binding Hardware.NetworkDetails}" Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="8,4,0,4">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="SYSTEM DRIVE" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.SystemDrive}" Style="{StaticResource SpecValueTextStyle}" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="0,8,8,0">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="WINDOWS" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.Windows}" Style="{StaticResource SpecValueTextStyle}" />
                     <TextBlock Text="{Binding Hardware.WindowsDetails}" Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource MetricCardStyle}" Margin="4,8,4,0">
+            <Border Style="{StaticResource MetricCardStyle}" Margin="4">
                 <StackPanel>
                     <TextBlock Text="SUPPORTED FEATURES" Style="{StaticResource SpecLabelTextStyle}" />
                     <TextBlock Text="{Binding Hardware.SupportedFeatures}" Style="{StaticResource SpecValueTextStyle}" TextWrapping="Wrap" />
@@ -113,7 +113,7 @@
             </Border>
         </UniformGrid>
 
-        <Grid Margin="0,24,0,0">
+        <Grid Margin="0,18,0,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <Border Grid.Column="0" Style="{StaticResource CardStyle}">
                 <StackPanel>

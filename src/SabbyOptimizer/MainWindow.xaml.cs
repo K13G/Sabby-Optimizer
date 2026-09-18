@@ -32,8 +32,8 @@ public partial class MainWindow : Window
     private const uint TpmReturnCmd = 0x0100;
     private const uint TpmNonotify = 0x0080;
     private const int IdiApplication = 32512;
-    private const double CollapsedSidebarWidth = 54;
-    private const double ExpandedSidebarWidth = 216;
+    private const double CollapsedSidebarWidth = 58;
+    private const double ExpandedSidebarWidth = 226;
 
     private readonly ISettingsService _settings;
     private readonly IAppearanceService _appearance;
@@ -48,6 +48,10 @@ public partial class MainWindow : Window
     private bool _handlingTrayMinimize;
     private bool _sidebarExpanded;
     private int _sidebarAnimationGeneration;
+    private readonly DispatcherTimer _sidebarCloseTimer = new()
+    {
+        Interval = TimeSpan.FromMilliseconds(170)
+    };
     private WindowState _lastNonMinimizedState = WindowState.Normal;
 
     public MainWindow(ShellViewModel viewModel, ISettingsService settings, IAppearanceService appearance, IAppLogger logger)
@@ -68,6 +72,12 @@ public partial class MainWindow : Window
         LocationChanged += OnWindowBoundsChanged;
         SizeChanged += OnWindowBoundsChanged;
         UiNotificationHub.Published += OnUiNotificationPublished;
+        _sidebarCloseTimer.Tick += (_, _) =>
+        {
+            _sidebarCloseTimer.Stop();
+            if (!SidebarHost.IsMouseOver && !SidebarEdgeHotspot.IsMouseOver)
+                SetSidebarExpanded(false);
+        };
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -522,6 +532,7 @@ public partial class MainWindow : Window
     private void OnClosed(object? sender, EventArgs e)
     {
         _appearance.AnimationSpeedChanged -= OnAnimationSpeedChanged;
+        _sidebarCloseTimer.Stop();
         LocationChanged -= OnWindowBoundsChanged;
         SizeChanged -= OnWindowBoundsChanged;
         UiNotificationHub.Published -= OnUiNotificationPublished;
@@ -708,13 +719,40 @@ public partial class MainWindow : Window
         transform.BeginAnimation(TranslateTransform.XProperty, slide, HandoffBehavior.SnapshotAndReplace);
     }
 
-    private void SidebarEdgeHotspot_MouseEnter(object sender, MouseEventArgs e) => SetSidebarExpanded(true);
+    private void RootLayout_PreviewMouseMove(object sender, MouseEventArgs e)
+    {
+        // A simple edge check is more reliable than depending on a clipped flyout's hit testing.
+        // SetSidebarExpanded is state-gated, so this does not create animations on every mouse move.
+        if (e.GetPosition(RootLayout).X <= 18)
+        {
+            _sidebarCloseTimer.Stop();
+            SetSidebarExpanded(true);
+        }
+    }
 
-    private void SidebarHost_MouseEnter(object sender, MouseEventArgs e) => SetSidebarExpanded(true);
+    private void SidebarEdgeHotspot_MouseEnter(object sender, MouseEventArgs e)
+    {
+        _sidebarCloseTimer.Stop();
+        SetSidebarExpanded(true);
+    }
 
-    private void SidebarHost_MouseLeave(object sender, MouseEventArgs e) => SetSidebarExpanded(false);
+    private void SidebarHost_MouseEnter(object sender, MouseEventArgs e)
+    {
+        _sidebarCloseTimer.Stop();
+        SetSidebarExpanded(true);
+    }
 
-    private void RootLayout_MouseLeave(object sender, MouseEventArgs e) => SetSidebarExpanded(false);
+    private void SidebarHost_MouseLeave(object sender, MouseEventArgs e)
+    {
+        _sidebarCloseTimer.Stop();
+        _sidebarCloseTimer.Start();
+    }
+
+    private void RootLayout_MouseLeave(object sender, MouseEventArgs e)
+    {
+        _sidebarCloseTimer.Stop();
+        SetSidebarExpanded(false);
+    }
 
     private void SetSidebarExpanded(bool expanded)
     {
@@ -735,7 +773,7 @@ public partial class MainWindow : Window
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
 
         var distance = Math.Abs(targetWidth - currentClipWidth);
-        var durationMs = Math.Clamp(75d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 45d), 75d, 120d);
+        var durationMs = Math.Clamp(90d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 45d), 90d, 135d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
         var generation = ++_sidebarAnimationGeneration;
