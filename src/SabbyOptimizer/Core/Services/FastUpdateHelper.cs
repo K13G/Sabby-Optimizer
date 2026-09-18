@@ -163,7 +163,7 @@ public static class FastUpdateHelper
 
             overlay.SetStage(
                 "Installing update…",
-                "Verified. Sabby will close only for installation, then reopen automatically.",
+                "Verified. Sabby will close for installation and reopen automatically when Setup finishes.",
                 100,
                 true);
             await overlay.RenderAsync();
@@ -174,7 +174,7 @@ public static class FastUpdateHelper
                 FileName = destination,
                 UseShellExecute = true,
                 Verb = "runas",
-                Arguments = "/VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /NORESTART"
+                Arguments = "/SABBYUPDATE=1 /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /NORESTART"
             });
 
             // The helper can leave now. Setup owns the close/replace/relaunch stage.

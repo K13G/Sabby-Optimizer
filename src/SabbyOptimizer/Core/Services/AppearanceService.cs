@@ -33,7 +33,7 @@ public sealed class AppearanceService : IAppearanceService
         // animations use compositor-friendly transforms and remain smooth independently.
         _animationTimer = new DispatcherTimer(DispatcherPriority.Background)
         {
-            Interval = TimeSpan.FromMilliseconds(500)
+            Interval = TimeSpan.FromMilliseconds(1000)
         };
         _animationTimer.Tick += (_, _) => RenderAnimatedFrame();
     }
