@@ -13,7 +13,7 @@ using PCTweaker.Models.GameProfiles;
 
 namespace PCTweaker.ViewModels;
 
-public sealed class GameProfilesViewModel : ViewModelBase
+public sealed class GameProfilesViewModel : ViewModelBase, IDisposable
 {
     private readonly IGameScanService _gameScanService;
     private readonly IGameProfileService _profileService;
@@ -296,4 +296,9 @@ public sealed class GameProfilesViewModel : ViewModelBase
         try { return Path.GetFullPath(path); }
         catch { return path; }
     }
+    public void Dispose()
+    {
+        _gameDetectionService.StateChanged -= OnGameDetectionStateChanged;
+    }
+
 }

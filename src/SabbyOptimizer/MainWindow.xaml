@@ -28,7 +28,7 @@
                             UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
-    <Grid x:Name="RootLayout" PreviewMouseMove="RootLayout_PreviewMouseMove" MouseLeave="RootLayout_MouseLeave">
+    <Grid x:Name="RootLayout">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="SidebarColumn" Width="54" />
             <ColumnDefinition Width="*" />
@@ -129,6 +129,7 @@
                 Width="216"
                 HorizontalAlignment="Left"
                 MouseEnter="SidebarHost_MouseEnter"
+                MouseLeave="SidebarHost_MouseLeave"
                 Background="{DynamicResource SidebarBrush}"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,0,1,0"
@@ -190,23 +191,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Border Grid.Row="1" Height="1" Background="{DynamicResource BorderBrush}" Margin="12,0,12,10">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Opacity" Value="0" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=SidebarHost, Path=Tag}" Value="True">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.16" /></Storyboard></BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1" /></Storyboard></BeginStoryboard>
-                                        </DataTrigger.ExitActions>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                    </Border>
+                    <Border Grid.Row="1" Height="1" Background="{DynamicResource BorderBrush}" Margin="12,0,12,10" Opacity="0.7" />
 
                     <ListBox Grid.Row="2"
                              Tag="{Binding ElementName=SidebarHost, Path=Tag}"
@@ -228,31 +213,14 @@
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                ToolTip="{Binding Label}" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Label}" Margin="7,0,12,0" VerticalAlignment="Center" FontWeight="Medium" TextTrimming="CharacterEllipsis" IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Opacity" Value="0" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Tag}" Value="True">
-                                                        <DataTrigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.16" AccelerationRatio="0.12" DecelerationRatio="0.55" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.EnterActions>
-                                                        <DataTrigger.ExitActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.11" AccelerationRatio="0.2" DecelerationRatio="0.45" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.ExitActions>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Label}"
+                                               Margin="7,0,12,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="Medium"
+                                               TextTrimming="CharacterEllipsis"
+                                               IsHitTestVisible="False"
+                                               Opacity="1" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

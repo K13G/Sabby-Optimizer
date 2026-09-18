@@ -708,20 +708,9 @@ public partial class MainWindow : Window
         transform.BeginAnimation(TranslateTransform.XProperty, slide, HandoffBehavior.SnapshotAndReplace);
     }
 
-    private void RootLayout_PreviewMouseMove(object sender, MouseEventArgs e)
-    {
-        // The column snaps only once per state change; visual motion is handled by compositor-friendly
-        // transform/clip animations instead of forcing a full WPF layout pass every ~16 ms.
-        var x = e.GetPosition(RootLayout).X;
-        if (!_sidebarExpanded && x <= CollapsedSidebarWidth + 18)
-            SetSidebarExpanded(true);
-        else if (_sidebarExpanded && x > ExpandedSidebarWidth + 18)
-            SetSidebarExpanded(false);
-    }
-
-    private void RootLayout_MouseLeave(object sender, MouseEventArgs e) => SetSidebarExpanded(false);
-
     private void SidebarHost_MouseEnter(object sender, MouseEventArgs e) => SetSidebarExpanded(true);
+
+    private void SidebarHost_MouseLeave(object sender, MouseEventArgs e) => SetSidebarExpanded(false);
 
     private void SetSidebarExpanded(bool expanded)
     {
@@ -742,7 +731,7 @@ public partial class MainWindow : Window
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
 
         var distance = Math.Abs(targetWidth - currentClipWidth);
-        var durationMs = Math.Clamp(85d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 65d), 85d, 150d);
+        var durationMs = Math.Clamp(75d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 45d), 75d, 120d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
         var generation = ++_sidebarAnimationGeneration;

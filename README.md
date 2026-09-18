@@ -4,28 +4,23 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.13-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.14-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.13
+## Latest update — 0.23.14
 
-### Settings & navigation
-🟢 **+** Sabby update controls now live directly inside **Settings** with installed version, available version, status, check-now, and install/restart controls.  
-🔴 **−** Removed the **Extensions** tab from the sidebar to reduce clutter.  
-🩷 **✓** Old localhost and pre-rename `mrcoem/mrcoem` update feeds automatically migrate to `K13G/Sabby-Optimizer`.
+### Performance & memory
+🟢 **+** Bounded navigation memory to four recent pages instead of retaining every visited tab.  
+🟢 **+** Cut animated-theme global resource refreshes from 4 Hz to 2 Hz.  
+🔴 **−** Removed retired hidden Presets, Config Studio, and Monitoring registrations.
 
-### Updates
-🟢 **+** Automatic Stable-channel checks use one permanent GitHub manifest URL.  
-🟢 **+** Settings can download, verify, install, close the old build, and reopen the updated app.  
-🩷 **✓** Silent in-app installs explicitly relaunch Sabby after Setup finishes.
-
-### GitHub / release system
-🟢 **+** Releases now publish from **K13G/Sabby-Optimizer**.  
-🟢 **+** Release notes are grouped by the exact Sabby area that changed.  
-🔴 **−** Removed the old bootstrap/update-pipeline explanation from the project front page.
+### Menu & animation
+🟢 **+** Reworked sidebar motion into one lighter rail animation with no per-label storyboards.  
+🩷 **✓** Fixed rapid tab-change desync and a Game Profiles event-retention bug.  
+🟢 **+** Tightened cards, borders, spacing, and control sizing for a cleaner UI.
 
 ## Change legend
 

@@ -32,7 +32,7 @@ public sealed class AppearanceService : IAppearanceService
         // animations use compositor-friendly transforms and remain smooth independently.
         _animationTimer = new DispatcherTimer(DispatcherPriority.Background)
         {
-            Interval = TimeSpan.FromMilliseconds(250)
+            Interval = TimeSpan.FromMilliseconds(500)
         };
         _animationTimer.Tick += (_, _) => RenderAnimatedFrame();
     }
@@ -88,6 +88,14 @@ public sealed class AppearanceService : IAppearanceService
         if (!_activePalette.Animated || _activePalette.DurationSeconds <= 0 || AnimationSpeed <= 0)
             return;
 
+        // DynamicResource color changes invalidate a large part of the WPF tree. Do not spend
+        // dispatcher/composition time animating a window the user cannot currently see/interact with.
+        if (!HasInteractiveWindow())
+        {
+            _lastTickSeconds = _animationClock.Elapsed.TotalSeconds;
+            return;
+        }
+
         try
         {
             AdvancePhase();
@@ -100,6 +108,22 @@ public sealed class AppearanceService : IAppearanceService
             // color cycle and keep the rest of Sabby fully usable.
             _animationTimer.Stop();
             _logger.Warning($"Animated appearance update was stopped safely: {ex.Message}");
+        }
+    }
+
+    private static bool HasInteractiveWindow()
+    {
+        try
+        {
+            return Application.Current?.Windows
+                .OfType<Window>()
+                .Any(window => window.IsVisible &&
+                               window.WindowState != WindowState.Minimized &&
+                               window.IsActive) == true;
+        }
+        catch
+        {
+            return true;
         }
     }
 

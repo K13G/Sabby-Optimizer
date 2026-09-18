@@ -113,7 +113,6 @@ public partial class App : Application
             var pingService = new PingOptimizationService();
             var systemRestoreService = new SystemRestoreService(_logger);
             var updateService = new UpdateCenterService(_logger);
-            var gameConfigStudioService = new GameConfigStudioService(paths, _logger);
 
             var dashboardViewModel = new DashboardViewModel(paths, quickHardware);
             var navigation = new NavigationService();
@@ -125,22 +124,14 @@ public partial class App : Application
             navigation.Register(AppPage.Ping, () => new PingViewModel(pingService, quickEngine));
             navigation.Register(AppPage.GpuDriver, () => new GpuDriverViewModel(quickGpuDriverService));
             navigation.Register(AppPage.Updates, () => new UpdateCenterViewModel(updateService, settings));
-            navigation.Register(AppPage.Presets, () =>
-            {
-                var vm = new PresetsViewModel(quickPresetService, quickEngine);
-                _ = vm.InitializeAsync();
-                return vm;
-            });
             navigation.Register(AppPage.GameProfiles, () =>
             {
                 var vm = new GameProfilesViewModel(gameScanService, gameProfileService, quickPresetService, quickGameDetection);
                 _ = vm.InitializeAsync();
                 return vm;
             });
-            navigation.Register(AppPage.ConfigStudio, () => new GameConfigStudioViewModel(gameProfileService, gameConfigStudioService));
             var quickMonitoring = new SystemMonitoringService(quickHardware, _logger);
             navigation.Register(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, quickHardware, pingService, _logger), quickMonitoring, settings));
-            navigation.Register(AppPage.Monitoring, () => new MonitoringViewModel(quickMonitoring, settings, quickGameDetection, gameProfileService, quickPresetService));
             navigation.Register(AppPage.Backups, () =>
             {
                 var vm = new BackupsViewModel(quickBackupService);
@@ -171,7 +162,7 @@ public partial class App : Application
             _ = UpgradeHardwareAwarePagesAsync(
                 navigation, dashboardViewModel, hardwareInfo, updateExtensions, settings, paths,
                 backupRepository, gameProfileService, gameScanService, maintenanceService,
-                pingService, gameConfigStudioService);
+                pingService);
 
             try
             {
@@ -285,8 +276,7 @@ public partial class App : Application
         GameProfileService gameProfileService,
         GameScanService gameScanService,
         MaintenanceService maintenanceService,
-        PingOptimizationService pingService,
-        GameConfigStudioService gameConfigStudioService)
+        PingOptimizationService pingService)
     {
         try
         {
@@ -323,21 +313,13 @@ public partial class App : Application
             navigation.Replace(AppPage.Ping, () => new PingViewModel(pingService, fullEngine), refreshIfCurrent: false);
             navigation.Replace(AppPage.GpuDriver, () => new GpuDriverViewModel(gpuDriverService), refreshIfCurrent: false);
             navigation.Replace(AppPage.Fixify, () => new FixifyViewModel(new FixifyService(maintenanceService, gpuDriverService, _logger!)), refreshIfCurrent: false);
-            navigation.Replace(AppPage.Presets, () =>
-            {
-                var vm = new PresetsViewModel(presetService, fullEngine);
-                _ = vm.InitializeAsync();
-                return vm;
-            }, refreshIfCurrent: false);
             navigation.Replace(AppPage.GameProfiles, () =>
             {
                 var vm = new GameProfilesViewModel(gameScanService, gameProfileService, presetService, gameDetection);
                 _ = vm.InitializeAsync();
                 return vm;
             }, refreshIfCurrent: false);
-            navigation.Replace(AppPage.ConfigStudio, () => new GameConfigStudioViewModel(gameProfileService, gameConfigStudioService), refreshIfCurrent: false);
             navigation.Replace(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, hardware, pingService, _logger!), monitoringService, settings), refreshIfCurrent: false);
-            navigation.Replace(AppPage.Monitoring, () => new MonitoringViewModel(monitoringService, settings, gameDetection, gameProfileService, presetService), refreshIfCurrent: false);
             navigation.Replace(AppPage.Backups, () =>
             {
                 var vm = new BackupsViewModel(backupService);
