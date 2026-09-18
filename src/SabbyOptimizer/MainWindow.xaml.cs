@@ -826,6 +826,33 @@ public partial class MainWindow : Window
         }
     }
 
+    private static void ApplyMonitorWorkArea(IntPtr hwnd, IntPtr lParam)
+    {
+        if (lParam == IntPtr.Zero) return;
+
+        try
+        {
+            var info = Marshal.PtrToStructure<MinMaxInfo>(lParam);
+            var monitor = MonitorFromWindow(hwnd, MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero) return;
+
+            var monitorInfo = new MonitorInfo { cbSize = Marshal.SizeOf<MonitorInfo>() };
+            if (!GetMonitorInfo(monitor, ref monitorInfo)) return;
+
+            var work = monitorInfo.rcWork;
+            var monitorRect = monitorInfo.rcMonitor;
+            info.ptMaxPosition.X = Math.Abs(work.Left - monitorRect.Left);
+            info.ptMaxPosition.Y = Math.Abs(work.Top - monitorRect.Top);
+            info.ptMaxSize.X = Math.Abs(work.Right - work.Left);
+            info.ptMaxSize.Y = Math.Abs(work.Bottom - work.Top);
+            info.ptMaxTrackSize = info.ptMaxSize;
+            Marshal.StructureToPtr(info, lParam, true);
+        }
+        catch
+        {
+            // Windows will fall back to its normal maximize behavior if monitor metrics are unavailable.
+        }
+    }
     public void RecoverPresentationAnimations()
     {
         try
@@ -876,6 +903,32 @@ public partial class MainWindow : Window
     [StructLayout(LayoutKind.Sequential)]
     private struct NativePoint { public int X; public int Y; }
 
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect { public int Left; public int Top; public int Right; public int Bottom; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MinMaxInfo
+    {
+        public NativePoint ptReserved;
+        public NativePoint ptMaxSize;
+        public NativePoint ptMaxPosition;
+        public NativePoint ptMinTrackSize;
+        public NativePoint ptMaxTrackSize;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorInfo
+    {
+        public int cbSize;
+        public NativeRect rcMonitor;
+        public NativeRect rcWork;
+        public uint dwFlags;
+    }
+
+    private const uint MonitorDefaultToNearest = 0x00000002;
+
+    [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+    [DllImport("user32.dll", CharSet = CharSet.Auto)] private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfo lpmi);
     [DllImport("dwmapi.dll")] private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)] private static extern bool Shell_NotifyIcon(uint dwMessage, ref NotifyIconData lpData);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
