@@ -1,6 +1,6 @@
-; Sabby Optimizer 0.23.15 installer definition (Inno Setup 7/6)
+; Sabby Optimizer 0.23.16 installer definition (Inno Setup 7/6)
 #ifndef AppVersion
-  #define AppVersion "0.23.15"
+  #define AppVersion "0.23.16"
 #endif
 #ifndef SourceDir
   #define SourceDir "..\artifacts\publish\win-x64"
