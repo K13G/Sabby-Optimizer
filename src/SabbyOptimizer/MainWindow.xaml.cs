@@ -833,7 +833,7 @@ public partial class MainWindow : Window
             info.ptMaxSize.X = Math.Abs(work.Right - work.Left);
             info.ptMaxSize.Y = Math.Abs(work.Bottom - work.Top);
             info.ptMaxTrackSize = info.ptMaxSize;
-            Marshal.StructureToPtr(info, lParam, true);
+            Marshal.StructureToPtr(info, lParam, false);
         }
         catch
         {
