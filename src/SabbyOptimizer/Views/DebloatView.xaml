@@ -11,7 +11,15 @@
         </Grid>
         <Grid Margin="0,0,0,10"><TextBox Text="{Binding SearchText,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SearchBoxStyle}"/><TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" Margin="12,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False"/></Grid>
         <ProgressBar Height="4" Value="{Binding Progress, Mode=OneWay}" Visibility="{Binding IsBusy,Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,9"/>
-        <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,10" TextWrapping="Wrap"/>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding PageText}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Button Content="Previous" Command="{Binding PreviousPageCommand}" Padding="10,5"/>
+                <Button Content="Next" Command="{Binding NextPageCommand}" Padding="10,5" Margin="6,0,0,0"/>
+            </StackPanel>
+        </Grid>
         <ItemsControl ItemsSource="{Binding Apps}">
             <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="{DynamicResource CardColumns}"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate><DataTemplate>

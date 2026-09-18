@@ -22,7 +22,7 @@
         TextOptions.TextHintingMode="Fixed">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="42"
-                            ResizeBorderThickness="6"
+                            ResizeBorderThickness="0,6,6,6"
                             CornerRadius="14"
                             GlassFrameThickness="0"
                             UseAeroCaptionButtons="False" />
@@ -125,7 +125,7 @@
         <Border x:Name="SidebarEdgeHotspot"
                 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                 Panel.ZIndex="2100"
-                Width="16"
+                Width="22"
                 HorizontalAlignment="Left"
                 Background="Transparent"
                 MouseEnter="SidebarEdgeHotspot_MouseEnter" />
@@ -176,13 +176,11 @@
                     <Grid.RowDefinitions>
                         <!-- These two rows always keep their height so nav icons never move when the rail expands. -->
                         <RowDefinition Height="84" />
-                        <RowDefinition Height="11" />
+                        <RowDefinition Height="5" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="0" />
                     </Grid.RowDefinitions>
 
-                    <!-- Phase 22: both brand states occupy the same fixed anchor. The sidebar
-                         can expand/collapse without the SO/SABBY baseline jumping vertically. -->
                     <Grid Grid.Row="0" Panel.ZIndex="50" Margin="17,18,12,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
                         <StackPanel x:Name="CollapsedBrandPanel" Orientation="Horizontal" VerticalAlignment="Top" Opacity="1">
                             <TextBlock Text="S" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource BrandAccentBrush}" />
@@ -198,7 +196,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Border Grid.Row="1" Height="1" Background="{DynamicResource BorderBrush}" Margin="12,0,12,10" Opacity="0.7" />
+                    <Border Grid.Row="1" Height="0" Visibility="Collapsed" />
 
                     <ListBox Grid.Row="2"
                              Tag="{Binding ElementName=SidebarHost, Path=Tag}"
@@ -349,6 +347,16 @@
                         Background="Transparent" BorderThickness="0"
                         ToolTip="Credits"
                         shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=SidebarHost, Path=Tag}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
@@ -380,7 +388,6 @@
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="WorkspaceShift" X="0" />
             </Grid.RenderTransform>
-            <!-- Phase 16: Blood Bath traverses the full workspace as a non-interactive overlay. -->
             <Grid x:Name="MainBloodLayer"
                   Panel.ZIndex="0"
                   IsHitTestVisible="False"
@@ -445,7 +452,6 @@
                                 </StackPanel>
                             </Border>
                         </Grid>
-                        <Rectangle Height="2" Width="84" HorizontalAlignment="Left" Margin="24,0,0,0" VerticalAlignment="Bottom" Fill="{DynamicResource AccentBrush}" RadiusX="1" RadiusY="1" />
                     </Grid>
                 </Border>
 

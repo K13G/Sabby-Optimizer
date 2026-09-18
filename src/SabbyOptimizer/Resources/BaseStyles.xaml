@@ -255,16 +255,19 @@
     <!-- Thin theme-matched scrollbars. Tracks stay visually quiet and never become the
          bright native Windows bars seen in earlier fullscreen builds. -->
     <Style x:Key="PopupVerticalScrollBarStyle" TargetType="ScrollBar">
-        <Setter Property="Width" Value="6" />
-        <Setter Property="MinWidth" Value="6" />
+        <Setter Property="Width" Value="9" />
+        <Setter Property="MinWidth" Value="9" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
-                    <Grid Width="6" Background="Transparent">
+                    <Grid Width="9" Background="Transparent">
                         <Track x:Name="PART_Track"
                                IsDirectionReversed="True"
                                Orientation="Vertical"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{Binding Value, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                ViewportSize="{TemplateBinding ViewportSize}">
                             <Track.DecreaseRepeatButton>
                                 <RepeatButton Command="ScrollBar.PageUpCommand" IsTabStop="False" Background="Transparent">
@@ -272,7 +275,7 @@
                                 </RepeatButton>
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb MinHeight="34" Width="4">
+                                <Thumb MinHeight="38" Width="7">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
                                             <Border x:Name="ThumbRoot"
@@ -307,8 +310,8 @@
     </Style>
 
     <Style x:Key="AppVerticalScrollBarStyle" TargetType="ScrollBar" BasedOn="{StaticResource PopupVerticalScrollBarStyle}">
-        <Setter Property="Width" Value="7" />
-        <Setter Property="MinWidth" Value="7" />
+        <Setter Property="Width" Value="12" />
+        <Setter Property="MinWidth" Value="12" />
     </Style>
 
     <Style TargetType="ComboBoxItem">

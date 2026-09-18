@@ -55,7 +55,11 @@ public sealed class BackupsViewModel : ViewModelBase
         RestoreOriginalsCommand = new AsyncRelayCommand(RestoreOriginalsAsync, () => !IsBusy && OriginalProtectedCount > 0);
     }
 
-    public Task InitializeAsync() => RefreshAsync();
+    public async Task InitializeAsync()
+    {
+        await Task.Yield();
+        await RefreshAsync();
+    }
 
     private async Task CreateSnapshotAsync()
     {
@@ -66,7 +70,8 @@ public sealed class BackupsViewModel : ViewModelBase
         try
         {
             StatusMessage = "Detecting current tweak states and creating snapshot...";
-            var snapshot = await _backupService.CreateSnapshotAsync();
+            await Task.Yield();
+            var snapshot = await Task.Run(() => _backupService.CreateSnapshotAsync());
             StatusMessage = $"Created '{snapshot.Name}' with {snapshot.Entries.Count} tracked entries.";
             await ReloadCollectionsAsync();
         }
@@ -104,10 +109,14 @@ public sealed class BackupsViewModel : ViewModelBase
 
     private async Task ReloadCollectionsAsync()
     {
-        var originals = await _backupService.GetOriginalEntriesAsync();
+        var originalsTask = _backupService.GetOriginalEntriesAsync();
+        var snapshotsTask = _backupService.GetSnapshotsAsync();
+        await Task.WhenAll(originalsTask, snapshotsTask);
+
+        var originals = await originalsTask;
         OriginalProtectedCount = originals.Count;
 
-        var snapshots = await _backupService.GetSnapshotsAsync();
+        var snapshots = await snapshotsTask;
         Snapshots.Clear();
         foreach (var snapshot in snapshots)
         {

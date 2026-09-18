@@ -64,6 +64,9 @@ public partial class MainWindow : Window
 
         RestoreWindowState();
         _appearance.AnimationSpeedChanged += OnAnimationSpeedChanged;
+        _appearance.AppearanceChanged += OnAppearanceChanged;
+        Activated += OnWindowActivityChanged;
+        Deactivated += OnWindowActivityChanged;
         SourceInitialized += OnSourceInitialized;
         Loaded += OnLoaded;
         Closing += OnClosing;
@@ -531,6 +534,9 @@ public partial class MainWindow : Window
     private void OnClosed(object? sender, EventArgs e)
     {
         _appearance.AnimationSpeedChanged -= OnAnimationSpeedChanged;
+        _appearance.AppearanceChanged -= OnAppearanceChanged;
+        Activated -= OnWindowActivityChanged;
+        Deactivated -= OnWindowActivityChanged;
         _sidebarCloseTimer.Stop();
         LocationChanged -= OnWindowBoundsChanged;
         SizeChanged -= OnWindowBoundsChanged;
@@ -620,6 +626,18 @@ public partial class MainWindow : Window
         _dropClocks[element] = clock;
     }
 
+    private void OnAppearanceChanged()
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            _ = Dispatcher.BeginInvoke(new Action(RestartEventAnimations), DispatcherPriority.Background);
+            return;
+        }
+        RestartEventAnimations();
+    }
+
+    private void OnWindowActivityChanged(object? sender, EventArgs e) => UpdateEventAnimationSpeed(_appearance.AnimationSpeed);
+
     private void OnAnimationSpeedChanged(double speed)
     {
         if (!Dispatcher.CheckAccess())
@@ -632,7 +650,9 @@ public partial class MainWindow : Window
 
     private void UpdateEventAnimationSpeed(double speed)
     {
-        var ratio = Math.Clamp(speed, 0, 200) / 100d;
+        var ratio = IsActive && IsVisible && WindowState != WindowState.Minimized
+            ? Math.Clamp(speed, 0, 200) / 100d
+            : 0d;
         foreach (var clock in _dropClocks.Values)
         {
             var controller = clock.Controller;
@@ -722,7 +742,7 @@ public partial class MainWindow : Window
     {
         // A simple edge check is more reliable than depending on a clipped flyout's hit testing.
         // SetSidebarExpanded is state-gated, so this does not create animations on every mouse move.
-        if (e.GetPosition(RootLayout).X <= 18)
+        if (e.GetPosition(RootLayout).X <= 24)
         {
             _sidebarCloseTimer.Stop();
             SetSidebarExpanded(true);
@@ -764,30 +784,48 @@ public partial class MainWindow : Window
         SidebarHost.Tag = expanded ? "True" : "False";
         AnimateSidebarBranding(expanded);
 
-        // SidebarHost spans both grid columns and overlays the workspace. Animating its own width
-        // makes WPF hit-testing match what is actually visible; the workspace never reflows.
+        // The rail is an overlay, but the workspace is intentionally squeezed while it is open
+        // so labels never cover cards/text. Only the hover transition performs this short layout animation.
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
         WorkspaceShift.X = 0;
 
         SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, null);
+        WorkspaceHost.BeginAnimation(FrameworkElement.MarginProperty, null);
+
         var distance = Math.Abs(targetWidth - currentWidth);
         var durationMs = Math.Clamp(95d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 55d), 95d, 150d);
+        var duration = TimeSpan.FromMilliseconds(durationMs);
         var generation = ++_sidebarAnimationGeneration;
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
 
-        var animation = new DoubleAnimation(currentWidth, targetWidth, TimeSpan.FromMilliseconds(durationMs))
+        var widthAnimation = new DoubleAnimation(currentWidth, targetWidth, duration)
         {
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
+            EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
         };
-        animation.Completed += (_, _) =>
+
+        var currentMargin = WorkspaceHost.Margin;
+        var targetMargin = expanded
+            ? new Thickness(ExpandedSidebarWidth - CollapsedSidebarWidth, 0, 0, 0)
+            : new Thickness(0);
+        var marginAnimation = new ThicknessAnimation(currentMargin, targetMargin, duration)
+        {
+            EasingFunction = ease,
+            FillBehavior = FillBehavior.Stop
+        };
+
+        widthAnimation.Completed += (_, _) =>
         {
             if (generation != _sidebarAnimationGeneration) return;
             SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, null);
             SidebarHost.Width = targetWidth;
+            WorkspaceHost.BeginAnimation(FrameworkElement.MarginProperty, null);
+            WorkspaceHost.Margin = targetMargin;
         };
 
-        SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, animation, HandoffBehavior.SnapshotAndReplace);
+        SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation, HandoffBehavior.SnapshotAndReplace);
+        WorkspaceHost.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation, HandoffBehavior.SnapshotAndReplace);
     }
 
     private void AnimateSidebarBranding(bool expanded)

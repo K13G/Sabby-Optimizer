@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -87,7 +88,10 @@ public static class FastUpdateHelper
             var version = SanitizeFilePart(Decode(args[3]));
             var bounds = args.Length >= 8 ? ParseBounds(args) : GetFallbackBounds();
 
-            overlay = new UpdateOverlay(version, bounds);
+            var ownerProcessId = args.Length >= 9 &&
+                int.TryParse(args[8], NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedOwner)
+                    ? parsedOwner : 0;
+            overlay = new UpdateOverlay(version, bounds, ownerProcessId);
             overlay.Show();
             overlay.BeginFadeIn();
             await overlay.RenderAsync();
@@ -286,8 +290,11 @@ public static class FastUpdateHelper
         private readonly TextBlock _version;
         private readonly ProgressBar _progress;
 
-        public UpdateOverlay(string version, OverlayBounds bounds)
+        private readonly int _ownerProcessId;
+
+        public UpdateOverlay(string version, OverlayBounds bounds, int ownerProcessId)
         {
+            _ownerProcessId = ownerProcessId;
             var accent = new SolidColorBrush(Color.FromRgb(190, 18, 36));
             var panel = new SolidColorBrush(Color.FromRgb(16, 18, 22));
             var border = new SolidColorBrush(Color.FromRgb(55, 58, 65));
@@ -385,7 +392,7 @@ public static class FastUpdateHelper
                 ResizeMode = ResizeMode.NoResize,
                 AllowsTransparency = true,
                 Background = Brushes.Transparent,
-                Topmost = true,
+                Topmost = false,
                 ShowInTaskbar = false,
                 ShowActivated = true,
                 Left = bounds.Left,
@@ -398,7 +405,23 @@ public static class FastUpdateHelper
             };
         }
 
-        public void Show() => _window.Show();
+        public void Show()
+        {
+            if (_ownerProcessId > 0)
+            {
+                try
+                {
+                    using var owner = Process.GetProcessById(_ownerProcessId);
+                    owner.Refresh();
+                    var handle = owner.MainWindowHandle;
+                    if (handle != IntPtr.Zero)
+                        new WindowInteropHelper(_window).Owner = handle;
+                }
+                catch { }
+            }
+
+            _window.Show();
+        }
 
         public void BeginFadeIn()
         {

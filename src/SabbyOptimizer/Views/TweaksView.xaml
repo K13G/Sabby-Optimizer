@@ -291,10 +291,11 @@
                                 </Button>
                                 <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding EvidenceLabel}" FontSize="8" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" />
-                                    <Grid Width="112" Height="5" Margin="0,3,0,0" HorizontalAlignment="Center">
-                                        <Border Background="#A92C36" CornerRadius="3" />
-                                        <Border Width="{Binding EvidenceGreenWidth}" MaxWidth="112" HorizontalAlignment="Left" Background="#31B866" CornerRadius="3" />
-                                    </Grid>
+                                    <Canvas Width="112" Height="5" Margin="0,3,0,0" HorizontalAlignment="Center">
+                                        <Border Canvas.Left="0" Width="{Binding EvidenceRedWidth}" Height="5" Background="#A92C36" CornerRadius="3,0,0,3" />
+                                        <Border Canvas.Right="0" Width="{Binding EvidenceGreenWidth}" Height="5" Background="#31B866" CornerRadius="0,3,3,0" />
+                                        <Border Canvas.Left="55.5" Width="1" Height="7" Canvas.Top="-1" Background="#A8FFFFFF" />
+                                    </Canvas>
                                 </StackPanel>
                                 <Button Grid.Column="2" Command="{Binding ToggleActivationCommand}" Padding="0" Background="Transparent" BorderThickness="0" Focusable="False" ToolTip="{Binding ToggleHint}">
                                     <Button.Template>

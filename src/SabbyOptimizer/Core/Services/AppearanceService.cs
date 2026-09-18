@@ -13,7 +13,7 @@ public sealed class AppearanceService : IAppearanceService
     private readonly Stopwatch _animationClock = Stopwatch.StartNew();
     private AppearancePalette _activePalette;
     private bool _hasPalette;
-    private double _phase;
+    private double _cyclePosition;
     private double _lastTickSeconds;
 
     public VisualStyle ActiveStyle { get; private set; } = VisualStyle.SabbyBlue;
@@ -21,6 +21,7 @@ public sealed class AppearanceService : IAppearanceService
     public double AnimationSpeed { get; private set; } = 100;
 
     public event Action<double>? AnimationSpeedChanged;
+    public event Action? AppearanceChanged;
 
     public AppearanceService(IAppLogger logger)
     {
@@ -50,11 +51,14 @@ public sealed class AppearanceService : IAppearanceService
         {
             _animationTimer.Stop();
             ActiveStyle = style;
-            _activePalette = GetPalette(style);
             _hasPalette = true;
-            _phase = 0;
+            _cyclePosition = 0;
             _lastTickSeconds = _animationClock.Elapsed.TotalSeconds;
         }
+
+        // Theme switching replaces the merged ResourceDictionary. Reload the requested visual
+        // palette every time so the newly-created theme cannot fall back to its default blue.
+        _activePalette = GetPalette(style);
 
         Intensity = Math.Clamp(intensity, 0, 100);
         AnimationSpeed = clampedSpeed;
@@ -72,7 +76,7 @@ public sealed class AppearanceService : IAppearanceService
             _lastTickSeconds = _animationClock.Elapsed.TotalSeconds;
         }
 
-        RenderFrame(_phase);
+        RenderFrame(_cyclePosition);
 
         if (speedChanged)
             AnimationSpeedChanged?.Invoke(AnimationSpeed);
@@ -80,6 +84,7 @@ public sealed class AppearanceService : IAppearanceService
         if (styleChanged)
         {
             _logger.Info($"Visual style applied: {style}{(_activePalette.Animated ? " (animated)" : string.Empty)}, intensity {Intensity:0}%, speed {AnimationSpeed:0}%.");
+            AppearanceChanged?.Invoke();
         }
     }
 
@@ -99,7 +104,7 @@ public sealed class AppearanceService : IAppearanceService
         try
         {
             AdvancePhase();
-            RenderFrame(_phase);
+            RenderFrame(_cyclePosition);
         }
         catch (InvalidOperationException ex)
         {
@@ -137,17 +142,17 @@ public sealed class AppearanceService : IAppearanceService
             return;
 
         var speedRatio = AnimationSpeed / 100d;
-        _phase = (_phase + (elapsed * speedRatio / _activePalette.DurationSeconds)) % 1d;
+        _cyclePosition = (_cyclePosition + (elapsed * speedRatio / _activePalette.DurationSeconds)) % 1d;
     }
 
-    private void RenderFrame(double phase)
+    private void RenderFrame(double position)
     {
         var rawPrimary = _activePalette.Animated
-            ? CycleColor(_activePalette.Primary, _activePalette.Secondary, _activePalette.Tertiary, phase)
+            ? CycleColor(_activePalette.Primary, _activePalette.Secondary, _activePalette.Tertiary, position)
             : _activePalette.Primary;
 
         var rawSecondary = _activePalette.Animated
-            ? CycleColor(_activePalette.Secondary, _activePalette.Tertiary, _activePalette.Primary, phase)
+            ? CycleColor(_activePalette.Secondary, _activePalette.Tertiary, _activePalette.Primary, position)
             : _activePalette.Secondary;
 
         var isLight = IsCurrentThemeLight();
@@ -187,11 +192,8 @@ public sealed class AppearanceService : IAppearanceService
         Color gradientStart,
         Color gradientEnd)
     {
-        // Accent brushes in the active theme bind their Color properties through DynamicResource.
-        // Updating the lightweight Color resources lets WPF invalidate only the color dependency
-        // properties while keeping the shared brush objects intact. This also prevents startup
-        // crashes when WPF has frozen a shared Freezable resource as read-only.
         var resources = GetActiveThemeResources();
+
         resources["BrandAccentColor"] = brandAccent;
         resources["AccentColor"] = accent;
         resources["AccentHoverColor"] = accentHover;
@@ -200,6 +202,36 @@ public sealed class AppearanceService : IAppearanceService
         resources["AccentGlowColor"] = accentGlow;
         resources["AccentGradientStartColor"] = gradientStart;
         resources["AccentGradientEndColor"] = gradientEnd;
+
+        // Theme dictionaries are replaced when Dark/Light/Darkness changes. Explicitly refresh
+        // the brush objects too; relying only on DynamicResource inside a frozen/shared Freezable
+        // allowed the new theme's default blue to survive until restart.
+        SetSolidBrush(resources, "BrandAccentBrush", brandAccent);
+        SetSolidBrush(resources, "AccentBrush", accent);
+        SetSolidBrush(resources, "AccentHoverBrush", accentHover);
+        SetSolidBrush(resources, "AccentSubtleBrush", accentSubtle);
+        SetSolidBrush(resources, "CardBorderBrush", cardBorder);
+        SetSolidBrush(resources, "AccentGlowBrush", accentGlow);
+
+        var gradient = new LinearGradientBrush
+        {
+            StartPoint = new Point(0, 0.5),
+            EndPoint = new Point(1, 0.5)
+        };
+        gradient.GradientStops.Add(new GradientStop(gradientStart, 0));
+        gradient.GradientStops.Add(new GradientStop(gradientEnd, 1));
+        resources["AccentGradientBrush"] = gradient;
+    }
+
+    private static void SetSolidBrush(ResourceDictionary resources, string key, Color color)
+    {
+        if (resources[key] is SolidColorBrush brush && !brush.IsFrozen)
+        {
+            brush.Color = color;
+            return;
+        }
+
+        resources[key] = new SolidColorBrush(color);
     }
 
     private static ResourceDictionary GetActiveThemeResources()
@@ -254,12 +286,12 @@ public sealed class AppearanceService : IAppearanceService
     private static byte LerpByte(byte a, byte b, double t) =>
         (byte)Math.Clamp((int)Math.Round(a + ((b - a) * t)), 0, 255);
 
-    private static Color CycleColor(Color first, Color second, Color third, double phase)
+    private static Color CycleColor(Color first, Color second, Color third, double position)
     {
-        phase -= Math.Floor(phase);
-        if (phase < 1d / 3d) return Lerp(first, second, phase * 3d);
-        if (phase < 2d / 3d) return Lerp(second, third, (phase - (1d / 3d)) * 3d);
-        return Lerp(third, first, (phase - (2d / 3d)) * 3d);
+        position -= Math.Floor(phase);
+        if (position < 1d / 3d) return Lerp(first, second, position * 3d);
+        if (position < 2d / 3d) return Lerp(second, third, (position - (1d / 3d)) * 3d);
+        return Lerp(third, first, (position - (2d / 3d)) * 3d);
     }
 
     private static Color Lerp(Color a, Color b, double t)
@@ -279,7 +311,7 @@ public sealed class AppearanceService : IAppearanceService
         VisualStyle.PurpleFlux => new(Color.FromRgb(153, 92, 255), Color.FromRgb(211, 83, 255), Color.FromRgb(153, 92, 255), false, 0),
         VisualStyle.EmeraldCircuit => new(Color.FromRgb(24, 204, 137), Color.FromRgb(58, 226, 168), Color.FromRgb(24, 204, 137), false, 0),
         VisualStyle.SunsetDrive => new(Color.FromRgb(255, 111, 97), Color.FromRgb(255, 177, 66), Color.FromRgb(255, 111, 97), false, 0),
-        VisualStyle.BloodBath => new(Color.FromRgb(110, 6, 12), Color.FromRgb(154, 10, 24), Color.FromRgb(56, 0, 6), false, 0),
+        VisualStyle.BloodBath => new(Color.FromRgb(205, 18, 38), Color.FromRgb(150, 8, 25), Color.FromRgb(62, 0, 8), false, 0),
         VisualStyle.Ice => new(Color.FromRgb(88, 205, 255), Color.FromRgb(183, 238, 255), Color.FromRgb(88, 205, 255), false, 0),
         VisualStyle.Inferno => new(Color.FromRgb(255, 70, 32), Color.FromRgb(255, 155, 28), Color.FromRgb(180, 20, 12), true, 7.5),
         VisualStyle.Gold => new(Color.FromRgb(236, 184, 55), Color.FromRgb(255, 221, 115), Color.FromRgb(236, 184, 55), false, 0),

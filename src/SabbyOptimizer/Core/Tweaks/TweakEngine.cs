@@ -58,7 +58,7 @@ public sealed class TweakEngine : ITweakEngine
 
         try
         {
-            var result = await handler.DetectAsync(cancellationToken).ConfigureAwait(false);
+            var result = await RunHandlerAsync(() => handler.DetectAsync(cancellationToken), cancellationToken).ConfigureAwait(false);
             _logger.Info($"Tweak detect: {tweakId} -> {result.State} ({result.DisplayText}).");
             return result;
         }
@@ -81,7 +81,7 @@ public sealed class TweakEngine : ITweakEngine
 
         try
         {
-            return await provider.CheckCompatibilityAsync(applying, cancellationToken).ConfigureAwait(false);
+            return await RunHandlerAsync(() => provider.CheckCompatibilityAsync(applying, cancellationToken), cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception ex)
@@ -139,11 +139,10 @@ public sealed class TweakEngine : ITweakEngine
                         : "This tweak cannot be undone in its current state.");
             }
 
-            // Phase 14 compatibility gate. Handlers with hardware/driver-specific requirements
-            // can block an incompatible operation before any Windows state is modified.
+            // Hardware/driver-specific handlers can block an incompatible operation before any Windows state is modified.
             if (handler is ITweakCompatibilityProvider compatibilityProvider)
             {
-                var compatibility = await compatibilityProvider.CheckCompatibilityAsync(apply, cancellationToken).ConfigureAwait(false);
+                var compatibility = await RunHandlerAsync(() => compatibilityProvider.CheckCompatibilityAsync(apply, cancellationToken), cancellationToken).ConfigureAwait(false);
                 if (!compatibility.IsCompatible)
                 {
                     _logger.Warning($"Compatibility check blocked {definition.Id}: {compatibility.Message}");
@@ -184,8 +183,8 @@ public sealed class TweakEngine : ITweakEngine
             _logger.Info($"Tweak {(apply ? "apply" : "undo")} started: {definition.Id}. Before={before.State}.");
 
             var operation = apply
-                ? await handler.ApplyAsync(cancellationToken).ConfigureAwait(false)
-                : await handler.UndoAsync(cancellationToken).ConfigureAwait(false);
+                ? await RunHandlerAsync(() => handler.ApplyAsync(cancellationToken), cancellationToken).ConfigureAwait(false)
+                : await RunHandlerAsync(() => handler.UndoAsync(cancellationToken), cancellationToken).ConfigureAwait(false);
 
             if (!operation.Success)
             {
@@ -250,7 +249,7 @@ public sealed class TweakEngine : ITweakEngine
         try
         {
             _logger.Warning($"Automatic rollback started for {definition.Id} after failed validation.");
-            var rollbackOperation = await handler.UndoAsync(cancellationToken).ConfigureAwait(false);
+            var rollbackOperation = await RunHandlerAsync(() => handler.UndoAsync(cancellationToken), cancellationToken).ConfigureAwait(false);
             var rollbackState = await DetectAsync(definition.Id, cancellationToken).ConfigureAwait(false);
             var restored = rollbackOperation.Success &&
                            rollbackState.State is not (TweakStateKind.Error or TweakStateKind.Unavailable) &&
@@ -270,6 +269,9 @@ public sealed class TweakEngine : ITweakEngine
             return (false, "Automatic rollback encountered an error. Use Backups or PC Restore before making further changes.");
         }
     }
+
+    private static Task<T> RunHandlerAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken) =>
+        Task.Run(operation, cancellationToken);
 
     private static bool HasMeaningfullyChanged(TweakDetectionResult before, TweakDetectionResult after) =>
         after.State is not (TweakStateKind.Error or TweakStateKind.Unavailable) &&

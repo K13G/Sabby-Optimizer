@@ -59,18 +59,43 @@ ConvertTo-Json -InputObject $items -Compress -Depth 3";
 
     public async Task<(bool Success, string Message)> RemoveAsync(DebloatAppInfo app, CancellationToken cancellationToken = default)
     {
-        var escaped = app.PackageFullName.Replace("'", "''", StringComparison.Ordinal);
-        var result = await PowerShellUtility.RunAsync($"Remove-AppxPackage -Package '{escaped}' -ErrorAction Stop", 30000, cancellationToken).ConfigureAwait(false);
-        if (!result.Success)
+        if (!app.CanRemove)
+            return (false, "Windows marks this package as protected/non-removable.");
+
+        var escapedFull = app.PackageFullName.Replace("'", "''", StringComparison.Ordinal);
+        var escapedName = app.Name.Replace("'", "''", StringComparison.Ordinal);
+
+        var script = $@"
+$ErrorActionPreference='Stop'
+$ProgressPreference='SilentlyContinue'
+$target = Get-AppxPackage | Where-Object {{ $_.PackageFullName -eq '{escapedFull}' }} | Select-Object -First 1
+if($null -eq $target) {{ Write-Output 'REMOVED'; exit 0 }}
+try {{
+    Remove-AppxPackage -Package $target.PackageFullName -Confirm:$false -ErrorAction Stop
+}} catch {{
+    $fallback = Get-AppxPackage -Name '{escapedName}' -ErrorAction SilentlyContinue | Where-Object {{ $_.PackageFullName -eq '{escapedFull}' }} | Select-Object -First 1
+    if($null -eq $fallback) {{ Write-Output 'REMOVED'; exit 0 }}
+    $fallback | Remove-AppxPackage -Confirm:$false -ErrorAction Stop
+}}
+for($i=0; $i -lt 8; $i++) {{
+    Start-Sleep -Milliseconds 180
+    $remaining = Get-AppxPackage | Where-Object {{ $_.PackageFullName -eq '{escapedFull}' }} | Select-Object -First 1
+    if($null -eq $remaining) {{ Write-Output 'REMOVED'; exit 0 }}
+}}
+Write-Error 'Package is still present after Windows completed the removal request.'
+exit 4";
+
+        var result = await PowerShellUtility.RunAsync(script, 45000, cancellationToken).ConfigureAwait(false);
+        var removed = result.Output.Contains("REMOVED", StringComparison.OrdinalIgnoreCase);
+        if (result.Success && removed)
         {
-            var error = FriendlyRemovalError(result.Error);
-            _logger.Warning($"Debloat removal rejected for {app.Name}: {error}");
-            return (false, error);
+            _logger.Info($"Debloat removal verified for {app.Name}.");
+            return (true, $"{app.Name} was removed for the current Windows user and verified.");
         }
 
-        var verify = await PowerShellUtility.RunAsync($"$p=Get-AppxPackage | Where-Object {{$_.PackageFullName -eq '{escaped}'}}; if($null -eq $p){{'REMOVED'}}else{{'PRESENT'}}", 12000, cancellationToken).ConfigureAwait(false);
-        var removed = verify.Success && verify.Output.Contains("REMOVED", StringComparison.OrdinalIgnoreCase);
-        return removed ? (true, $"{app.Name} was removed for the current Windows user and verified by re-scan.") : (false, $"Windows completed the command, but {app.Name} still appears installed.");
+        var error = FriendlyRemovalError(string.IsNullOrWhiteSpace(result.Error) ? result.Output : result.Error);
+        _logger.Warning($"Debloat removal rejected for {app.Name}: {error}");
+        return (false, error);
     }
 
     private static DebloatAppInfo ToInfo(PackageRow row)
