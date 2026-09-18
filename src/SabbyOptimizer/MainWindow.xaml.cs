@@ -257,11 +257,13 @@ public partial class MainWindow : Window
         {
             _lastNonMinimizedState = WindowState.Maximized;
             ResetRevealScale();
+            Dispatcher.BeginInvoke(new Action(UpdateResponsiveLayoutResources), DispatcherPriority.Loaded);
             Dispatcher.BeginInvoke(new Action(RestartEventAnimations), DispatcherPriority.Background);
         }
         else if (WindowState == WindowState.Normal)
         {
             _lastNonMinimizedState = WindowState.Normal;
+            Dispatcher.BeginInvoke(new Action(UpdateResponsiveLayoutResources), DispatcherPriority.Loaded);
             Dispatcher.BeginInvoke(new Action(RestartEventAnimations), DispatcherPriority.Background);
         }
         else if (WindowState == WindowState.Minimized && _settings.Current.MinimizeToTray && !_handlingTrayMinimize)
@@ -296,7 +298,10 @@ public partial class MainWindow : Window
         // treated as a maximum, while the current window width sets a safe visual cap.
         var requested = Math.Clamp(_settings.Current.CardColumns, 1, 4);
         var width = ActualWidth > 0 ? ActualWidth : Width;
-        var visualCap = width >= 1540 ? 4 : width >= 1080 ? 3 : width >= 820 ? 2 : 1;
+        // WPF reports device-independent pixels, so 125-150% scaling can make a
+        // 1920px fullscreen window look much narrower to layout code. Respect four
+        // columns on normal maximized desktop widths instead of silently falling to three.
+        var visualCap = width >= 1180 ? 4 : width >= 900 ? 3 : width >= 700 ? 2 : 1;
         Application.Current.Resources["CardColumns"] = Math.Min(requested, visualCap);
     }
 
@@ -798,7 +803,7 @@ public partial class MainWindow : Window
             // Translating text by fractional pixels is a common source of temporary softness.
             MainContentHost.BeginAnimation(
                 OpacityProperty,
-                new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(55))
+                new DoubleAnimation(0.96, 1, TimeSpan.FromMilliseconds(85))
                 {
                     EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
                     FillBehavior = FillBehavior.Stop
@@ -828,10 +833,10 @@ public partial class MainWindow : Window
 
             var work = monitorInfo.rcWork;
             var monitorRect = monitorInfo.rcMonitor;
-            info.ptMaxPosition.X = Math.Abs(work.Left - monitorRect.Left);
-            info.ptMaxPosition.Y = Math.Abs(work.Top - monitorRect.Top);
-            info.ptMaxSize.X = Math.Abs(work.Right - work.Left);
-            info.ptMaxSize.Y = Math.Abs(work.Bottom - work.Top);
+            info.ptMaxPosition.X = work.Left - monitorRect.Left;
+            info.ptMaxPosition.Y = work.Top - monitorRect.Top;
+            info.ptMaxSize.X = work.Right - work.Left;
+            info.ptMaxSize.Y = work.Bottom - work.Top;
             info.ptMaxTrackSize = info.ptMaxSize;
             Marshal.StructureToPtr(info, lParam, false);
         }
