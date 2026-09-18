@@ -17,7 +17,7 @@
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
-        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextFormattingMode="Display"
         TextOptions.TextRenderingMode="ClearType"
         TextOptions.TextHintingMode="Fixed">
     <shell:WindowChrome.WindowChrome>
@@ -333,7 +333,7 @@
                 Margin="7,0,0,10"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
-                Background="#E60D0F12"
+                Background="#F20D0F12"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="18">
@@ -465,7 +465,7 @@
                                     ToolTip="Sabby Optimizer is running with administrator rights">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="10" Foreground="#31B866" VerticalAlignment="Center" />
-                                    <TextBlock Text="ADMIN" Margin="5,0,0,0" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Text="ADMIN" Margin="5,0,0,0" FontSize="9" LineHeight="12" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Border>
                         </Grid>
