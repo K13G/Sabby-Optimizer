@@ -35,3 +35,18 @@ This document records the static code/UI audit completed for 0.23.19. Items belo
 0.23.19 targets the largest static sources of UI stalls and excess WPF visual-tree memory found in the audit. Exact total CPU, RAM, and startup percentage changes depend on hardware, selected pages, installed Appx packages, and active visual effects, so the project does not publish an invented whole-app percentage.
 
 Concrete changes include: Debloat renders at most 32 result cards at once; animated theme resource refreshes remain at half the earlier 4 Hz rate; inactive event effects pause; backup/tweak operations no longer start synchronous system work on the UI dispatcher; and navigation caching remains bounded.
+
+
+## 0.23.20 follow-up
+
+| Area | Issue found | Fix |
+| --- | --- | --- |
+| Updater | Relaunch was dependent on generic silent-install behavior. | App updates now pass `/SABBYUPDATE=1`; Setup explicitly launches the new Sabby when that flag is present. |
+| Hover UI | Every normal button hover allocated short WPF storyboards. | Global button hover now uses state setters only. |
+| Sidebar | Workspace squeeze used `ThicknessAnimation`, causing layout work every frame. | Replaced with compositor ScaleX + TranslateX transforms. |
+| Animated styles | DynamicResource palette updates still invalidated large parts of the tree twice per second. | Reduced animated palette refresh to 1 Hz. |
+| Tweaks | View models wrapped an engine that already dispatches system handlers in another `Task.Run`. | Removed redundant outer scheduler hops. |
+| Ping | The same nested `Task.Run` pattern existed in tweak checks. | Uses engine async operations directly. |
+| Memory | Four recent page trees were retained. | Cache reduced to three. |
+| Idle CPU | Game detection polled every 2.5 seconds. | Polling reduced to every 5 seconds. |
+| Startup | Full catalog/self-check work could begin close to first interaction. | Added a 700 ms interaction grace period after hardware discovery. |
