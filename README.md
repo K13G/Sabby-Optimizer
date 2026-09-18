@@ -4,23 +4,27 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.14-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.15-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.14
+## Latest update — 0.23.15
 
-### Performance & memory
-🟢 **+** Bounded navigation memory to four recent pages instead of retaining every visited tab.  
-🟢 **+** Cut animated-theme global resource refreshes from 4 Hz to 2 Hz.  
-🔴 **−** Removed retired hidden Presets, Config Studio, and Monitoring registrations.
+### Startup & performance
+🟢 **+** Hardware discovery starts immediately in parallel; the old 3.5s + up-to-30s intentional wait is gone.  
+🟢 **+** Animated-theme global refresh work remains **50% lower** than 0.23.13.  
+🟢 **+** Clicking **Update now** closes Sabby immediately and hands download/verification/install to a lightweight helper.
 
-### Menu & animation
-🟢 **+** Reworked sidebar motion into one lighter rail animation with no per-label storyboards.  
-🩷 **✓** Fixed rapid tab-change desync and a Game Profiles event-retention bug.  
-🟢 **+** Tightened cards, borders, spacing, and control sizing for a cleaner UI.
+### Menu & UI
+🩷 **✓** Fixed the far-left hover hotspot so the sidebar opens from the screen edge again.  
+🟢 **+** Cleaner animated hover glow for buttons/sidebar plus re-centered badges and button text.  
+🩷 **✓** Replaced confusing **Active • protected** wording with **Already on / already optimized** when the PC was already in Sabby's target state.
+
+### Tweaks
+🟢 **+** Game Mode, Background Capture, and Windows Animations can safely deactivate even if they were already optimized before Sabby opened.  
+🩷 **✓** Settings without a trustworthy rollback value are still not guessed.
 
 ## Change legend
 
