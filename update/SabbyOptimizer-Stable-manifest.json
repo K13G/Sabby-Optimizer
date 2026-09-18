@@ -1,9 +1,9 @@
 {
-  "version": "0.23.15",
-  "downloadUrl": "https://github.com/K13G/Sabby-Optimizer/releases/download/v0.23.15/SabbyOptimizer-0.23.15-Setup.exe",
-  "sha256": "FD21D1E2237DE6F311DACBFA6E4EB87EE8BF4D5FD8F001349D9C6661BADEA4F7",
+  "version": "0.23.16",
+  "downloadUrl": "https://github.com/K13G/Sabby-Optimizer/releases/download/v0.23.16/SabbyOptimizer-0.23.16-Setup.exe",
+  "sha256": "B25D74229C3B14E05C68C18366B1F757744D330F9EE34C94B7DBEA046D5A3A7A",
   "signerThumbprint": null,
-  "releaseNotes": "Sabby Optimizer 0.23.15 (Stable) — startup, sidebar hover, UI centering, tweak-state clarity, and fast updater improvements.",
+  "releaseNotes": "Sabby Optimizer 0.23.16 (Stable)",
   "mandatory": true,
-  "publishedAt": "2026-09-18T21:58:59Z"
+  "publishedAt": "2026-09-18T22:20:55.3817112Z"
 }
