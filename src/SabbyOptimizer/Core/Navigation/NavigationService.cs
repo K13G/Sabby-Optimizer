@@ -4,7 +4,7 @@ namespace PCTweaker.Core.Navigation;
 
 public sealed class NavigationService : INavigationService
 {
-    private const int MaxCachedPages = 4;
+    private const int MaxCachedPages = 3;
 
     private readonly Dictionary<AppPage, Func<ViewModelBase>> _factories = new();
     private readonly Dictionary<AppPage, ViewModelBase> _cache = new();

@@ -145,6 +145,7 @@ public partial class MainWindow : Window
         UpdateResponsiveLayoutResources();
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
         WorkspaceShift.X = 0;
+        WorkspaceScale.ScaleX = 1;
         CollapsedBrandPanel.Opacity = 1;
         SidebarBrandPanel.Opacity = 0;
         SidebarHost.Tag = "False";
@@ -642,7 +643,7 @@ public partial class MainWindow : Window
     {
         if (!Dispatcher.CheckAccess())
         {
-            Dispatcher.Invoke(() => UpdateEventAnimationSpeed(speed));
+            _ = Dispatcher.BeginInvoke(new Action(() => UpdateEventAnimationSpeed(speed)), DispatcherPriority.Background);
             return;
         }
         UpdateEventAnimationSpeed(speed);
@@ -784,32 +785,33 @@ public partial class MainWindow : Window
         SidebarHost.Tag = expanded ? "True" : "False";
         AnimateSidebarBranding(expanded);
 
-        // The rail is an overlay, but the workspace is intentionally squeezed while it is open
-        // so labels never cover cards/text. Only the hover transition performs this short layout animation.
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
-        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
-        WorkspaceShift.X = 0;
-
         SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, null);
-        WorkspaceHost.BeginAnimation(FrameworkElement.MarginProperty, null);
+        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
+        WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
 
         var distance = Math.Abs(targetWidth - currentWidth);
-        var durationMs = Math.Clamp(95d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 55d), 95d, 150d);
+        var durationMs = Math.Clamp(90d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 40d), 90d, 130d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var generation = ++_sidebarAnimationGeneration;
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+
+        var delta = ExpandedSidebarWidth - CollapsedSidebarWidth;
+        var workspaceWidth = Math.Max(1d, WorkspaceHost.ActualWidth);
+        var targetScale = expanded ? Math.Max(0.72, (workspaceWidth - delta) / workspaceWidth) : 1d;
+        var targetShift = expanded ? delta : 0d;
 
         var widthAnimation = new DoubleAnimation(currentWidth, targetWidth, duration)
         {
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
         };
-
-        var currentMargin = WorkspaceHost.Margin;
-        var targetMargin = expanded
-            ? new Thickness(ExpandedSidebarWidth - CollapsedSidebarWidth, 0, 0, 0)
-            : new Thickness(0);
-        var marginAnimation = new ThicknessAnimation(currentMargin, targetMargin, duration)
+        var scaleAnimation = new DoubleAnimation(WorkspaceScale.ScaleX, targetScale, duration)
+        {
+            EasingFunction = ease,
+            FillBehavior = FillBehavior.Stop
+        };
+        var shiftAnimation = new DoubleAnimation(WorkspaceShift.X, targetShift, duration)
         {
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
@@ -820,12 +822,15 @@ public partial class MainWindow : Window
             if (generation != _sidebarAnimationGeneration) return;
             SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, null);
             SidebarHost.Width = targetWidth;
-            WorkspaceHost.BeginAnimation(FrameworkElement.MarginProperty, null);
-            WorkspaceHost.Margin = targetMargin;
+            WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+            WorkspaceScale.ScaleX = targetScale;
+            WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
+            WorkspaceShift.X = targetShift;
         };
 
         SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation, HandoffBehavior.SnapshotAndReplace);
-        WorkspaceHost.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation, HandoffBehavior.SnapshotAndReplace);
+        WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation, HandoffBehavior.SnapshotAndReplace);
+        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, shiftAnimation, HandoffBehavior.SnapshotAndReplace);
     }
 
     private void AnimateSidebarBranding(bool expanded)

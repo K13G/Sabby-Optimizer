@@ -291,8 +291,8 @@ public partial class App : Application
             var hardware = await hardwareTask;
             dashboard.UpdateHardware(hardware);
 
-            // Keep one tiny render grace period, not the old 3.5s + up-to-30s intentional wait.
-            await Task.Delay(180);
+            // Keep first interaction clear of full catalog/self-check work. Core controls are already usable.
+            await Task.Delay(700);
             var fullCatalog = await Task.Run(() => TweakCatalog.CreateCatalog(paths, hardware));
 
             var fullEngine = new TweakEngine(fullCatalog, _logger!, backupRepository);

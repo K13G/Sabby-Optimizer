@@ -79,7 +79,7 @@ public sealed class GameDetectionService : IGameDetectionService
 
     private async Task MonitorLoopAsync(CancellationToken cancellationToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(2500));
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(5000));
         while (!cancellationToken.IsCancellationRequested)
         {
             try

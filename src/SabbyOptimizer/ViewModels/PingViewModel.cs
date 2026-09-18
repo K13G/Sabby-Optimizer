@@ -478,10 +478,10 @@ public sealed class PingViewModel : ViewModelBase
                 // Some NIC handlers use Windows PowerShell cmdlets internally. Run the complete
                 // detection/apply chain on a worker thread so synchronous driver/PowerShell calls
                 // never block WPF's dispatcher and make the app appear frozen.
-                var compatibility = await Task.Run(async () => await _tweaks.CheckCompatibilityAsync(id, true).ConfigureAwait(false));
+                var compatibility = await _tweaks.CheckCompatibilityAsync(id, true);
                 if (!compatibility.IsCompatible) { skipped++; continue; }
 
-                var state = await Task.Run(async () => await _tweaks.DetectAsync(id).ConfigureAwait(false));
+                var state = await _tweaks.DetectAsync(id);
                 if (state.State == TweakStateKind.Applied) { done++; continue; }
                 if (!state.CanApply) { skipped++; continue; }
 

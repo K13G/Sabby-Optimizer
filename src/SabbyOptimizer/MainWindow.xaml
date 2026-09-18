@@ -384,9 +384,12 @@
             </StackPanel>
         </Border>
 
-        <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10" ClipToBounds="True">
+        <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10" ClipToBounds="True" RenderTransformOrigin="0,0">
             <Grid.RenderTransform>
-                <TranslateTransform x:Name="WorkspaceShift" X="0" />
+                <TransformGroup>
+                    <ScaleTransform x:Name="WorkspaceScale" ScaleX="1" ScaleY="1" />
+                    <TranslateTransform x:Name="WorkspaceShift" X="0" />
+                </TransformGroup>
             </Grid.RenderTransform>
             <Grid x:Name="MainBloodLayer"
                   Panel.ZIndex="0"

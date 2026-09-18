@@ -207,8 +207,8 @@ public sealed class TweakCardViewModel : ViewModelBase
         try
         {
             OperationMessage = "Detecting current state…";
-            UpdateState(await Task.Run(async () => await _engine.DetectAsync(Definition.Id).ConfigureAwait(false)));
-            var compatibility = await Task.Run(async () => await _engine.CheckCompatibilityAsync(Definition.Id, true).ConfigureAwait(false));
+            UpdateState(await _engine.DetectAsync(Definition.Id));
+            var compatibility = await _engine.CheckCompatibilityAsync(Definition.Id, true);
             CompatibilityPassed = compatibility.IsCompatible;
             CompatibilityText = compatibility.IsCompatible
                 ? (string.IsNullOrWhiteSpace(compatibility.Warning) ? "✓ Compatibility check passed" : $"⚠ {compatibility.Warning}")
@@ -246,11 +246,11 @@ public sealed class TweakCardViewModel : ViewModelBase
         try
         {
             OperationMessage = "Applying safely…";
-            var result = await Task.Run(async () => await _engine.ApplyAsync(Definition.Id).ConfigureAwait(false));
+            var result = await _engine.ApplyAsync(Definition.Id);
             if (result.VerifiedState is not null)
                 UpdateState(result.VerifiedState);
             else
-                UpdateState(await Task.Run(async () => await _engine.DetectAsync(Definition.Id).ConfigureAwait(false)));
+                UpdateState(await _engine.DetectAsync(Definition.Id));
 
             OperationMessage = result.RequiresElevation
                 ? "Administrator permission is required; nothing was partially applied."
@@ -273,11 +273,11 @@ public sealed class TweakCardViewModel : ViewModelBase
         try
         {
             OperationMessage = "Undoing and verifying…";
-            var result = await Task.Run(async () => await _engine.UndoAsync(Definition.Id).ConfigureAwait(false));
+            var result = await _engine.UndoAsync(Definition.Id);
             if (result.VerifiedState is not null)
                 UpdateState(result.VerifiedState);
             else
-                UpdateState(await Task.Run(async () => await _engine.DetectAsync(Definition.Id).ConfigureAwait(false)));
+                UpdateState(await _engine.DetectAsync(Definition.Id));
 
             OperationMessage = result.Message;
             VerificationSucceeded = result.Success && result.VerifiedState is not null && _state.State != TweakStateKind.Applied;
