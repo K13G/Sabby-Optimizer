@@ -726,7 +726,6 @@ public partial class MainWindow : Window
     private void SetSidebarExpanded(bool expanded)
     {
         var targetWidth = expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth;
-        var oldColumnWidth = SidebarColumn.Width.Value;
         var currentClipWidth = SidebarClipGeometry.Rect.Width;
         if (_sidebarExpanded == expanded && Math.Abs(currentClipWidth - targetWidth) < 0.5)
             return;
@@ -735,19 +734,15 @@ public partial class MainWindow : Window
         SidebarHost.Tag = expanded ? "True" : "False";
         AnimateSidebarBranding(expanded);
 
-        // Preserve the workspace's on-screen position across the one-time column layout change,
-        // then animate only its TranslateTransform back to zero. This removes the old per-frame
-        // GridLength mutation that caused stutter on complex pages.
-        var currentShift = WorkspaceShift.X;
+        // Overlay the expanded rail instead of resizing the whole window layout. This keeps dense
+        // pages perfectly still and removes the expensive measure/arrange pass on every hover.
+        SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
+        WorkspaceShift.X = 0;
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
-        var layoutDelta = targetWidth - oldColumnWidth;
-        SidebarColumn.Width = new GridLength(targetWidth);
-        WorkspaceShift.X = currentShift - layoutDelta;
-        SidebarClipGeometry.Rect = new Rect(0, 0, currentClipWidth, 10000);
 
         var distance = Math.Abs(targetWidth - currentClipWidth);
-        var durationMs = Math.Clamp(95d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 95d), 95d, 190d);
+        var durationMs = Math.Clamp(85d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 65d), 85d, 150d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
         var generation = ++_sidebarAnimationGeneration;
@@ -760,22 +755,14 @@ public partial class MainWindow : Window
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
         };
-        var shift = new DoubleAnimation(WorkspaceShift.X, 0, duration)
-        {
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-        shift.Completed += (_, _) =>
+        clip.Completed += (_, _) =>
         {
             if (generation != _sidebarAnimationGeneration) return;
-            WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
             SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
-            WorkspaceShift.X = 0;
             SidebarClipGeometry.Rect = new Rect(0, 0, targetWidth, 10000);
         };
 
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, clip, HandoffBehavior.SnapshotAndReplace);
-        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, shift, HandoffBehavior.SnapshotAndReplace);
     }
 
     private void AnimateSidebarBranding(bool expanded)
