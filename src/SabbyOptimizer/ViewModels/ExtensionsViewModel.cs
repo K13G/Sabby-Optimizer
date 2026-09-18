@@ -90,7 +90,7 @@ public sealed class ExtensionsViewModel : ViewModelBase
     private SabbyUpdateChannel _selectedChannel;
     private bool _autoCheck;
     private string _feedUrl = string.Empty;
-    private string _updateStatus = "Choose an update channel and configure its manifest feed when you are ready.";
+    private string _updateStatus = "Sabby checks the official GitHub stable channel automatically.";
     private string _releaseNotes = "No channel check has been run yet.";
     private string _extensionStatus = "Loading tweak-rule extensions…";
     private double _downloadProgress;
@@ -98,7 +98,7 @@ public sealed class ExtensionsViewModel : ViewModelBase
     private string? _stagedFile;
 
     public ObservableCollection<TweakExtensionItemViewModel> Extensions { get; } = new();
-    public IReadOnlyList<SabbyUpdateChannel> Channels { get; } = Enum.GetValues<SabbyUpdateChannel>();
+    public IReadOnlyList<SabbyUpdateChannel> Channels { get; } = [SabbyUpdateChannel.Stable];
 
     public SabbyUpdateChannel SelectedChannel
     {
@@ -158,8 +158,8 @@ public sealed class ExtensionsViewModel : ViewModelBase
     public string CurrentVersion => _release?.CurrentVersion ?? typeof(ExtensionsViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.0.0";
     public string LatestVersion => _release?.LatestVersion ?? "—";
     public bool UpdateAvailable => _release?.UpdateAvailable == true;
-    public string UpdateButtonText => _stagedFile is null ? "Download & stage" : "Open staged file";
-    public string ChannelHelp => "Stable is for normal builds, Preview is for early tested features, and Nightly is for the newest development build. Each channel uses a JSON manifest URL or local manifest file that you control.";
+    public string UpdateButtonText => _stagedFile is null ? "Download update" : "Open downloaded update";
+    public string ChannelHelp => "Official releases come from the Sabby GitHub stable feed. Auto-check is enabled by default, and required releases prompt before you continue using an outdated build.";
 
     public AsyncRelayCommand CheckChannelCommand { get; }
     public AsyncRelayCommand StageUpdateCommand { get; }
@@ -172,9 +172,12 @@ public sealed class ExtensionsViewModel : ViewModelBase
     {
         _service = service;
         _settings = settings;
-        _selectedChannel = settings.Current.SabbyUpdateChannel;
+        _selectedChannel = SabbyUpdateChannel.Stable;
+        _settings.Current.SabbyUpdateChannel = SabbyUpdateChannel.Stable;
         _autoCheck = settings.Current.AutoCheckSabbyUpdates;
-        _feedUrl = GetFeedUrl(_selectedChannel);
+        var builtInFeed = SabbyUpdateDefaults.GetBuiltInStableFeedUrl();
+        _feedUrl = string.IsNullOrWhiteSpace(builtInFeed) ? GetFeedUrl(SabbyUpdateChannel.Stable) : builtInFeed;
+        _settings.Current.StableUpdateFeedUrl = _feedUrl;
 
         CheckChannelCommand = new AsyncRelayCommand(CheckChannelAsync, () => !IsBusy);
         StageUpdateCommand = new AsyncRelayCommand(StageUpdateAsync, () => !IsBusy && (_release?.UpdateAvailable == true || _stagedFile is not null));
