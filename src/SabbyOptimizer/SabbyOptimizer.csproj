@@ -15,9 +15,9 @@
     <AssemblyName>SabbyOptimizer</AssemblyName>
     <RootNamespace>PCTweaker</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.23.17</Version>
-    <FileVersion>0.23.17.0</FileVersion>
-    <InformationalVersion>0.23.17</InformationalVersion>
+    <Version>0.23.18</Version>
+    <FileVersion>0.23.18.0</FileVersion>
+    <InformationalVersion>0.23.18</InformationalVersion>
     <Product>Sabby Optimizer</Product>
     <ApplicationIcon Condition="Exists('Resources\AppIcon.ico')">Resources\AppIcon.ico</ApplicationIcon>
     <Deterministic>true</Deterministic>

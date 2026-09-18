@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -34,10 +35,16 @@ public static class FastUpdateHelper
 
         try
         {
+            var bounds = GetVisibleSabbyBounds();
             var args = string.Join(" ", HelperSwitch,
                 Quote(Encode(release.DownloadUrl)),
                 Quote(Encode(release.Sha256 ?? string.Empty)),
-                Quote(Encode(release.LatestVersion)));
+                Quote(Encode(release.LatestVersion)),
+                Quote(bounds.Left.ToString("R", CultureInfo.InvariantCulture)),
+                Quote(bounds.Top.ToString("R", CultureInfo.InvariantCulture)),
+                Quote(bounds.Width.ToString("R", CultureInfo.InvariantCulture)),
+                Quote(bounds.Height.ToString("R", CultureInfo.InvariantCulture)),
+                Environment.ProcessId.ToString(CultureInfo.InvariantCulture));
 
             var process = Process.Start(new ProcessStartInfo
             {
@@ -78,8 +85,9 @@ public static class FastUpdateHelper
             var downloadUrl = Decode(args[1]);
             var expectedSha = Decode(args[2]).Replace(" ", string.Empty, StringComparison.Ordinal).Trim();
             var version = SanitizeFilePart(Decode(args[3]));
+            var bounds = args.Length >= 8 ? ParseBounds(args) : GetFallbackBounds();
 
-            overlay = new UpdateOverlay(version);
+            overlay = new UpdateOverlay(version, bounds);
             overlay.Show();
             overlay.BeginFadeIn();
             await overlay.RenderAsync();
@@ -92,7 +100,7 @@ public static class FastUpdateHelper
             var partial = destination + ".part";
             try { if (File.Exists(partial)) File.Delete(partial); } catch { }
 
-            overlay.SetStage("Downloading update…", "Preparing the new Sabby Optimizer build.", 0, false);
+            overlay.SetStage("Downloading update…", "Sabby stays open while the verified update downloads.", 0, false);
 
             using (var response = await Http.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
             {
@@ -121,7 +129,7 @@ public static class FastUpdateHelper
                             lastDisplayed = percent;
                             overlay.SetStage(
                                 "Downloading update…",
-                                $"{percent}% complete • Sabby will restart automatically.",
+                                $"{percent}% complete • Sabby is still open underneath.",
                                 percent,
                                 false);
                         }
@@ -130,14 +138,14 @@ public static class FastUpdateHelper
                     {
                         overlay.SetStage(
                             "Downloading update…",
-                            "Downloading the verified installer • Sabby will restart automatically.",
+                            "Downloading the verified installer • Sabby is still open underneath.",
                             0,
                             true);
                     }
                 }
             }
 
-            overlay.SetStage("Verifying update…", "Checking the installer before anything is changed.", 100, true);
+            overlay.SetStage("Verifying update…", "Checking SHA-256 before the installer is allowed to run.", 100, true);
 
             if (!string.IsNullOrWhiteSpace(expectedSha))
             {
@@ -151,11 +159,11 @@ public static class FastUpdateHelper
 
             overlay.SetStage(
                 "Installing update…",
-                "The download is verified. Approve the Windows prompt if it appears. Sabby will reopen automatically.",
+                "Verified. Sabby will close only for installation, then reopen automatically.",
                 100,
                 true);
             await overlay.RenderAsync();
-            await Task.Delay(420).ConfigureAwait(false);
+            await Task.Delay(500).ConfigureAwait(false);
 
             Process.Start(new ProcessStartInfo
             {
@@ -165,7 +173,7 @@ public static class FastUpdateHelper
                 Arguments = "/VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /NORESTART"
             });
 
-            // Release the running Sabby executable immediately so Setup can replace it.
+            // The helper can leave now. Setup owns the close/replace/relaunch stage.
             overlay.CloseSafe();
         }
         catch (Exception ex)
@@ -176,34 +184,62 @@ public static class FastUpdateHelper
             {
                 overlay.SetError(
                     "Update couldn't finish",
-                    "Nothing unsafe was applied. Sabby will reopen so you can try the update again.");
+                    "Nothing was installed. Your current Sabby window is still open underneath.");
                 await overlay.RenderAsync();
                 await Task.Delay(2600).ConfigureAwait(false);
                 overlay.CloseSafe();
             }
-
-            TryReopenSabby();
         }
 
         return true;
     }
 
-    private static void TryReopenSabby()
+    private static OverlayBounds GetVisibleSabbyBounds()
     {
         try
         {
-            var executable = Environment.ProcessPath;
-            if (!string.IsNullOrWhiteSpace(executable) && File.Exists(executable))
+            var window = Application.Current?.MainWindow;
+            if (window is not null && window.IsVisible)
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = executable,
-                    UseShellExecute = true
-                });
+                var point = window.PointToScreen(new Point(0, 0));
+                var dpi = VisualTreeHelper.GetDpi(window);
+                return NormalizeBounds(new OverlayBounds(
+                    point.X / dpi.DpiScaleX,
+                    point.Y / dpi.DpiScaleY,
+                    Math.Max(520, window.ActualWidth),
+                    Math.Max(360, window.ActualHeight)));
             }
         }
         catch { }
+
+        return GetFallbackBounds();
     }
+
+    private static OverlayBounds ParseBounds(string[] args)
+    {
+        static double Parse(string value) =>
+            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed) ? parsed : 0;
+
+        return NormalizeBounds(new OverlayBounds(
+            Parse(args[4]),
+            Parse(args[5]),
+            Parse(args[6]),
+            Parse(args[7])));
+    }
+
+    private static OverlayBounds NormalizeBounds(OverlayBounds bounds)
+    {
+        if (bounds.Width < 320 || bounds.Height < 240 ||
+            double.IsNaN(bounds.Left) || double.IsNaN(bounds.Top) ||
+            double.IsNaN(bounds.Width) || double.IsNaN(bounds.Height))
+            return GetFallbackBounds();
+
+        return bounds;
+    }
+
+    private static OverlayBounds GetFallbackBounds() =>
+        new(SystemParameters.WorkArea.Left, SystemParameters.WorkArea.Top,
+            SystemParameters.WorkArea.Width, SystemParameters.WorkArea.Height);
 
     private static void WriteFailure(Exception ex)
     {
@@ -240,6 +276,8 @@ public static class FastUpdateHelper
         return new string(value.Where(ch => !invalid.Contains(ch)).ToArray());
     }
 
+    private readonly record struct OverlayBounds(double Left, double Top, double Width, double Height);
+
     private sealed class UpdateOverlay
     {
         private readonly Window _window;
@@ -248,7 +286,7 @@ public static class FastUpdateHelper
         private readonly TextBlock _version;
         private readonly ProgressBar _progress;
 
-        public UpdateOverlay(string version)
+        public UpdateOverlay(string version, OverlayBounds bounds)
         {
             var accent = new SolidColorBrush(Color.FromRgb(190, 18, 36));
             var panel = new SolidColorBrush(Color.FromRgb(16, 18, 22));
@@ -258,7 +296,7 @@ public static class FastUpdateHelper
             _title = new TextBlock
             {
                 Text = "Preparing update…",
-                FontSize = 27,
+                FontSize = 25,
                 FontWeight = FontWeights.SemiBold,
                 Foreground = Brushes.White,
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -270,11 +308,11 @@ public static class FastUpdateHelper
                 Text = "Sabby Optimizer is getting the newest verified build.",
                 FontSize = 12.5,
                 Foreground = secondary,
-                Margin = new Thickness(0, 10, 0, 0),
+                Margin = new Thickness(0, 9, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 TextAlignment = TextAlignment.Center,
                 TextWrapping = TextWrapping.Wrap,
-                MaxWidth = 520
+                MaxWidth = 500
             };
 
             _version = new TextBlock
@@ -290,14 +328,14 @@ public static class FastUpdateHelper
             _progress = new ProgressBar
             {
                 Height = 6,
-                Width = 430,
+                Width = 410,
                 Minimum = 0,
                 Maximum = 100,
                 Value = 0,
                 Foreground = accent,
                 Background = new SolidColorBrush(Color.FromRgb(38, 41, 47)),
                 BorderThickness = new Thickness(0),
-                Margin = new Thickness(0, 26, 0, 0)
+                Margin = new Thickness(0, 24, 0, 0)
             };
 
             var brand = new TextBlock
@@ -307,7 +345,7 @@ public static class FastUpdateHelper
                 FontWeight = FontWeights.Bold,
                 Foreground = accent,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 15)
+                Margin = new Thickness(0, 0, 0, 14)
             };
 
             var stack = new StackPanel
@@ -323,8 +361,8 @@ public static class FastUpdateHelper
 
             var card = new Border
             {
-                Width = 610,
-                Padding = new Thickness(38, 34, 38, 32),
+                Width = Math.Min(590, Math.Max(460, bounds.Width - 80)),
+                Padding = new Thickness(36, 32, 36, 30),
                 CornerRadius = new CornerRadius(18),
                 Background = panel,
                 BorderBrush = border,
@@ -336,7 +374,7 @@ public static class FastUpdateHelper
 
             var root = new Grid
             {
-                Background = new SolidColorBrush(Color.FromArgb(218, 0, 0, 0))
+                Background = new SolidColorBrush(Color.FromArgb(202, 0, 0, 0))
             };
             root.Children.Add(card);
 
@@ -350,10 +388,10 @@ public static class FastUpdateHelper
                 Topmost = true,
                 ShowInTaskbar = false,
                 ShowActivated = true,
-                Left = SystemParameters.VirtualScreenLeft,
-                Top = SystemParameters.VirtualScreenTop,
-                Width = SystemParameters.VirtualScreenWidth,
-                Height = SystemParameters.VirtualScreenHeight,
+                Left = bounds.Left,
+                Top = bounds.Top,
+                Width = bounds.Width,
+                Height = bounds.Height,
                 WindowStartupLocation = WindowStartupLocation.Manual,
                 Content = root,
                 Opacity = 0
@@ -366,7 +404,7 @@ public static class FastUpdateHelper
         {
             _window.BeginAnimation(
                 UIElement.OpacityProperty,
-                new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(140))
+                new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(130))
                 {
                     EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
                 });

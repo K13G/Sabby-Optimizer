@@ -4,27 +4,23 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.17-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.18-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.17
+## Latest update — 0.23.18
 
-### Full UI revamp
-🟢 **+** Unified cards, buttons, fields, selectors, tooltips, scrollbars, spacing, and typography into a cleaner visual system.  
-🟢 **+** Refreshed all three base themes with clearer surfaces and less harsh contrast.  
-🟢 **+** Rebalanced Dashboard and Tweaks layouts to show more useful content with less empty space.
+### Update overlay
+🩷 **✓** Updating no longer closes Sabby immediately.  
+🟢 **+** A faded progress overlay now sits directly over the app while the installer downloads and verifies.  
+🟢 **+** Sabby closes only when the verified installer is ready to replace the application files.
 
-### Sidebar & navigation
-🩷 **✓** Added a reliable left-edge hover detector and delayed collapse so the expanding sidebar works consistently again.  
-🟢 **+** Cleaner navigation hover/selected states, icon spacing, workspace header, and title-bar chrome.
-
-### Layout
-🟢 **+** Dashboard hardware cards now use a compact 4 × 2 grid.  
-🟢 **+** Tweak cards, badges, toolbars, and status panels are denser and more consistent.  
-🩷 **✓** Existing performance/stability work remains intact; no heavy page-transition animations were added back.
+### Left hover menu
+🩷 **✓** Rebuilt sidebar expansion around its real width instead of a clipped fixed-width panel.  
+🩷 **✓** The expanded menu now has a real 226 px hit area over the workspace, while the collapsed rail remains 58 px.  
+🟢 **+** Edge hotspot, root-level edge detection, and delayed collapse remain as extra reliability layers.
 
 ## Change legend
 

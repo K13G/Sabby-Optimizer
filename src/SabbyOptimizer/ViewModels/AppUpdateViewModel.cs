@@ -1,4 +1,3 @@
-using System.Windows;
 using PCTweaker.Core.Mvvm;
 using PCTweaker.Core.Services;
 using PCTweaker.Models;
@@ -100,6 +99,7 @@ public sealed class AppUpdateViewModel : ViewModelBase
             return;
         }
 
-        Application.Current.Shutdown(0);
+        // Keep the visible optimizer open. The helper places a dimmed overlay over Sabby
+        // while it downloads/verifies and Setup closes the app only when installation begins.
     }
 }

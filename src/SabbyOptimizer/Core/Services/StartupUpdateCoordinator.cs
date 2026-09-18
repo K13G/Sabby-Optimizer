@@ -43,7 +43,7 @@ public sealed class StartupUpdateCoordinator
         var choice = MessageBox.Show(owner,
             $"Sabby Optimizer {release.LatestVersion} is required before continuing.\n\n" +
             (string.IsNullOrWhiteSpace(release.ReleaseNotes) ? "This update includes the latest fixes and improvements." : release.ReleaseNotes) +
-            "\n\nPress OK and the visible app will close immediately. The lightweight updater downloads the verified installer, installs it, and reopens Sabby. Your settings remain in Local AppData.",
+            "\n\nPress OK to update. Sabby stays visible under a faded update overlay while the installer downloads and verifies. The app closes only when installation is ready, then reopens automatically. Your settings remain in Local AppData.",
             "Sabby Optimizer - Update Required",
             MessageBoxButton.OKCancel,
             MessageBoxImage.Information);
@@ -62,6 +62,7 @@ public sealed class StartupUpdateCoordinator
             return;
         }
 
-        Application.Current.Shutdown(0);
+        // Do not close here. The updater overlays this window during download/verification.
+        // Inno Setup closes/replaces Sabby only after the verified installer is ready.
     }
 }
