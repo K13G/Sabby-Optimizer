@@ -360,6 +360,8 @@ public static class FastUpdateHelper
             };
         }
 
+        public void Show() => _window.Show();
+
         public void BeginFadeIn()
         {
             _window.BeginAnimation(
