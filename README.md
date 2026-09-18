@@ -4,23 +4,23 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.18-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.19-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.18
+## Latest update — 0.23.19
 
-### Update overlay
-🩷 **✓** Updating no longer closes Sabby immediately.  
-🟢 **+** A faded progress overlay now sits directly over the app while the installer downloads and verifies.  
-🟢 **+** Sabby closes only when the verified installer is ready to replace the application files.
+### Full repair & performance audit
+🩷 **✓** Fixed theme/style color persistence, exact-edge sidebar hover, draggable scrollbars, Debloat removal/scroll jumping, meter direction, and backup tab hitches.  
+🟢 **+** Expanded navigation now pushes the workspace aside instead of covering it.  
+🟢 **+** Debloat pages results 32 at a time to reduce WPF visual-tree memory.  
+🟢 **+** Expensive tweak/backup system work is kept off the UI dispatcher.  
+🟢 **+** The update overlay stays attached to the still-open Sabby window until installation is ready.  
+🔴 **−** Removed visible numbered development terminology and stray decorative lines.
 
-### Left hover menu
-🩷 **✓** Rebuilt sidebar expansion around its real width instead of a clipped fixed-width panel.  
-🩷 **✓** The expanded menu now has a real 226 px hit area over the workspace, while the collapsed rail remains 58 px.  
-🟢 **+** Edge hotspot, root-level edge detection, and delayed collapse remain as extra reliability layers.
+See **[BUG_AUDIT.md](BUG_AUDIT.md)** for the complete audit and every issue addressed.
 
 ## Change legend
 
