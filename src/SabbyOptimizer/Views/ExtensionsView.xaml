@@ -1,0 +1,149 @@
+<UserControl x:Class="PCTweaker.Views.ExtensionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <StackPanel>
+        <Grid Margin="0,0,0,16">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="PHASE 21" Style="{StaticResource EyebrowTextStyle}" />
+                <TextBlock Text="Update &amp; Extension System" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0" />
+                <TextBlock Text="Separate Sabby's own update channel from Windows/app updates, and extend the tweak catalog with validated declarative rule packs instead of arbitrary scripts."
+                           Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+
+        <Border Style="{StaticResource CardStyle}" Padding="18" Margin="0,0,0,14">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Sabby update channel" FontSize="17" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding ChannelHelp}" Margin="0,5,24,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1" Content="Auto-check on launch" IsChecked="{Binding AutoCheck, Mode=TwoWay}" VerticalAlignment="Top" />
+                </Grid>
+
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Channel" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                        <ComboBox ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel, Mode=TwoWay}" Margin="0,6,0,0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Manifest URL or local JSON file" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                        <TextBox Text="{Binding FeedUrl, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0" Padding="10,8" ToolTip="A channel manifest contains version, downloadUrl, optional sha256, releaseNotes, and publishedAt." />
+                    </StackPanel>
+                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Button Content="Check channel" Command="{Binding CheckChannelCommand}" MinWidth="112" />
+                        <Button Content="{Binding UpdateButtonText}" Command="{Binding StageUpdateCommand}" Style="{StaticResource PrimaryButtonStyle}" MinWidth="126" Margin="8,0,0,0" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource SubtlePanelStyle}">
+                        <StackPanel>
+                            <TextBlock Text="VERSION" FontSize="9" Foreground="{DynamicResource TextMutedBrush}" />
+                            <StackPanel Orientation="Horizontal" Margin="0,7,0,0">
+                                <TextBlock Text="{Binding CurrentVersion}" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock Text=" → " Margin="6,0" FontSize="18" Foreground="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding LatestVersion}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding UpdateStatus}" Margin="0,7,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                            <ProgressBar Value="{Binding DownloadProgress, Mode=OneWay}" Height="6" Margin="0,11,0,0" Style="{StaticResource PolishedProgressBarStyle}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource SubtlePanelStyle}">
+                        <StackPanel>
+                            <TextBlock Text="RELEASE NOTES" FontSize="9" Foreground="{DynamicResource TextMutedBrush}" />
+                            <TextBlock Text="{Binding ReleaseNotes}" Margin="0,7,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                            <TextBlock Margin="0,9,0,0" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap"
+                                       Text="Sabby stages the download and verifies SHA-256 when the channel manifest provides a hash. It never overwrites the executable while it is running." />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource CardStyle}" Padding="18">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Tweak-rule extensions" FontSize="17" FontWeight="SemiBold" />
+                        <TextBlock Text="Extensions are JSON rule packs. Phase 21 only accepts declarative HKCU/HKLM registry value rules—no PowerShell, command lines, DLL loading, or executable code. Imported extensions start disabled."
+                                   Margin="0,5,24,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                        <Button Content="Import JSON" Command="{Binding ImportExtensionCommand}" />
+                        <Button Content="Example" Command="{Binding CreateExampleCommand}" Margin="8,0,0,0" />
+                        <Button Content="Open folder" Command="{Binding OpenExtensionsFolderCommand}" Margin="8,0,0,0" />
+                        <Button Content="Refresh" Command="{Binding RefreshExtensionsCommand}" Margin="8,0,0,0" />
+                    </StackPanel>
+                </Grid>
+
+                <Border Margin="0,14,0,0" Padding="12" CornerRadius="8" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                    <TextBlock Text="{Binding ExtensionStatus}" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                </Border>
+
+                <ItemsControl ItemsSource="{Binding Extensions}" Margin="-5,10,-5,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><UniformGrid Columns="2" /></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource CardStyle}" Margin="5" Padding="15" MinHeight="190">
+                                <Grid>
+                                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                                <TextBlock Text="{Binding VersionText}" FontSize="10" Foreground="{DynamicResource AccentBrush}" />
+                                                <TextBlock Text=" • " FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                                <TextBlock Text="{Binding Author}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Padding="8,4" CornerRadius="9" Background="{DynamicResource AccentSubtleBrush}" VerticalAlignment="Top">
+                                            <TextBlock Text="{Binding StateLabel}" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" />
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Grid.Row="1" Margin="0,12,0,10">
+                                        <TextBlock Text="{Binding Description}" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding RulesText}" Margin="0,7,0,0" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" />
+                                        <TextBlock Text="{Binding FileName}" Margin="0,3,0,0" FontSize="9.5" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Status}" Margin="0,8,0,0" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <Grid Grid.Row="2">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Button Content="Enable / Disable" Command="{Binding ToggleCommand}" HorizontalAlignment="Left" />
+                                        <Button Grid.Column="1" Content="Remove" Command="{Binding RemoveCommand}" Style="{StaticResource DangerButtonStyle}" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Text="No tweak-rule extensions are installed. Use Example to create a safe disabled template, or Import JSON to add your own validated rule pack." Foreground="{DynamicResource TextMutedBrush}" Margin="0,10,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers><DataTrigger Binding="{Binding Extensions.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F5F7FA" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#EEF3F8" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#D8E0E8" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#17202A" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#556270" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#7F8A96" />
+    <Color x:Key="BrandAccentColor">#5B9DFF</Color>
+    <Color x:Key="AccentColor">#246FDB</Color>
+    <Color x:Key="AccentHoverColor">#1D5FBE</Color>
+    <Color x:Key="AccentSubtleColor">#E4EEFC</Color>
+    <Color x:Key="CardBorderColor">#3D5B9DFF</Color>
+    <Color x:Key="AccentGlowColor">#5C5B9DFF</Color>
+    <Color x:Key="AccentGradientStartColor">#5B9DFF</Color>
+    <Color x:Key="AccentGradientEndColor">#39D0FF</Color>
+
+    <SolidColorBrush x:Key="BrandAccentBrush" Color="{DynamicResource BrandAccentColor}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{DynamicResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentSubtleBrush" Color="{DynamicResource AccentSubtleColor}" />
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{DynamicResource CardBorderColor}" />
+    <SolidColorBrush x:Key="AccentGlowBrush" Color="{DynamicResource AccentGlowColor}" />
+    <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="{DynamicResource AccentGradientStartColor}" Offset="0" />
+        <GradientStop Color="{DynamicResource AccentGradientEndColor}" Offset="1" />
+    </LinearGradientBrush>
+</ResourceDictionary>

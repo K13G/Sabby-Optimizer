@@ -1,0 +1,60 @@
+<Application x:Class="PCTweaker.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:PCTweaker.ViewModels"
+             xmlns:views="clr-namespace:PCTweaker.Views"
+             ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Themes/DarkTheme.xaml" />
+                <ResourceDictionary Source="Resources/BaseStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                <views:DashboardView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:TweaksViewModel}">
+                <views:TweaksView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SystemToolsViewModel}">
+                <views:SystemToolsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:FixifyViewModel}">
+                <views:FixifyView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DebloatViewModel}"><views:DebloatView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PingViewModel}"><views:PingView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GpuDriverViewModel}"><views:GpuDriverView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:UpdateCenterViewModel}"><views:UpdateCenterView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ExtensionsViewModel}"><views:ExtensionsView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PresetsViewModel}">
+                <views:PresetsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GameProfilesViewModel}">
+                <views:GameProfilesView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GameConfigStudioViewModel}">
+                <views:GameConfigStudioView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:BenchmarkViewModel}">
+                <views:BenchmarkView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MonitoringViewModel}">
+                <views:MonitoringView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:BackupsViewModel}">
+                <views:BackupsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PcRestoreViewModel}">
+                <views:PcRestoreView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                <views:SettingsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CreditsViewModel}">
+                <views:CreditsView />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

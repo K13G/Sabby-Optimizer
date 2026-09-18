@@ -1,0 +1,339 @@
+<UserControl x:Class="PCTweaker.Views.PresetsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <StackPanel HorizontalAlignment="Stretch">
+        <Border Style="{StaticResource CardStyle}" Padding="24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="PRESET LIBRARY" Style="{StaticResource EyebrowTextStyle}" />
+                    <TextBlock Text="Build reusable configurations"
+                               Margin="0,7,0,0"
+                               FontSize="24"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="Create, capture, edit, duplicate, import, export, and delete named presets. Presets store supported tweak states rather than executable scripts."
+                               Margin="0,9,24,0"
+                               MaxWidth="880"
+                               HorizontalAlignment="Left"
+                               Style="{StaticResource PageDescriptionTextStyle}" />
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        Width="82"
+                        Height="82"
+                        CornerRadius="20"
+                        Background="{DynamicResource AccentSubtleBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="&#xE8FD;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="32"
+                               Foreground="{DynamicResource AccentBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Style="{StaticResource CardStyle}" Margin="0,16,0,0" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="1.8*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Preset name" Style="{StaticResource FieldLabelTextStyle}" Margin="0,0,0,7" />
+                    <TextBox Text="{Binding NewPresetName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Leave blank to use an automatic name." />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Description" Style="{StaticResource FieldLabelTextStyle}" Margin="0,0,0,7" />
+                    <TextBox Text="{Binding NewPresetDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button Content="Create preset"
+                            Command="{Binding CreatePresetCommand}"
+                            MinWidth="118" />
+                    <Button Content="Capture current"
+                            Command="{Binding CaptureCurrentCommand}"
+                            Margin="8,0,0,0"
+                            MinWidth="128" />
+                    <Button Content="Import"
+                            Command="{Binding ImportCommand}"
+                            Margin="8,0,0,0"
+                            MinWidth="90" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Margin="0,20,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Saved presets" Style="{StaticResource SectionHeadingTextStyle}" />
+                <Border Margin="10,0,0,0"
+                        Padding="8,3"
+                        CornerRadius="10"
+                        Background="{DynamicResource AccentSubtleBrush}">
+                    <TextBlock Text="{Binding PresetCountText}"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource AccentBrush}" />
+                </Border>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Border Width="280"
+                        Height="38"
+                        Background="{DynamicResource SurfaceBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="34" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="&#xE721;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Search preset names, descriptions, or tweak names" />
+                    </Grid>
+                </Border>
+                <Button Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Margin="8,0,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <Border Padding="12,10"
+                Margin="0,0,0,12"
+                CornerRadius="10"
+                Background="{DynamicResource SurfaceHoverBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1">
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <ItemsControl ItemsSource="{Binding FilteredPresets}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="20">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="19"
+                                                   FontWeight="SemiBold" />
+                                        <Border Margin="10,1,0,0"
+                                                Padding="8,3"
+                                                CornerRadius="10"
+                                                Background="{DynamicResource AccentSubtleBrush}"
+                                                VerticalAlignment="Top">
+                                            <TextBlock Text="{Binding EntryCountText}"
+                                                       FontSize="9"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource AccentBrush}" />
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Description}"
+                                               Margin="0,6,0,0"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding ModifiedText}"
+                                               Margin="0,6,0,0"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource TextMutedBrush}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                                    <Button Content="Edit" Command="{Binding EditCommand}" />
+                                    <Button Content="Duplicate" Command="{Binding DuplicateCommand}" Margin="8,0,0,0" />
+                                    <Button Content="Export" Command="{Binding ExportCommand}" Margin="8,0,0,0" />
+                                    <Button Content="Delete"
+                                            Command="{Binding RequestDeleteCommand}"
+                                            Style="{StaticResource DangerButtonStyle}"
+                                            Margin="8,0,0,0" />
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="{Binding Status}"
+                                       Margin="0,8,0,0"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       TextWrapping="Wrap" />
+
+                            <Border Margin="0,14,0,0"
+                                    Padding="16"
+                                    CornerRadius="12"
+                                    Background="{DynamicResource SurfaceHoverBrush}"
+                                    BorderBrush="{DynamicResource CardBorderBrush}"
+                                    BorderThickness="1"
+                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="16" />
+                                            <ColumnDefinition Width="2*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Name" Style="{StaticResource FieldLabelTextStyle}" Margin="0,0,0,6" />
+                                            <TextBox Text="{Binding EditName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Description" Style="{StaticResource FieldLabelTextStyle}" Margin="0,0,0,6" />
+                                            <TextBox Text="{Binding EditDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Grid Margin="0,18,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1.2*" />
+                                            <ColumnDefinition Width="2.2*" />
+                                            <ColumnDefinition Width="180" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Tweak" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                        <TextBlock Grid.Column="1" Text="Purpose" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                        <TextBlock Grid.Column="2" Text="Desired state" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                    </Grid>
+
+                                    <ItemsControl ItemsSource="{Binding TweakOptions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Padding="0,10"
+                                                        BorderBrush="{DynamicResource BorderBrush}"
+                                                        BorderThickness="0,1,0,0">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="1.2*" />
+                                                            <ColumnDefinition Width="2.2*" />
+                                                            <ColumnDefinition Width="180" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Margin="0,0,14,0">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                            <TextBlock Text="{Binding Category}"
+                                                                       Margin="0,3,0,0"
+                                                                       FontSize="9"
+                                                                       Foreground="{DynamicResource AccentBrush}" />
+                                                        </StackPanel>
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding Description}"
+                                                                   Margin="0,0,14,0"
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                   TextWrapping="Wrap"
+                                                                   VerticalAlignment="Center" />
+                                                        <ComboBox Grid.Column="2"
+                                                                  ItemsSource="{Binding StateChoices}"
+                                                                  SelectedItem="{Binding SelectedState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                  VerticalAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                                        <Button Content="Cancel" Command="{Binding CancelEditCommand}" />
+                                        <Button Content="Save preset"
+                                                Command="{Binding SaveEditCommand}"
+                                                Style="{StaticResource SuccessButtonStyle}"
+                                                Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,14,0,0"
+                                    Padding="14"
+                                    CornerRadius="10"
+                                    Background="#30D33B49"
+                                    BorderBrush="#A0D33B49"
+                                    BorderThickness="1"
+                                    Visibility="{Binding IsDeleteConfirmOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Delete this preset?" FontWeight="SemiBold" />
+                                        <TextBlock Text="This removes the saved preset file. It does not change Windows settings or backup snapshots."
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="Cancel" Command="{Binding CancelDeleteCommand}" />
+                                        <Button Content="Delete"
+                                                Command="{Binding ConfirmDeleteCommand}"
+                                                Style="{StaticResource DangerButtonStyle}"
+                                                Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Border Style="{StaticResource CardStyle}" Margin="0,4,0,0" Padding="18">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Width="44" Height="44" CornerRadius="12" Background="{DynamicResource AccentSubtleBrush}">
+                    <TextBlock Text="&#xE72E;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="19"
+                               Foreground="{DynamicResource AccentBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Margin="13,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Safe preset format" FontWeight="SemiBold" />
+                    <TextBlock Text="Imported and exported presets contain JSON metadata plus desired tweak states only. Sabby Optimizer does not execute scripts embedded in a preset file. Applying presets will be wired to verified tweak handlers as those handlers arrive in their dedicated phases."
+                               Margin="0,5,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>

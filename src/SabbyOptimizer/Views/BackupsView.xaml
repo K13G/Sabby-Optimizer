@@ -1,0 +1,327 @@
+<UserControl x:Class="PCTweaker.Views.BackupsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <StackPanel HorizontalAlignment="Stretch">
+        <Border Style="{StaticResource CardStyle}" Padding="24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="RESTORE CENTER" Style="{StaticResource EyebrowTextStyle}" />
+                    <TextBlock Text="Every supported change keeps a way back"
+                               Margin="0,7,0,0"
+                               FontSize="24"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="Phase 4 records original tweak states before changes, creates point-in-time snapshots, and restores either one tracked tweak or an entire supported snapshot through the same verified tweak engine."
+                               Margin="0,9,30,0"
+                               MaxWidth="920"
+                               HorizontalAlignment="Left"
+                               Style="{StaticResource PageDescriptionTextStyle}" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                        <Button Content="Create snapshot"
+                                Command="{Binding CreateSnapshotCommand}"
+                                Style="{StaticResource SuccessButtonStyle}" />
+                        <Button Content="Refresh history"
+                                Command="{Binding RefreshCommand}"
+                                Margin="10,0,0,0" />
+                        <Button Content="Restore original states"
+                                Command="{Binding RestoreOriginalsCommand}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Margin="10,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        Width="84"
+                        Height="84"
+                        CornerRadius="22"
+                        Background="{DynamicResource AccentSubtleBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="&#xE8B7;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="34"
+                               Foreground="{DynamicResource AccentBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.1*" />
+                <ColumnDefinition Width="14" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="46" Height="46" CornerRadius="13" Background="{DynamicResource AccentSubtleBrush}">
+                        <TextBlock Text="&#xE73E;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="20"
+                                   Foreground="{DynamicResource AccentBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="13,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Original-state protection" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding OriginalProtectedCountText}"
+                                   Margin="0,5,0,0"
+                                   Foreground="{DynamicResource AccentBrush}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="Each tweak's first detected state is stored once and never silently overwritten by a later apply or undo."
+                                   Margin="0,5,0,0"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="46" Height="46" CornerRadius="13" Background="{DynamicResource AccentSubtleBrush}">
+                        <TextBlock Text="&#xE9D2;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="20"
+                                   Foreground="{DynamicResource AccentBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="13,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Restore status" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding SnapshotCountText}"
+                                   Margin="0,5,0,0"
+                                   Foreground="{DynamicResource AccentBrush}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   Margin="0,5,0,0"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Margin="0,24,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Snapshot history" Style="{StaticResource SectionHeadingTextStyle}" />
+                <TextBlock Text="Manual snapshots record every visible tweak state the engine can detect at that moment."
+                           Margin="0,4,0,0"
+                           Foreground="{DynamicResource TextMutedBrush}" />
+            </StackPanel>
+            <Border Grid.Column="1"
+                    Padding="11,7"
+                    CornerRadius="13"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    VerticalAlignment="Center">
+                <TextBlock Text="{Binding SnapshotCountText}"
+                           FontSize="10"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource AccentBrush}" />
+            </Border>
+        </Grid>
+
+        <Grid>
+            <ItemsControl x:Name="SnapshotList" ItemsSource="{Binding Snapshots}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="18">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" FontSize="17" FontWeight="SemiBold" />
+                                            <Border Margin="9,0,0,0"
+                                                    Padding="8,3"
+                                                    CornerRadius="9"
+                                                    Background="{DynamicResource AccentSubtleBrush}">
+                                                <TextBlock Text="{Binding Kind}"
+                                                           FontSize="9"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource AccentBrush}" />
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding CreatedText}"
+                                                   Margin="0,5,0,0"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                                        <TextBlock Text="{Binding EntryCountText}"
+                                                   Margin="0,4,0,0"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource TextMutedBrush}" />
+                                        <TextBlock Text="{Binding Status}"
+                                                   Margin="0,5,0,0"
+                                                   Foreground="{DynamicResource AccentBrush}"
+                                                   TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="{Binding ExpandButtonText}"
+                                                Command="{Binding ToggleExpandedCommand}" />
+                                        <Button Content="Restore snapshot"
+                                                Command="{Binding RestoreSnapshotCommand}"
+                                                Margin="8,0,0,0" />
+                                        <Button Content="Delete"
+                                                Command="{Binding DeleteSnapshotCommand}"
+                                                Style="{StaticResource DangerButtonStyle}"
+                                                Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Border Margin="0,15,0,0"
+                                        Padding="12"
+                                        CornerRadius="10"
+                                        Background="{DynamicResource SurfaceHoverBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <StackPanel>
+                                        <Grid Margin="4,0,4,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1.1*" />
+                                                <ColumnDefinition Width="130" />
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="120" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Tweak" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Grid.Column="1" Text="Captured" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Grid.Column="2" Text="Details" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Grid.Column="3" Text="Restore" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </Grid>
+
+                                        <ItemsControl ItemsSource="{Binding Entries}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="4,10">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="1.1*" />
+                                                                <ColumnDefinition Width="130" />
+                                                                <ColumnDefinition Width="2*" />
+                                                                <ColumnDefinition Width="120" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding RestoreAvailability}" Margin="0,3,0,0" FontSize="9" Foreground="{DynamicResource TextMutedBrush}" />
+                                                            </StackPanel>
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="{Binding CapturedState}"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="{DynamicResource AccentBrush}"
+                                                                       FontWeight="SemiBold" />
+                                                            <StackPanel Grid.Column="2" Margin="0,0,14,0" VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding Detail}"
+                                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                           TextWrapping="Wrap" />
+                                                                <TextBlock Text="{Binding Status}"
+                                                                           Margin="0,3,0,0"
+                                                                           FontSize="9"
+                                                                           Foreground="{DynamicResource AccentBrush}"
+                                                                           TextWrapping="Wrap" />
+                                                            </StackPanel>
+                                                            <Button Grid.Column="3"
+                                                                    Content="Restore"
+                                                                    Command="{Binding RestoreCommand}"
+                                                                    IsEnabled="{Binding CanRestore}"
+                                                                    VerticalAlignment="Center" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Padding="24"
+                    CornerRadius="14"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=SnapshotList, Path=HasItems}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE8B7;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="28"
+                               Foreground="{DynamicResource AccentBrush}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="No snapshots yet"
+                               Margin="0,10,0,0"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Create a snapshot to record the current state of every tweak visible to the engine."
+                               Margin="0,6,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               TextAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Style="{StaticResource CardStyle}" Margin="0,6,0,0" Padding="18">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Width="42" Height="42" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}">
+                    <TextBlock Text="&#xE72E;"
+                               FontFamily="Segoe MDL2 Assets"
+                               Foreground="{DynamicResource AccentBrush}"
+                               FontSize="18"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Margin="13,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Phase 4 restore rule" FontWeight="SemiBold" />
+                    <TextBlock Text="Sabby Optimizer never guesses an unknown state back into place. Applied and Not Applied states can be restored through verified handlers; Custom, Unavailable, and detection-error states remain recorded for history but are not blindly changed."
+                               Margin="0,5,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>
