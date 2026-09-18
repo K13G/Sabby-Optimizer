@@ -288,7 +288,7 @@ public sealed class AppearanceService : IAppearanceService
 
     private static Color CycleColor(Color first, Color second, Color third, double position)
     {
-        position -= Math.Floor(phase);
+        position -= Math.Floor(position);
         if (position < 1d / 3d) return Lerp(first, second, position * 3d);
         if (position < 2d / 3d) return Lerp(second, third, (position - (1d / 3d)) * 3d);
         return Lerp(third, first, (position - (2d / 3d)) * 3d);
