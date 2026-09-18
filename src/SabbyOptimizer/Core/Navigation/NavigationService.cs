@@ -6,6 +6,7 @@ public sealed class NavigationService : INavigationService
 {
     private readonly Dictionary<AppPage, Func<ViewModelBase>> _factories = new();
     private readonly Dictionary<AppPage, ViewModelBase> _cache = new();
+    private bool _isNavigating;
 
     public AppPage CurrentPage { get; private set; } = AppPage.Dashboard;
     public ViewModelBase? CurrentViewModel { get; private set; }
@@ -40,17 +41,48 @@ public sealed class NavigationService : INavigationService
 
     public void NavigateTo(AppPage page)
     {
+        if (_isNavigating)
+            return;
+
+        if (CurrentPage == page && CurrentViewModel is not null)
+            return;
+
         if (!_factories.TryGetValue(page, out var factory))
             throw new InvalidOperationException($"No page factory is registered for {page}.");
 
-        if (!_cache.TryGetValue(page, out var viewModel))
+        var previousPage = CurrentPage;
+        var previousViewModel = CurrentViewModel;
+        _isNavigating = true;
+        try
         {
-            viewModel = factory();
-            _cache[page] = viewModel;
-        }
+            if (!_cache.TryGetValue(page, out var viewModel))
+            {
+                viewModel = factory();
+                _cache[page] = viewModel;
+            }
 
-        CurrentPage = page;
-        CurrentViewModel = viewModel;
-        Navigated?.Invoke(this, EventArgs.Empty);
+            CurrentPage = page;
+            CurrentViewModel = viewModel;
+
+            var handlers = Navigated?.GetInvocationList();
+            if (handlers is not null)
+            {
+                foreach (EventHandler handler in handlers)
+                {
+                    try { handler(this, EventArgs.Empty); }
+                    catch { }
+                }
+            }
+        }
+        catch
+        {
+            CurrentPage = previousPage;
+            CurrentViewModel = previousViewModel;
+            throw;
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 }
