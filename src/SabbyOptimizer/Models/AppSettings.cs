@@ -53,7 +53,7 @@ public sealed class AppSettings
         AnimationSpeed = Math.Clamp(AnimationSpeed, 0, 200);
         CardColumns = Math.Clamp(CardColumns, 1, 4);
         if (!Enum.IsDefined(SabbyUpdateChannel)) SabbyUpdateChannel = SabbyUpdateChannel.Stable;
-        StableUpdateFeedUrl ??= string.Empty;
+        StableUpdateFeedUrl = PCTweaker.Core.Services.SabbyUpdateDefaults.NormalizeStableFeed(StableUpdateFeedUrl);
         PreviewUpdateFeedUrl ??= string.Empty;
         NightlyUpdateFeedUrl ??= string.Empty;
         MonitoringRefreshIntervalMs = Math.Clamp(MonitoringRefreshIntervalMs, 750, 10000);

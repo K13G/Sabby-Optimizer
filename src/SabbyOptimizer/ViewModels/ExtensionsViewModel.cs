@@ -330,10 +330,10 @@ public sealed class ExtensionsViewModel : ViewModelBase
 
     private string GetFeedUrl(SabbyUpdateChannel channel) => channel switch
     {
-        SabbyUpdateChannel.Stable => _settings.Current.StableUpdateFeedUrl,
+        SabbyUpdateChannel.Stable => SabbyUpdateDefaults.NormalizeStableFeed(_settings.Current.StableUpdateFeedUrl),
         SabbyUpdateChannel.Preview => _settings.Current.PreviewUpdateFeedUrl,
         SabbyUpdateChannel.Nightly => _settings.Current.NightlyUpdateFeedUrl,
-        _ => string.Empty
+        _ => SabbyUpdateDefaults.GetBuiltInStableFeedUrl()
     };
 
     private async Task SaveSettingsAsync()

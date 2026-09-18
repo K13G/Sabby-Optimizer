@@ -27,15 +27,11 @@ public sealed class StartupUpdateCoordinator
         // app is already responsive.
         await Task.Delay(1400, cancellationToken);
 
-        var feed = _settings.Current.StableUpdateFeedUrl;
-        if (string.IsNullOrWhiteSpace(feed))
+        var feed = SabbyUpdateDefaults.NormalizeStableFeed(_settings.Current.StableUpdateFeedUrl);
+        if (!string.Equals(_settings.Current.StableUpdateFeedUrl, feed, StringComparison.Ordinal))
         {
-            feed = SabbyUpdateDefaults.GetBuiltInStableFeedUrl();
-            if (!string.IsNullOrWhiteSpace(feed))
-            {
-                _settings.Current.StableUpdateFeedUrl = feed;
-                try { await _settings.SaveAsync(); } catch { }
-            }
+            _settings.Current.StableUpdateFeedUrl = feed;
+            try { await _settings.SaveAsync(); } catch { }
         }
 
         if (!_settings.Current.AutoCheckSabbyUpdates || string.IsNullOrWhiteSpace(feed))
