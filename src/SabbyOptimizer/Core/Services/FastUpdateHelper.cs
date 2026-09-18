@@ -306,7 +306,6 @@ public static class FastUpdateHelper
                 FontSize = 10,
                 FontWeight = FontWeights.Bold,
                 Foreground = accent,
-                CharacterSpacing = 120,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 15)
             };
