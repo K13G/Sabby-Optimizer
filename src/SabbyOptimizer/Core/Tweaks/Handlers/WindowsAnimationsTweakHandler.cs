@@ -32,7 +32,7 @@ public sealed class WindowsAnimationsTweakHandler : ITweakHandler
             return Task.FromResult(TweakDetectionResult.Error("Windows did not return the client-area animation setting."));
 
         return Task.FromResult(!enabled
-            ? new TweakDetectionResult(TweakStateKind.Applied, "Animations off", "Windows client-area animations are disabled.", false, _previousEnabled.HasValue)
+            ? new TweakDetectionResult(TweakStateKind.Applied, "Animations off", "Windows client-area animations are disabled.", false, true)
             : new TweakDetectionResult(TweakStateKind.NotApplied, "Animations on", "Windows client-area animations are enabled.", true, false));
     }
 

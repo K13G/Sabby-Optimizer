@@ -41,7 +41,7 @@ public sealed class GameCaptureTweakHandler : ITweakHandler
             var captureValue = Convert.ToInt32(capture);
             var storeValue = Convert.ToInt32(store);
             if (captureValue == 0 && storeValue == 0)
-                return Task.FromResult(new TweakDetectionResult(TweakStateKind.Applied, "Capture off", "Windows game capture is disabled for this user.", false, _previousCaptured));
+                return Task.FromResult(new TweakDetectionResult(TweakStateKind.Applied, "Capture off", "Windows game capture is disabled for this user.", false, true));
             if (captureValue != 0 && storeValue != 0)
                 return Task.FromResult(new TweakDetectionResult(TweakStateKind.NotApplied, "Capture on", "Windows game capture is enabled for this user.", true, false));
         }

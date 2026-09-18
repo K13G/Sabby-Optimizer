@@ -1,6 +1,6 @@
-; Sabby Optimizer 0.23.14 installer definition (Inno Setup 7/6)
+; Sabby Optimizer 0.23.15 installer definition (Inno Setup 7/6)
 #ifndef AppVersion
-  #define AppVersion "0.23.14"
+  #define AppVersion "0.23.15"
 #endif
 #ifndef SourceDir
   #define SourceDir "..\artifacts\publish\win-x64"
@@ -8,7 +8,6 @@
 #ifndef OutputDir
   #define OutputDir "..\artifacts\installer"
 #endif
-
 #ifndef AppIcon
   #define AppIcon "..\SabbyOptimizer\Resources\AppIcon.ico"
 #endif
@@ -68,8 +67,6 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usPostUninstall then
   begin
-    { Intentionally preserve %LOCALAPPDATA%\SabbyOptimizer user settings, backups,
-      presets, game profiles and migration snapshots. A normal uninstall never
-      destroys persistent user data. }
+    { User settings/data are intentionally preserved under Local AppData. }
   end;
 end;

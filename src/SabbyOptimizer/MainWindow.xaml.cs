@@ -708,9 +708,13 @@ public partial class MainWindow : Window
         transform.BeginAnimation(TranslateTransform.XProperty, slide, HandoffBehavior.SnapshotAndReplace);
     }
 
+    private void SidebarEdgeHotspot_MouseEnter(object sender, MouseEventArgs e) => SetSidebarExpanded(true);
+
     private void SidebarHost_MouseEnter(object sender, MouseEventArgs e) => SetSidebarExpanded(true);
 
     private void SidebarHost_MouseLeave(object sender, MouseEventArgs e) => SetSidebarExpanded(false);
+
+    private void RootLayout_MouseLeave(object sender, MouseEventArgs e) => SetSidebarExpanded(false);
 
     private void SetSidebarExpanded(bool expanded)
     {

@@ -76,14 +76,14 @@ public sealed class TweakCardViewModel : ViewModelBase
         : _state.State == TweakStateKind.Unknown
             ? "Ready"
             : IsActivated
-                ? (CanUndo ? "Deactivate" : "Active • protected")
+                ? (CanUndo ? "Deactivate" : "Already on")
                 : _state.State is TweakStateKind.Unavailable or TweakStateKind.Error
                     ? "Not supported"
                     : (CanApply ? "Activate" : "Checked");
     public string ToggleHint => _state.State == TweakStateKind.Unknown
         ? "Click once. Sabby will detect compatibility and current state, then safely apply when appropriate."
         : IsProtectedActive
-            ? "This setting was already active before Sabby captured a rollback state. Sabby will not guess an unsafe default; use Info to see the exact Windows setting."
+            ? "This recommended state was already active before Sabby opened. Nothing needs to be applied. Sabby will not invent a rollback value for a setting it did not change; Info shows the exact Windows control."
             : CanApply || CanUndo
                 ? "Click to change this setting with read-back verification."
                 : "This control is not currently changeable on this PC. Click for the detected reason.";
@@ -318,7 +318,7 @@ public sealed class TweakCardViewModel : ViewModelBase
         // Do not grey out a detected-on switch with no explanation. A pre-existing state may not
         // have a Sabby rollback record, and guessing the old value would violate rollback safety.
         var message = IsProtectedActive
-            ? "Detected as active, but Sabby has no pre-change rollback value because this setting was already on. Open Info for the exact Windows mechanism."
+            ? "Already optimized before Sabby opened. Sabby did not change this setting, so it will not invent a rollback value. Open Info for the exact Windows control if you want to change it manually."
             : string.IsNullOrWhiteSpace(CompatibilityText) ? "This setting is not changeable on this PC." : CompatibilityText;
         OperationMessage = message;
         UiNotificationHub.Publish(Name, message, UiNotificationKind.Warning);

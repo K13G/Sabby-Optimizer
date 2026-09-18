@@ -4,8 +4,13 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="TweakCardMotionStyle" TargetType="Border">
-            <!-- Keep dense tweak grids compositor-stable: no per-card hover storyboards. -->
             <Setter Property="RenderTransform" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <Style x:Key="TweakCategoryListStyle" TargetType="ListBox">
             <Setter Property="Background" Value="Transparent" />
@@ -211,7 +216,7 @@
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                     <Border Height="26" Padding="8,0" Margin="0,0,6,0" CornerRadius="7" Background="{DynamicResource SurfaceHoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                                        <TextBlock Text="{Binding CategoryLabel}" FontSize="8.5" Margin="0,1,0,0" TextAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding CategoryLabel}" FontSize="8.5" Margin="0" LineHeight="12" LineStackingStrategy="BlockLineHeight" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
                                     </Border>
                                     <Border Height="26" Padding="8,0" CornerRadius="7">
                                         <Border.Style>
@@ -231,7 +236,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock Text="{Binding SafetyLabel}" FontSize="8.5" Margin="0,1,0,0" TextAlignment="Center" FontWeight="SemiBold" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SafetyLabel}" FontSize="8.5" Margin="0" LineHeight="12" LineStackingStrategy="BlockLineHeight" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
@@ -309,11 +314,6 @@
                                                     <Setter TargetName="SwitchThumb" Property="Fill" Value="White" />
                                                     <DataTrigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="16" Duration="0:0:0.11" /></Storyboard></BeginStoryboard></DataTrigger.EnterActions>
                                                     <DataTrigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.11" /></Storyboard></BeginStoryboard></DataTrigger.ExitActions>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsProtectedActive}" Value="True">
-                                                    <Setter TargetName="SwitchTrack" Property="Background" Value="#9A6B20" />
-                                                    <Setter TargetName="SwitchTrack" Property="BorderBrush" Value="#D69B35" />
-                                                    <Setter TargetName="SwitchThumb" Property="Fill" Value="White" />
                                                 </DataTrigger>
                                                 <Trigger Property="IsMouseOver" Value="True"><Setter Property="Opacity" Value="0.92" /></Trigger>
                                             </ControlTemplate.Triggers>

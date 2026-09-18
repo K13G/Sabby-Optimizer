@@ -28,7 +28,7 @@
                             UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
-    <Grid x:Name="RootLayout">
+    <Grid x:Name="RootLayout" MouseLeave="RootLayout_MouseLeave">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="SidebarColumn" Width="54" />
             <ColumnDefinition Width="*" />
@@ -120,6 +120,15 @@
                 </StackPanel>
             </Grid>
         </Border>
+
+        <!-- Tiny screen-edge trigger that never covers the navigation icons. -->
+        <Border x:Name="SidebarEdgeHotspot"
+                Grid.Row="1" Grid.Column="0"
+                Panel.ZIndex="2100"
+                Width="10"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                MouseEnter="SidebarEdgeHotspot_MouseEnter" />
 
         <!-- Compact icon rail that expands only while hovered. -->
         <Border x:Name="SidebarHost"

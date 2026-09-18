@@ -167,7 +167,7 @@
                                 CornerRadius="9"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
-                            <ContentPresenter Margin="0,1,0,0" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+                            <ContentPresenter Margin="0" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="True" />
                         </Border>
                         <Border x:Name="HoverOverlay"
                                 Background="{DynamicResource AccentSubtleBrush}"
@@ -178,7 +178,19 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.24" />
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.22" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard><Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity"
+                                                     From="0" To="0.22" Duration="0:0:0.09" FillBehavior="Stop" />
+                                </Storyboard></BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard><Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity"
+                                                     From="0.22" To="0" Duration="0:0:0.10" FillBehavior="Stop" />
+                                </Storyboard></BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True"><Setter TargetName="Root" Property="Opacity" Value="0.82" /></Trigger>
                         <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.48" /></Trigger>
@@ -222,7 +234,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="7"
                             Padding="{TemplateBinding Padding}">
-                        <ContentPresenter VerticalAlignment="Center" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -591,7 +603,7 @@
                             <ControlTemplate TargetType="ListBoxItem">
                                 <Border x:Name="Root" Background="Transparent" CornerRadius="9" SnapsToDevicePixels="True">
                                     <Grid>
-                                        <Border x:Name="HoverGlow" CornerRadius="9" Background="{DynamicResource SurfaceHoverBrush}" Opacity="0" />
+                                        <Border x:Name="HoverGlow" CornerRadius="9" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" Opacity="0" />
                                         <Border x:Name="SelectedGlow" CornerRadius="9" Background="{DynamicResource AccentSubtleBrush}" Opacity="0" />
                                         <ContentPresenter x:Name="NavContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                         <Border x:Name="Indicator"
@@ -605,7 +617,19 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="HoverGlow" Property="Opacity" Value="1" />
+                                        <Setter TargetName="HoverGlow" Property="Opacity" Value="0.56" />
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard><Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="HoverGlow" Storyboard.TargetProperty="Opacity"
+                                                                 From="0" To="0.56" Duration="0:0:0.08" FillBehavior="Stop" />
+                                            </Storyboard></BeginStoryboard>
+                                        </Trigger.EnterActions>
+                                        <Trigger.ExitActions>
+                                            <BeginStoryboard><Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="HoverGlow" Storyboard.TargetProperty="Opacity"
+                                                                 From="0.56" To="0" Duration="0:0:0.10" FillBehavior="Stop" />
+                                            </Storyboard></BeginStoryboard>
+                                        </Trigger.ExitActions>
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter TargetName="SelectedGlow" Property="Opacity" Value="1" />

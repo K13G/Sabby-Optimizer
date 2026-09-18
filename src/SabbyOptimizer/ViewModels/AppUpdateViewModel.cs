@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using PCTweaker.Core.Mvvm;
 using PCTweaker.Core.Services;
@@ -32,7 +30,7 @@ public sealed class AppUpdateViewModel : ViewModelBase
     public string CurrentVersion => _release?.CurrentVersion ?? typeof(AppUpdateViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.0.0";
     public string LatestVersion => _release?.LatestVersion ?? "Checking…";
     public bool UpdateAvailable => _release?.UpdateAvailable == true;
-    public string UpdateButtonText => UpdateAvailable ? "Install update & restart" : "Up to date";
+    public string UpdateButtonText => UpdateAvailable ? "Update now" : "Up to date";
     public string UpdateStatus { get => _updateStatus; private set => SetProperty(ref _updateStatus, value); }
     public string ReleaseNotes { get => _releaseNotes; private set => SetProperty(ref _releaseNotes, value); }
     public double DownloadProgress { get => _downloadProgress; private set => SetProperty(ref _downloadProgress, Math.Clamp(value, 0, 100)); }
@@ -94,30 +92,14 @@ public sealed class AppUpdateViewModel : ViewModelBase
         }
 
         IsBusy = true;
-        DownloadProgress = 0;
-        try
+        UpdateStatus = "Starting Sabby's fast updater…";
+        if (!FastUpdateHelper.TryStart(_release, out var error))
         {
-            UpdateStatus = $"Downloading Sabby {_release.LatestVersion}…";
-            var progress = new Progress<double>(value => DownloadProgress = value);
-            var staged = await _service.DownloadAndStageUpdateAsync(_release, progress);
-            if (!staged.Success || string.IsNullOrWhiteSpace(staged.FilePath) || !File.Exists(staged.FilePath))
-            {
-                UpdateStatus = $"Update could not be installed safely: {staged.Message}";
-                return;
-            }
-
-            UpdateStatus = "Update verified. Approve the Windows administrator prompt; Sabby will reopen automatically.";
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = staged.FilePath,
-                UseShellExecute = true,
-                Verb = "runas",
-                Arguments = "/VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /NORESTART"
-            });
-            Application.Current.Shutdown(0);
+            UpdateStatus = error;
+            IsBusy = false;
+            return;
         }
-        catch (Win32Exception ex) when (ex.NativeErrorCode == 1223) { UpdateStatus = "Update cancelled at the Windows administrator prompt."; }
-        catch (Exception ex) { UpdateStatus = $"Update installation could not start: {ex.Message}"; }
-        finally { IsBusy = false; }
+
+        Application.Current.Shutdown(0);
     }
 }

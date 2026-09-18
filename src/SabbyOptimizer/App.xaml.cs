@@ -25,6 +25,12 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        if (await FastUpdateHelper.TryRunHelperAsync(e.Args))
+        {
+            Shutdown(0);
+            return;
+        }
+
         if (TryRunNvApiHelperCommand(e.Args))
             return;
 
@@ -80,23 +86,25 @@ public partial class App : Application
             var updateExtensions = new Phase21UpdateExtensionService(paths, _logger);
             var startupService = new AppStartupService(_logger);
             var hardwareInfo = new HardwareInfoService(_logger);
+            var hardwareTask = Task.Run(hardwareInfo.GetHardwareInfo);
+
             var quickHardware = new HardwareInfo
             {
                 DeviceName = Environment.MachineName,
-                Processor = "Detecting…",
-                ProcessorDetails = "Background hardware discovery",
-                Graphics = "Detecting…",
-                GraphicsDetails = "Background hardware discovery",
-                Memory = "Detecting…",
-                MemoryDetails = "Background hardware discovery",
-                Motherboard = "Detecting…",
-                MotherboardDetails = "Background hardware discovery",
+                Processor = "Loading…",
+                ProcessorDetails = "Hardware scan running in parallel",
+                Graphics = "Loading…",
+                GraphicsDetails = "Hardware scan running in parallel",
+                Memory = "Loading…",
+                MemoryDetails = "Hardware scan running in parallel",
+                Motherboard = "Loading…",
+                MotherboardDetails = "Hardware scan running in parallel",
                 Windows = "Windows",
-                WindowsDetails = "Background hardware discovery",
+                WindowsDetails = "Hardware scan running in parallel",
                 SystemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:",
-                Network = "Detecting…",
-                NetworkDetails = "Background adapter discovery",
-                SupportedFeatures = "Loading hardware-aware controls…"
+                Network = "Loading…",
+                NetworkDetails = "Hardware scan running in parallel",
+                SupportedFeatures = "Core controls ready"
             };
 
             var backupRepository = new BackupRepository(paths, _logger);
@@ -160,7 +168,7 @@ public partial class App : Application
             _ = RunStartupUpdateCheckAsync(mainWindow, updateExtensions, settings, paths);
             _ = RunReleaseMigrationAsync(paths, settings);
             _ = UpgradeHardwareAwarePagesAsync(
-                navigation, dashboardViewModel, hardwareInfo, updateExtensions, settings, paths,
+                navigation, dashboardViewModel, hardwareInfo, hardwareTask, settings, paths,
                 backupRepository, gameProfileService, gameScanService, maintenanceService,
                 pingService);
 
@@ -229,7 +237,7 @@ public partial class App : Application
     {
         try
         {
-            var coordinator = new StartupUpdateCoordinator(updateExtensions, settings, paths, _logger!);
+            var coordinator = new StartupUpdateCoordinator(updateExtensions, settings, _logger!);
             await coordinator.CheckAndEnforceAsync(owner);
         }
         catch (Exception ex)
@@ -269,7 +277,7 @@ public partial class App : Application
         NavigationService navigation,
         DashboardViewModel dashboard,
         HardwareInfoService hardwareInfo,
-        Phase21UpdateExtensionService updateExtensions,
+        Task<HardwareInfo> hardwareTask,
         ISettingsService settings,
         IAppPaths paths,
         BackupRepository backupRepository,
@@ -280,21 +288,12 @@ public partial class App : Application
     {
         try
         {
-            // Keep process-heavy CIM/PowerShell work completely out of the first interaction window.
-            // Give the first frame a short interaction grace period, then start capability discovery quickly.
-            // Navigation never waits for this work, and tweak states remain lazy/on-demand.
-            await Task.Delay(3500);
-            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromSeconds(30));
-
-            var hardware = await Task.Run(hardwareInfo.GetHardwareInfo);
+            var hardware = await hardwareTask;
             dashboard.UpdateHardware(hardware);
 
-            var fullCatalog = await Task.Run(() =>
-            {
-                var builtIn = TweakCatalog.CreatePhase16Catalog(paths, hardware);
-                var extensions = updateExtensions.LoadEnabledHandlers();
-                return builtIn.Concat(extensions).ToArray();
-            });
+            // Keep one tiny render grace period, not the old 3.5s + up-to-30s intentional wait.
+            await Task.Delay(180);
+            var fullCatalog = await Task.Run(() => TweakCatalog.CreatePhase16Catalog(paths, hardware));
 
             var fullEngine = new TweakEngine(fullCatalog, _logger!, backupRepository);
             var selfCheck = await Task.Run(async () => await TweakEngineSelfCheck.RunAsync(fullEngine, _logger!));

@@ -41,7 +41,7 @@ public sealed class GameModeTweakHandler : ITweakHandler
 
         var value = Convert.ToInt32(raw);
         return Task.FromResult(value != 0
-            ? new TweakDetectionResult(TweakStateKind.Applied, "Enabled", "Windows Game Mode is enabled for this user.", false, _previousCaptured)
+            ? new TweakDetectionResult(TweakStateKind.Applied, "Enabled", "Windows Game Mode is enabled for this user.", false, true)
             : new TweakDetectionResult(TweakStateKind.NotApplied, "Disabled", "Windows Game Mode is disabled for this user.", true, false));
     }
 

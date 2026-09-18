@@ -114,7 +114,7 @@ public sealed class TweaksViewModel : ViewModelBase
     public string FpsControlCountText => $"{Tweaks.Count(x => FpsIds.Contains(x.Definition.Id))} FPS/frame-time";
     public string ActiveCountText => $"{Tweaks.Count(x => x.IsActivated)} active";
     public string ReadyCountText => $"{Tweaks.Count(x => x.CanApply || x.IsStatePending)} ready/check";
-    public string ProtectedCountText => $"{Tweaks.Count(x => x.IsActivated && !x.CanUndo)} detected-on / protected";
+    public string ProtectedCountText => $"{Tweaks.Count(x => x.IsActivated && !x.CanUndo)} already optimized";
 
     // Compatibility shim for a previous Tweaks template. Keep writable so stale/cached XAML
     // can never surface a TwoWay-to-read-only binding failure.
