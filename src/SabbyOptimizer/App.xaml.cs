@@ -247,8 +247,7 @@ public partial class App : Application
     private static async Task WaitForCapabilityDemandAsync(NavigationService navigation, TimeSpan idleTimeout)
     {
         static bool NeedsFullCapabilities(AppPage page) => page is
-            AppPage.Tweaks or AppPage.Ping or AppPage.GpuDriver or AppPage.Fixify or
-            AppPage.GameProfiles or AppPage.Benchmark or AppPage.Backups;
+            AppPage.GpuDriver or AppPage.GameProfiles;
 
         if (NeedsFullCapabilities(navigation.CurrentPage))
             return;
@@ -292,7 +291,7 @@ public partial class App : Application
             // Give the first frame a short interaction grace period, then start capability discovery quickly.
             // Navigation never waits for this work, and tweak states remain lazy/on-demand.
             await Task.Delay(1200);
-            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromMilliseconds(2200));
+            await WaitForCapabilityDemandAsync(navigation, TimeSpan.FromMilliseconds(8000));
 
             var hardware = await Task.Run(hardwareInfo.GetHardwareInfo);
             dashboard.UpdateHardware(hardware);
