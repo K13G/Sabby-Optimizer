@@ -170,7 +170,7 @@
                         <RowDefinition Height="84" />
                         <RowDefinition Height="11" />
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="96" />
+                        <RowDefinition Height="0" />
                     </Grid.RowDefinitions>
 
                     <!-- Phase 22: both brand states occupy the same fixed anchor. The sidebar
@@ -259,7 +259,7 @@
                     </ListBox>
 
                     <!-- Compact footer actions stay visible in fullscreen and remain side-by-side. -->
-                    <Border Grid.Row="3" Panel.ZIndex="150" Height="72"
+                    <Border Grid.Row="3" Panel.ZIndex="150" Height="0" Visibility="Collapsed"
                             Background="{DynamicResource SidebarBrush}"
                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
                         <Grid Width="216" HorizontalAlignment="Left">
@@ -324,6 +324,80 @@
                     </Border>
                 </Grid>
             </Grid>
+        </Border>
+
+        <!-- Settings/Credits live outside the clipped hover rail so both stay visible at every window size. -->
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                Panel.ZIndex="920"
+                Width="104" Height="56"
+                Margin="7,0,0,10"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Background="#E60D0F12"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="18">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Command="{Binding OpenSettingsCommand}"
+                        Width="40" Height="40" MinHeight="40" Padding="0"
+                        Background="Transparent" BorderThickness="0"
+                        ToolTip="Settings"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
+                                <Border x:Name="Bubble" Width="34" Height="34" CornerRadius="17"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Command="{Binding OpenCreditsCommand}"
+                        Width="40" Height="40" MinHeight="40" Padding="0" Margin="6,0,0,0"
+                        Background="Transparent" BorderThickness="0"
+                        ToolTip="Credits"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
+                                <Border x:Name="Bubble" Width="34" Height="34" CornerRadius="17"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsCreditsSelected}" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
         </Border>
 
         <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10" ClipToBounds="True">
@@ -413,7 +487,7 @@
                     <ContentControl x:Name="MainContentHost"
                                     Content="{Binding CurrentViewModel, NotifyOnTargetUpdated=True}"
                                     TargetUpdated="MainContentHost_TargetUpdated"
-                                    Margin="24,20,24,28"
+                                    Margin="22,18,22,24"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Stretch"
                                     VerticalContentAlignment="Stretch" />
