@@ -196,6 +196,13 @@ public partial class MainWindow : Window
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (msg == WmGetMinMaxInfo)
+        {
+            ApplyMonitorWorkArea(hwnd, lParam);
+            handled = true;
+            return IntPtr.Zero;
+        }
+
         if (msg != WmAppTray)
             return IntPtr.Zero;
 
