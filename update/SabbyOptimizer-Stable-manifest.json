@@ -1,9 +1,9 @@
 {
-  "version": "0.23.9",
-  "downloadUrl": "https://github.com/mrcoem/mrcoem/releases/download/v0.23.9/SabbyOptimizer-0.23.9-Setup.exe",
-  "sha256": "DF6B0C1ECE06C6CFF2294FA65BE9F90BDDA558AA1EEBE8C0CF60DD1DA13A6427",
+  "version": "0.23.10",
+  "downloadUrl": "https://github.com/mrcoem/mrcoem/releases/download/v0.23.10/SabbyOptimizer-0.23.10-Setup.exe",
+  "sha256": "E9AD7ED24BEA5AE2E160B639EA89736CE48E75C6C9328EB8AABE30B8E5A0D55D",
   "signerThumbprint": null,
-  "releaseNotes": "Sabby Optimizer 0.23.9 (Stable)",
+  "releaseNotes": "Sabby Optimizer 0.23.10 (Stable)",
   "mandatory": true,
-  "publishedAt": "2026-09-18T19:27:20.6715776Z"
+  "publishedAt": "2026-09-18T19:54:29.5647529Z"
 }
