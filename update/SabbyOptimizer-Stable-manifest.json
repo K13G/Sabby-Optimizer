@@ -1,9 +1,9 @@
 {
   "version": "0.23.8",
   "downloadUrl": "https://github.com/mrcoem/mrcoem/releases/download/v0.23.8/SabbyOptimizer-0.23.8-Setup.exe",
-  "sha256": "",
+  "sha256": "F68AE774CBA4049AC56023555676D28F58DEA5687DBEBB91053E9B116D5B8850",
   "signerThumbprint": null,
-  "releaseNotes": "Sabby Optimizer 0.23.8",
+  "releaseNotes": "Sabby Optimizer 0.23.8 (Stable)",
   "mandatory": true,
-  "publishedAt": "2026-09-18T18:56:00Z"
+  "publishedAt": "2026-09-18T19:11:45.3362195Z"
 }
