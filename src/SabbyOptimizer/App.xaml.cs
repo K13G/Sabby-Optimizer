@@ -343,7 +343,8 @@ public partial class App : Application
                 return vm;
             }, refreshIfCurrent: false);
 
-            gameDetection.Start();
+            if (settings.Current.GameDetectionEnabled)
+                gameDetection.Start();
 
             // No all-tweaks scan runs automatically. Detection is lazy/per-card and Refresh All is
             // explicit, preventing dozens of PowerShell/registry probes from turning startup into a
