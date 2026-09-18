@@ -59,5 +59,8 @@ jobs:
           git add "update/SabbyOptimizer-Stable-manifest.json"
           if (-not (git diff --cached --quiet)) {
             git commit -m "Publish Sabby ${{ steps.version.outputs.version }} stable manifest"
+            # main may have received docs-only commits while the Windows build was running.
+            # Rebase the generated manifest commit before pushing so releases do not fail at the final step.
+            git pull --rebase origin main
             git push
           }
