@@ -102,9 +102,9 @@ public sealed class TweakCardViewModel : ViewModelBase
         >= 25 => "LOW IMPACT",
         _ => "PLACEBO"
     };
-    public double EvidenceGreenWidth => 96d * EvidenceScore / 100d;
-    public double EvidenceRedWidth => 96d - EvidenceGreenWidth;
-    public double EvidenceMarkerOffset => Math.Clamp((96d * EvidenceScore / 100d) - 1d, 0d, 94d);
+    public double EvidenceGreenWidth => 112d * EvidenceScore / 100d;
+    public double EvidenceRedWidth => 112d - EvidenceGreenWidth;
+    public double EvidenceMarkerOffset => Math.Clamp((112d * EvidenceScore / 100d) - 1d, 0d, 110d);
 
     public bool IsRecommendationBlocked =>
         Definition.Id == "power.active-plan" &&
