@@ -268,7 +268,7 @@ public sealed class GameProfilesViewModel : ViewModelBase, IDisposable
 
             var runningCount = Games.Count(item => item.IsRunning);
             DetectionStatus = runningCount > 0
-                ? $"{runningCount} game{(runningCount == 1 ? string.Empty : "s")} detected as running. Linked presets and Smart tuning use the safe Phase 7 lifecycle."
+                ? $"{runningCount} game{(runningCount == 1 ? string.Empty : "s")} detected as running. Linked settings and Smart tuning use Sabby's verified game lifecycle."
                 : "Launch detection is active. Waiting for an enabled saved game to start.";
         }
 

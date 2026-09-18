@@ -9,7 +9,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <StackPanel>
-                    <TextBlock Text="PHASE 19" Style="{StaticResource EyebrowTextStyle}"/>
+                    <TextBlock Text="BENCHMARK LAB" Style="{StaticResource EyebrowTextStyle}"/>
                     <TextBlock Text="Benchmarking &amp; Before/After Validation" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0"/>
                 </StackPanel>
                 <TextBlock Text="Measure the same PC before and after tuning so Sabby can separate measurable changes from normal run-to-run noise."

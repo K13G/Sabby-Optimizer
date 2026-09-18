@@ -17,7 +17,7 @@ echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
  "$ErrorActionPreference='SilentlyContinue';" ^
  "$roots=@((Join-Path $env:USERPROFILE 'Downloads'),(Join-Path $env:USERPROFILE 'Documents'),(Join-Path $env:USERPROFILE 'Desktop')) | Where-Object { Test-Path $_ };" ^
- "$items=@(); foreach($root in $roots){ $items += Get-ChildItem -LiteralPath $root -Force | Where-Object { ($_.PSIsContainer -and ($_.Name -like 'SabbyOptimizer_*' -or $_.Name -like 'SabbyOptimizer_Phase*' -or $_.Name -like 'sabby_02*' -or $_.Name -like 'sabby_quick*' -or $_.Name -like 'sabby_visibility*')) -or ((-not $_.PSIsContainer) -and ($_.Name -like 'SabbyOptimizer*.zip' -or $_.Name -like 'SabbySource*.zip')) } };" ^
+ "$items=@(); foreach($root in $roots){ $items += Get-ChildItem -LiteralPath $root -Force | Where-Object { ($_.PSIsContainer -and ($_.Name -like 'SabbyOptimizer_*' -or $_.Name -like 'sabby_02*' -or $_.Name -like 'sabby_quick*' -or $_.Name -like 'sabby_visibility*')) -or ((-not $_.PSIsContainer) -and ($_.Name -like 'SabbyOptimizer*.zip' -or $_.Name -like 'SabbySource*.zip')) } };" ^
  "$items=$items | Sort-Object FullName -Unique;" ^
  "if(-not $items){ Write-Host '[OK] No old Sabby ZIPs or extracted build folders were found.' -ForegroundColor Green; exit 0 };" ^
  "Write-Host 'The following OLD BUILD FILES will be deleted:' -ForegroundColor Yellow; $items | ForEach-Object { Write-Host ('  ' + $_.FullName) };" ^

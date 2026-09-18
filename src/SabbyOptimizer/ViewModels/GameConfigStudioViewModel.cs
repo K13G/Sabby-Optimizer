@@ -280,7 +280,7 @@ public sealed class GameConfigStudioViewModel : ViewModelBase
         if (dialog.ShowDialog() != true) return;
         if (!_configService.IsSupportedTextConfig(dialog.FileName))
         {
-            Status = "That file type is not in Phase 18's safe text-config allowlist. Binary/save-game files are intentionally not editable here.";
+            Status = "That file type is not in Sabby's safe text-config allowlist. Binary/save-game files are intentionally not editable here.";
             return;
         }
 

@@ -79,7 +79,7 @@
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="Tweak-rule extensions" FontSize="17" FontWeight="SemiBold" />
-                        <TextBlock Text="Extensions are JSON rule packs. Phase 21 only accepts declarative HKCU/HKLM registry value rules—no PowerShell, command lines, DLL loading, or executable code. Imported extensions start disabled."
+                        <TextBlock Text="Extensions are JSON rule packs. Sabby accepts only declarative HKCU/HKLM registry value rules—no PowerShell, command lines, DLL loading, or executable code. Imported extensions start disabled."
                                    Margin="0,5,24,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">

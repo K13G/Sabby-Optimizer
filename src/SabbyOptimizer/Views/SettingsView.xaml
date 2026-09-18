@@ -521,7 +521,7 @@
                         <StackPanel>
                             <CheckBox Content="Detect linked games while Sabby Optimizer is running"
                                       IsChecked="{Binding GameDetectionEnabled, Mode=TwoWay}" />
-                            <TextBlock Text="Phase 7 watches only the executable paths saved in Game Profiles. When a linked game starts, its preset can be applied and the previous supported settings are restored when the game closes."
+                            <TextBlock Text="Sabby watches only executable paths saved in Game Profiles. When a linked game starts, supported settings can be applied and the previous supported settings are restored when the game closes."
                                        Margin="28,6,0,0"
                                        Foreground="{DynamicResource TextMutedBrush}"
                                        TextWrapping="Wrap"

@@ -10,7 +10,7 @@
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="Per-Game Config Studio" Style="{StaticResource SectionHeadingTextStyle}" />
-                <TextBlock Text="Phase 18 discovers and safely edits local text configuration files for each saved game. Sabby backs up before every write and never edits binaries or save-game data."
+                <TextBlock Text="Sabby discovers and safely edits supported local text configuration files for saved games. It backs up before every write and never edits binaries or save-game data."
                            Margin="0,5,20,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
             </StackPanel>
             <Button Grid.Column="1" Content="Refresh games" Command="{Binding RefreshGamesCommand}" VerticalAlignment="Center" />

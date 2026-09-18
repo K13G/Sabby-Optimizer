@@ -15,7 +15,7 @@
                                Margin="0,7,0,0"
                                FontSize="24"
                                FontWeight="SemiBold" />
-                    <TextBlock Text="Deep scan builds a reusable local game library. Phase 7 watches enabled saved executables, applies a linked preset when a game starts, and restores the previous supported states when it closes. Games never need to be running during scanning."
+                    <TextBlock Text="Deep scan builds a reusable local game library. Sabby watches enabled saved executables, applies supported game settings when a game starts, and restores the previous supported states when it closes. Games never need to be running during scanning."
                                Margin="0,9,30,0"
                                MaxWidth="940"
                                HorizontalAlignment="Left"

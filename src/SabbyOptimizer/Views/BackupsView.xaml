@@ -19,7 +19,7 @@
                                Margin="0,7,0,0"
                                FontSize="24"
                                FontWeight="SemiBold" />
-                    <TextBlock Text="Phase 4 records original tweak states before changes, creates point-in-time snapshots, and restores either one tracked tweak or an entire supported snapshot through the same verified tweak engine."
+                    <TextBlock Text="Sabby records original tweak states before changes, creates point-in-time snapshots, and restores either one tracked tweak or an entire supported snapshot through the same verified tweak engine."
                                Margin="0,9,30,0"
                                MaxWidth="920"
                                HorizontalAlignment="Left"
@@ -315,7 +315,7 @@
                                VerticalAlignment="Center" />
                 </Border>
                 <StackPanel Grid.Column="1" Margin="13,0,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="Phase 4 restore rule" FontWeight="SemiBold" />
+                    <TextBlock Text="Restore rule" FontWeight="SemiBold" />
                     <TextBlock Text="Sabby Optimizer never guesses an unknown state back into place. Applied and Not Applied states can be restored through verified handlers; Custom, Unavailable, and detection-error states remain recorded for history but are not blindly changed."
                                Margin="0,5,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"

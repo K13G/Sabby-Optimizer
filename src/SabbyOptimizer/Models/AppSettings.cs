@@ -24,15 +24,13 @@ public sealed class AppSettings
     public bool AutoUpdateEnabled { get; set; }
     public bool IncludeOptionalWindowsUpdates { get; set; }
 
-    // Phase 21 — Sabby update channels + declarative tweak-rule extensions
-    public SabbyUpdateChannel SabbyUpdateChannel { get; set; } = SabbyUpdateChannel.Stable;
+        public SabbyUpdateChannel SabbyUpdateChannel { get; set; } = SabbyUpdateChannel.Stable;
     public bool AutoCheckSabbyUpdates { get; set; } = true;
     public string StableUpdateFeedUrl { get; set; } = string.Empty;
     public string PreviewUpdateFeedUrl { get; set; } = string.Empty;
     public string NightlyUpdateFeedUrl { get; set; } = string.Empty;
 
-    // Phase 20 — Monitoring & Automation
-    public bool MonitoringEnabled { get; set; } = false;
+        public bool MonitoringEnabled { get; set; } = false;
     public int MonitoringRefreshIntervalMs { get; set; } = 2000;
     public bool ThermalAlertsEnabled { get; set; } = true;
     public double ThermalWarningCelsius { get; set; } = 85;

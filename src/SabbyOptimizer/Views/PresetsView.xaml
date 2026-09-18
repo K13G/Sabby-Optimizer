@@ -328,7 +328,7 @@
                 </Border>
                 <StackPanel Grid.Column="1" Margin="13,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="Safe preset format" FontWeight="SemiBold" />
-                    <TextBlock Text="Imported and exported presets contain JSON metadata plus desired tweak states only. Sabby Optimizer does not execute scripts embedded in a preset file. Applying presets will be wired to verified tweak handlers as those handlers arrive in their dedicated phases."
+                    <TextBlock Text="Imported and exported presets contain JSON metadata plus desired tweak states only. Sabby Optimizer does not execute scripts embedded in a preset file. Preset changes are applied only through verified tweak handlers with explicit supported states."
                                Margin="0,5,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                TextWrapping="Wrap" />

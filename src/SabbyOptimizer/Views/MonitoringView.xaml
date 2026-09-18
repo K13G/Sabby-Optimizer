@@ -8,7 +8,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="PHASE 20" Style="{StaticResource EyebrowTextStyle}" />
+                <TextBlock Text="MONITORING" Style="{StaticResource EyebrowTextStyle}" />
                 <TextBlock Text="Monitoring &amp; Automation" Style="{StaticResource SectionHeadingTextStyle}" Margin="0,4,0,0" />
                 <TextBlock Text="Live clocks, utilization, temperatures when a trustworthy sensor source exists, network activity, game profiles, and automatic behavior."
                            Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />

@@ -13,7 +13,6 @@ public sealed class GameProfileDefinition
     public Guid? LinkedPresetId { get; set; }
     public string Notes { get; set; } = string.Empty;
 
-    // Phase 15 per-game controls. These are Windows/Sabby-side settings only; Sabby does not
     // rewrite proprietary game configuration files or guess internal graphics options.
     public string GraphicsPreference { get; set; } = "System default";
     public string ProcessPriority { get; set; } = "Normal";
