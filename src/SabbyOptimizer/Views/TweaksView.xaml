@@ -159,6 +159,9 @@
                 </StackPanel>
             </Border>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" Margin="0,0,8,0" />
+                <Button Content="‹" Command="{Binding PreviousPageCommand}" Width="34" Height="34" MinHeight="34" Padding="0" ToolTip="Previous tweak page" />
+                <Button Content="›" Command="{Binding NextPageCommand}" Width="34" Height="34" MinHeight="34" Padding="0" Margin="5,0,10,0" ToolTip="Next tweak page" />
                 <CheckBox Content="Actionable only" IsChecked="{Binding ShowOnlyActionable, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,10,0" />
                 <Button Content="Competitive FPS" Command="{Binding ApplyCompetitiveFpsCommand}" ToolTip="Apply supported reversible FPS/frame-time controls and verify each change." />
                 <Button Content="Max FPS (advanced)" Command="{Binding ApplyMaximumFpsCommand}" Margin="8,0,0,0" ToolTip="Also applies advanced AC processor policies such as core-unparking and a 100% performance floor. Higher power/heat; not guaranteed to improve every game." />

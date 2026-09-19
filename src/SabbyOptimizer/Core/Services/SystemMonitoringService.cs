@@ -98,7 +98,7 @@ public sealed class SystemMonitoringService : IAsyncDisposable
         if (DateTimeOffset.UtcNow >= _nextGpuProbe)
         {
             _lastGpu = await ReadGpuAsync(cancellationToken).ConfigureAwait(false);
-            _nextGpuProbe = DateTimeOffset.UtcNow.AddSeconds(2);
+            _nextGpuProbe = DateTimeOffset.UtcNow.AddSeconds(5);
         }
 
         var snapshot = new SystemMonitorSnapshot(
@@ -254,6 +254,7 @@ public sealed class SystemMonitoringService : IAsyncDisposable
             };
             using var process = Process.Start(start);
             if (process is null) return GpuSample.Empty;
+            try { process.PriorityClass = ProcessPriorityClass.BelowNormal; } catch { }
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(1500);
             var outputTask = process.StandardOutput.ReadToEndAsync(timeout.Token);

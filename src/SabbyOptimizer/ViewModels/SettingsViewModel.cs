@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using System.Windows.Threading;
 using PCTweaker.Core.Mvvm;
 using PCTweaker.Core.Services;
 using PCTweaker.Models;
@@ -28,6 +29,8 @@ public sealed class SettingsViewModel : ViewModelBase
     private bool _smartGameTuningTest;
     private int _cardColumns;
     private string _visualStyleSearchText = string.Empty;
+    private readonly DispatcherTimer _appearancePreviewTimer;
+    private readonly DispatcherTimer _behaviorSaveTimer;
     private string _selectedEventFilter = "All styles";
     private VisualStyleSortOption _selectedSortOption;
     private bool _isStylePickerOpen;
@@ -150,7 +153,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             var clamped = Math.Clamp(value, 0, 100);
             if (!SetProperty(ref _styleIntensity, clamped)) return;
-            _appearance.Apply(_selectedVisualStyle, clamped, _animationSpeed);
+            QueueAppearancePreview();
             OnPropertyChanged(nameof(StyleIntensityText));
             StatusMessage = "Previewing appearance. Save settings to keep it.";
         }
@@ -165,7 +168,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             var clamped = Math.Clamp(value, 0, 200);
             if (!SetProperty(ref _animationSpeed, clamped)) return;
-            _appearance.Apply(_selectedVisualStyle, _styleIntensity, clamped);
+            QueueAppearancePreview();
             OnPropertyChanged(nameof(AnimationSpeedText));
             StatusMessage = clamped <= 0
                 ? "Animations frozen at their current frame. Save settings to keep it."
@@ -182,7 +185,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _rememberLastPage, value)) return;
             _settings.Current.RememberLastPage = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -193,7 +196,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _rememberWindowState, value)) return;
             _settings.Current.RememberWindowState = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -204,7 +207,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _startMaximized, value)) return;
             _settings.Current.StartMaximized = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -216,7 +219,7 @@ public sealed class SettingsViewModel : ViewModelBase
             if (!SetProperty(ref _startWithWindows, value)) return;
             _settings.Current.StartWithWindows = value;
             _startupService.SetEnabled(value);
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -227,7 +230,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _closeToTray, value)) return;
             _settings.Current.CloseToTray = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -238,7 +241,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _minimizeToTray, value)) return;
             _settings.Current.MinimizeToTray = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -250,7 +253,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _gameDetectionEnabled, value)) return;
             _settings.Current.GameDetectionEnabled = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -261,7 +264,7 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (!SetProperty(ref _smartGameTuningTest, value)) return;
             _settings.Current.SmartGameTuningTest = value;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -278,7 +281,7 @@ public sealed class SettingsViewModel : ViewModelBase
             _settings.Current.CardColumns = clamped;
             if (System.Windows.Application.Current is not null)
                 System.Windows.Application.Current.Resources["CardColumns"] = clamped;
-            _ = SaveBehaviorSettingAsync();
+            QueueBehaviorSave();
         }
     }
 
@@ -368,6 +371,26 @@ public sealed class SettingsViewModel : ViewModelBase
         _cardColumns = settings.Current.CardColumns;
         _selectedSortOption = SortOptions[0];
 
+        _appearancePreviewTimer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(70)
+        };
+        _appearancePreviewTimer.Tick += (_, _) =>
+        {
+            _appearancePreviewTimer.Stop();
+            _appearance.Apply(_selectedVisualStyle, _styleIntensity, _animationSpeed);
+        };
+
+        _behaviorSaveTimer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(280)
+        };
+        _behaviorSaveTimer.Tick += async (_, _) =>
+        {
+            _behaviorSaveTimer.Stop();
+            await SaveBehaviorSettingAsync();
+        };
+
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         ResetCommand = new RelayCommand(() => IsResetConfirmationOpen = true);
         CancelResetCommand = new RelayCommand(() => IsResetConfirmationOpen = false);
@@ -406,6 +429,18 @@ public sealed class SettingsViewModel : ViewModelBase
         return query.ToList();
     }
 
+    private void QueueAppearancePreview()
+    {
+        _appearancePreviewTimer.Stop();
+        _appearancePreviewTimer.Start();
+    }
+
+    private void QueueBehaviorSave()
+    {
+        _behaviorSaveTimer.Stop();
+        _behaviorSaveTimer.Start();
+    }
+
     private async Task SaveBehaviorSettingAsync()
     {
         try
@@ -421,6 +456,13 @@ public sealed class SettingsViewModel : ViewModelBase
 
     private async Task SaveAsync()
     {
+        if (_appearancePreviewTimer.IsEnabled)
+        {
+            _appearancePreviewTimer.Stop();
+            _appearance.Apply(_selectedVisualStyle, _styleIntensity, _animationSpeed);
+        }
+        _behaviorSaveTimer.Stop();
+
         _settings.Current.Theme = SelectedTheme;
         _settings.Current.VisualStyle = SelectedVisualStyle;
         _settings.Current.StyleIntensity = StyleIntensity;

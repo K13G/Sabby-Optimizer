@@ -90,7 +90,6 @@ public partial class App : Application
             var updateExtensions = new UpdateExtensionService(paths, _logger);
             var startupService = new AppStartupService(_logger);
             var hardwareInfo = new HardwareInfoService(_logger);
-            var hardwareTask = Task.Run(hardwareInfo.GetHardwareInfo);
 
             var quickHardware = new HardwareInfo
             {
@@ -162,6 +161,14 @@ public partial class App : Application
             mainWindow.PlayStartupReveal();
             mainWindow.EnsureVisibleAndActivated();
             await Dispatcher.Yield(DispatcherPriority.Loaded);
+
+            // Do not make the cold-start frame compete with CIM/PowerShell/driver discovery.
+            // Give input/rendering a short head start, then run the full hardware scan off-thread.
+            var hardwareTask = Task.Run(async () =>
+            {
+                await Task.Delay(450).ConfigureAwait(false);
+                return hardwareInfo.GetHardwareInfo();
+            });
 
             // Restore the user's last page only after the first interactive Dashboard frame is on
             // screen. This keeps cold launch responsive even when the saved page has a large XAML tree.

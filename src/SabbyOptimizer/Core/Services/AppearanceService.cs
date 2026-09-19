@@ -194,14 +194,14 @@ public sealed class AppearanceService : IAppearanceService
     {
         var resources = GetActiveThemeResources();
 
-        resources["BrandAccentColor"] = brandAccent;
-        resources["AccentColor"] = accent;
-        resources["AccentHoverColor"] = accentHover;
-        resources["AccentSubtleColor"] = accentSubtle;
-        resources["CardBorderColor"] = cardBorder;
-        resources["AccentGlowColor"] = accentGlow;
-        resources["AccentGradientStartColor"] = gradientStart;
-        resources["AccentGradientEndColor"] = gradientEnd;
+        SetColorResource(resources, "BrandAccentColor", brandAccent);
+        SetColorResource(resources, "AccentColor", accent);
+        SetColorResource(resources, "AccentHoverColor", accentHover);
+        SetColorResource(resources, "AccentSubtleColor", accentSubtle);
+        SetColorResource(resources, "CardBorderColor", cardBorder);
+        SetColorResource(resources, "AccentGlowColor", accentGlow);
+        SetColorResource(resources, "AccentGradientStartColor", gradientStart);
+        SetColorResource(resources, "AccentGradientEndColor", gradientEnd);
 
         // Theme dictionaries are replaced when Dark/Light/Darkness changes. Explicitly refresh
         // the brush objects too; relying only on DynamicResource inside a frozen/shared Freezable
@@ -213,14 +213,30 @@ public sealed class AppearanceService : IAppearanceService
         SetSolidBrush(resources, "CardBorderBrush", cardBorder);
         SetSolidBrush(resources, "AccentGlowBrush", accentGlow);
 
-        var gradient = new LinearGradientBrush
+        if (resources["AccentGradientBrush"] is LinearGradientBrush gradient &&
+            !gradient.IsFrozen && gradient.GradientStops.Count >= 2)
         {
-            StartPoint = new Point(0, 0.5),
-            EndPoint = new Point(1, 0.5)
-        };
-        gradient.GradientStops.Add(new GradientStop(gradientStart, 0));
-        gradient.GradientStops.Add(new GradientStop(gradientEnd, 1));
-        resources["AccentGradientBrush"] = gradient;
+            gradient.GradientStops[0].Color = gradientStart;
+            gradient.GradientStops[1].Color = gradientEnd;
+        }
+        else
+        {
+            gradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0.5),
+                EndPoint = new Point(1, 0.5)
+            };
+            gradient.GradientStops.Add(new GradientStop(gradientStart, 0));
+            gradient.GradientStops.Add(new GradientStop(gradientEnd, 1));
+            resources["AccentGradientBrush"] = gradient;
+        }
+    }
+
+    private static void SetColorResource(ResourceDictionary resources, string key, Color color)
+    {
+        if (resources[key] is Color existing && existing == color)
+            return;
+        resources[key] = color;
     }
 
     private static void SetSolidBrush(ResourceDictionary resources, string key, Color color)

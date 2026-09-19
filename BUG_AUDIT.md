@@ -70,3 +70,20 @@ Concrete changes include: Debloat renders at most 32 result cards at once; anima
 | Sidebar hover | Settings/Credits lived outside SidebarHost, so entering them could let the close timer collapse the menu. | Footer is now included in hover retention and stops/restarts the same close timer. |
 | Sidebar performance | Workspace ScaleX animated the entire live WPF page, causing blur and expensive redraws. | Removed ScaleX entirely; workspace uses a one-pass margin layout plus TranslateX FLIP animation. |
 | Sidebar clarity | Scaling changed perceived text/card size during hover. | Workspace remains at 100% render scale throughout the transition. |
+
+
+## 0.23.25 deep performance audit
+
+| Area | Issue found | Fix |
+| --- | --- | --- |
+| Logging | FileLogger used synchronous File.AppendAllText from whichever thread logged, including the UI dispatcher. | Logging is queued and batch-flushed on the thread pool; retention cleanup also moved off startup. |
+| Startup | Full hardware discovery started before the first window frame, competing for CPU/process/I/O with XAML creation. | Hardware discovery starts after first paint plus a 450 ms idle grace period. |
+| Tweaks visual tree | All filtered rich tweak cards were instantiated at once in a non-virtualized UniformGrid. | Tweaks pages the filtered catalog 24 cards at a time. |
+| Tweaks state updates | One tweak state change could trigger repeated full-catalog Active/Ready/Protected counts. | State-stat refreshes are coalesced at DispatcherPriority.Background. |
+| Tweaks cleanup | An old full-scan initialization method remained dead code. | Removed the unreachable method. |
+| Settings sliders | Every pointer-pixel change on intensity/speed triggered a global appearance resource refresh. | Slider preview refresh is debounced to a short 70 ms quiet window. |
+| Settings persistence | Every behavior checkbox immediately serialized and replaced settings.json. | Rapid behavior changes are coalesced into one 280 ms delayed save. |
+| Style picker | Virtualization relied on framework defaults. | Explicit recycling virtualization and content scrolling are enabled. |
+| Appearance | Animated frame updates allocated/replaced a new LinearGradientBrush each tick. | Existing gradient stops are mutated when possible; identical Color resources are skipped. |
+| Navigation hover | Sidebar-item hover templates created short Storyboards/animation clocks. | Hover feedback is now direct state styling without per-item animation clocks. |
+| Monitoring | Optional NVIDIA monitoring could spawn nvidia-smi every 2 seconds. | GPU sensor result is cached for 5 seconds and helper priority is lowered when supported. |

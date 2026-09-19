@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Threading;
 using PCTweaker.Core.Backups;
 using PCTweaker.Core.Mvvm;
 using PCTweaker.Core.Tweaks;
@@ -10,6 +12,7 @@ namespace PCTweaker.ViewModels;
 
 public sealed class TweaksViewModel : ViewModelBase
 {
+    private const int PageSize = 24;
     private static readonly string[] AutoOptimizeIds =
     [
         "gaming.capture",
@@ -79,6 +82,9 @@ public sealed class TweaksViewModel : ViewModelBase
     private double _applyBestProgress;
     private object? _networkControlContext;
     private bool _showOnlyActionable;
+    private int _currentPage;
+    private int _filteredCount;
+    private bool _statsRefreshPending;
 
     public ObservableCollection<TweakCardViewModel> Tweaks { get; }
     private ObservableCollection<TweakCardViewModel> _visibleTweaks = new();
@@ -115,6 +121,16 @@ public sealed class TweaksViewModel : ViewModelBase
     public string ActiveCountText => $"{Tweaks.Count(x => x.IsActivated)} active";
     public string ReadyCountText => $"{Tweaks.Count(x => x.CanApply || x.IsStatePending)} ready/check";
     public string ProtectedCountText => $"{Tweaks.Count(x => x.IsActivated && !x.CanUndo)} already optimized";
+    public string PageText
+    {
+        get
+        {
+            if (_filteredCount == 0) return "No matching controls";
+            var first = (_currentPage * PageSize) + 1;
+            var last = Math.Min(_filteredCount, first + VisibleTweaks.Count - 1);
+            return $"{first}–{last} of {_filteredCount}";
+        }
+    }
 
     // Compatibility shim for a previous Tweaks template. Keep writable so stale/cached XAML
     // can never surface a TwoWay-to-read-only binding failure.
@@ -130,7 +146,10 @@ public sealed class TweaksViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _selectedCategory, value))
+            {
+                _currentPage = 0;
                 RebuildVisibleTweaks();
+            }
         }
     }
 
@@ -140,7 +159,10 @@ public sealed class TweaksViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _selectedSort, value))
+            {
+                _currentPage = 0;
                 RebuildVisibleTweaks();
+            }
         }
     }
 
@@ -150,7 +172,10 @@ public sealed class TweaksViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _searchText, value))
+            {
+                _currentPage = 0;
                 RebuildVisibleTweaks();
+            }
         }
     }
 
@@ -160,7 +185,10 @@ public sealed class TweaksViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _showOnlyActionable, value))
+            {
+                _currentPage = 0;
                 RebuildVisibleTweaks();
+            }
         }
     }
 
@@ -193,6 +221,8 @@ public sealed class TweaksViewModel : ViewModelBase
     public AsyncRelayCommand ApplyCompetitiveFpsCommand { get; }
     public AsyncRelayCommand ApplyMaximumFpsCommand { get; }
     public AsyncRelayCommand ApplyLowLatencyProfileCommand { get; }
+    public RelayCommand PreviousPageCommand { get; }
+    public RelayCommand NextPageCommand { get; }
 
     public TweaksViewModel(ITweakEngine engine, TweakEngineSelfCheckResult selfCheck, HardwareInfo hardware, IBackupService backupService)
     {
@@ -216,6 +246,8 @@ public sealed class TweaksViewModel : ViewModelBase
             () => ApplyCuratedProfileAsync("Maximum FPS (advanced)", MaximumFpsProfileIds), () => !_isApplyingBest);
         ApplyLowLatencyProfileCommand = new AsyncRelayCommand(
             () => ApplyCuratedProfileAsync("Low-latency local stack", LowLatencyProfileIds), () => !_isApplyingBest);
+        PreviousPageCommand = new RelayCommand(PreviousPage, () => _currentPage > 0);
+        NextPageCommand = new RelayCommand(NextPage, () => ((_currentPage + 1) * PageSize) < _filteredCount);
         RebuildVisibleTweaks();
     }
 
@@ -228,18 +260,6 @@ public sealed class TweaksViewModel : ViewModelBase
         await Task.Delay(250);
         RefreshStatus = "Ready — controls verify on demand. No background startup scan is running.";
         RaiseStats();
-    }
-
-    private async Task InitializeAsync(int concurrency = 2)
-    {
-        try
-        {
-            await RefreshAllAsync(concurrency);
-        }
-        catch
-        {
-            RefreshStatus = "Background state discovery finished with some unavailable controls. Refresh any card for details.";
-        }
     }
 
     private async Task RefreshAllAsync(int concurrency = 2)
@@ -395,13 +415,34 @@ public sealed class TweaksViewModel : ViewModelBase
 
     private void OnTweakPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(TweakCardViewModel.IsActivated) or nameof(TweakCardViewModel.CanApply) or
-            nameof(TweakCardViewModel.CanUndo) or nameof(TweakCardViewModel.IsBusy))
+        if (e.PropertyName is not (nameof(TweakCardViewModel.IsActivated) or nameof(TweakCardViewModel.CanApply) or
+            nameof(TweakCardViewModel.CanUndo) or nameof(TweakCardViewModel.IsBusy)))
+            return;
+
+        QueueStatsRefresh();
+    }
+
+    private void QueueStatsRefresh()
+    {
+        if (_statsRefreshPending)
+            return;
+
+        _statsRefreshPending = true;
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher is null)
         {
+            _statsRefreshPending = false;
+            RaiseStats();
+            return;
+        }
+
+        _ = dispatcher.BeginInvoke(new Action(() =>
+        {
+            _statsRefreshPending = false;
             RaiseStats();
             if (ShowOnlyActionable)
                 RebuildVisibleTweaks();
-        }
+        }), DispatcherPriority.Background);
     }
 
     private void RaiseStats()
@@ -459,9 +500,32 @@ public sealed class TweaksViewModel : ViewModelBase
             _ => query.OrderByDescending(x => x.EvidenceScore).ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
         };
 
-        // Replace the filtered collection in one notification instead of firing 50+
-        // individual collection-change events. This removes a large source of click/category lag.
-        _visibleTweaks = new ObservableCollection<TweakCardViewModel>(query.ToArray());
+        // Rich tweak cards have a large WPF visual tree. Keep only one page instantiated at a
+        // time so sorting/searching/navigation never creates 50+ card templates in one frame.
+        var filtered = query.ToArray();
+        _filteredCount = filtered.Length;
+        var maxPage = Math.Max(0, (_filteredCount - 1) / PageSize);
+        _currentPage = Math.Clamp(_currentPage, 0, maxPage);
+
+        _visibleTweaks = new ObservableCollection<TweakCardViewModel>(
+            filtered.Skip(_currentPage * PageSize).Take(PageSize));
         OnPropertyChanged(nameof(VisibleTweaks));
+        OnPropertyChanged(nameof(PageText));
+        PreviousPageCommand.RaiseCanExecuteChanged();
+        NextPageCommand.RaiseCanExecuteChanged();
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage <= 0) return;
+        _currentPage--;
+        RebuildVisibleTweaks();
+    }
+
+    private void NextPage()
+    {
+        if (((_currentPage + 1) * PageSize) >= _filteredCount) return;
+        _currentPage++;
+        RebuildVisibleTweaks();
     }
 }

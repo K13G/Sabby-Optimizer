@@ -1,17 +1,24 @@
-## Sabby Optimizer 0.23.24
+## Sabby Optimizer 0.23.25
 
-### Sidebar & settings placement
-🩷 **✓** Fixed the collapsed Settings button being pushed too far right when Credits was hidden. Settings is now anchored to the 58 px compact rail instead of being centered inside the two-button footer width.  
-🩷 **✓** Moving from the expanded sidebar down onto Settings/Credits no longer starts a close race. The footer is now part of the sidebar hover region.  
-🟢 **+** Credits still remains hidden while the rail is collapsed and appears only when the menu is expanded.
+### Deep performance cleanup
+🟢 **+** Moved file logging off the UI thread and batch log writes in the background, removing synchronous disk writes from clicks, navigation, tweak operations, and appearance changes.  
+🟢 **+** Full hardware/CIM discovery now waits until after the first interactive frame plus a short idle grace period instead of competing with cold startup.  
+🟢 **+** Tweak cards are paged **24 at a time**, cutting the largest WPF visual tree roughly in half on the current catalog while keeping search/category/sort across the entire catalog.  
+🩷 **✓** Tweak statistics are coalesced to one background-priority UI refresh instead of repeatedly recounting the whole catalog for every state-property change.  
+🟢 **+** Style picker explicitly uses WPF recycling virtualization.  
+🟢 **+** Animated appearance gradients are reused instead of allocating/replacing a new gradient brush every frame.  
+🟢 **+** Identical color resources are no longer replaced unnecessarily.
 
-### Hover performance
-🩷 **✓** Removed full-workspace ScaleX animation from the sidebar transition. Scaling the entire WPF page made text blur and forced expensive redraws on dense pages.  
-🟢 **+** Sidebar open/close now uses a FLIP transition: one layout update to the final workspace width, then a short TranslateX animation back to rest.  
-🟢 **+** Workspace content stays at 100% scale during the animation, so text/cards remain sharp.  
-🟢 **+** Sidebar reveal/branding timing is shorter and synchronized for a faster response.
+### Interaction cleanup
+🩷 **✓** Appearance sliders now debounce their expensive global DynamicResource refresh to ~70 ms while dragging, instead of repainting the full application for every pointer pixel.  
+🟢 **+** Rapid Settings checkbox changes are coalesced into one settings-file write after a short quiet period.  
+🔴 **−** Removed per-navigation-item hover Storyboards; hover feedback now uses direct lightweight state changes without creating animation clocks.  
+🩷 **✓** Removed an unused Tweaks background-initialization method that could no longer be reached.
 
-### Existing fixes retained
-🟢 **+** Live scrollbar dragging from 0.23.23 remains enabled.  
-🟢 **+** The 14 px main scrollbar grab target remains.  
-🟢 **+** Update install/restart behavior remains unchanged.
+### Background CPU
+🟢 **+** NVIDIA sensor polling, when monitoring is explicitly running, now reuses the last GPU sample for 5 seconds instead of spawning nvidia-smi every 2 seconds.  
+🟢 **+** NVIDIA sensor helper processes are lowered to BelowNormal priority where Windows permits it.  
+🟢 **+** Existing inactive-window event-animation pausing, bounded navigation cache, lazy tweak detection, live-scroll fixes, and the 0.23.24 FLIP sidebar transition remain enabled.
+
+### Scope
+This pass targets static/code-visible sources of UI stalls, allocation churn, synchronous I/O, large visual trees, and unnecessary background work. Exact RAM/CPU/FPS improvement varies by page, hardware, installed apps, and selected visual style; the changelog does not invent a percentage.
