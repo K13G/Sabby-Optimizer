@@ -50,3 +50,14 @@ Concrete changes include: Debloat renders at most 32 result cards at once; anima
 | Memory | Four recent page trees were retained. | Cache reduced to three. |
 | Idle CPU | Game detection polled every 2.5 seconds. | Polling reduced to every 5 seconds. |
 | Startup | Full catalog/self-check work could begin close to first interaction. | Added a 700 ms interaction grace period after hardware discovery. |
+
+
+## 0.23.23 follow-up
+
+| Area | Issue found | Fix |
+| --- | --- | --- |
+| Scrollbar | Main workspace had deferred scrolling enabled, so dragging the thumb did not update content until release. | Disabled deferred scrolling for the main ScrollViewer. |
+| Scrollbar | The visual scrollbar was wider than the actual thumb/track grab area. | Track now fills the template width, thumb stretches across it, and the main scrollbar is 14 px wide. |
+| Scrollbar | Clicking outside the thumb only paged indirectly. | Enabled move-to-point behavior for the custom scrollbar. |
+| Sidebar | Sidebar Width was animated on hover, forcing WPF layout/measure work every frame. | Sidebar stays at full logical width and reveals through RectangleGeometry clipping; workspace remains compositor transformed. |
+| Sidebar | Branding fade outlasted the rail reveal and made the interaction feel sluggish. | Reduced branding fade timing to track the shorter reveal. |

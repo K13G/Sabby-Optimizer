@@ -243,13 +243,14 @@
     <!-- Thin theme-matched scrollbars. Tracks stay visually quiet and never become the
          bright native Windows bars seen in earlier fullscreen builds. -->
     <Style x:Key="PopupVerticalScrollBarStyle" TargetType="ScrollBar">
-        <Setter Property="Width" Value="9" />
-        <Setter Property="MinWidth" Value="9" />
+        <Setter Property="Width" Value="11" />
+        <Setter Property="MinWidth" Value="11" />
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="IsMoveToPointEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
-                    <Grid Width="9" Background="Transparent">
+                    <Grid Background="Transparent">
                         <Track x:Name="PART_Track"
                                IsDirectionReversed="True"
                                Orientation="Vertical"
@@ -263,11 +264,10 @@
                                 </RepeatButton>
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb MinHeight="38" Width="7">
+                                <Thumb MinHeight="38" HorizontalAlignment="Stretch" Margin="1,0">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
                                             <Border x:Name="ThumbRoot"
-                                                    Margin="1,0"
                                                     Background="{DynamicResource TextMutedBrush}"
                                                     Opacity="0.72"
                                                     CornerRadius="2" />
@@ -298,8 +298,8 @@
     </Style>
 
     <Style x:Key="AppVerticalScrollBarStyle" TargetType="ScrollBar" BasedOn="{StaticResource PopupVerticalScrollBarStyle}">
-        <Setter Property="Width" Value="12" />
-        <Setter Property="MinWidth" Value="12" />
+        <Setter Property="Width" Value="14" />
+        <Setter Property="MinWidth" Value="14" />
     </Style>
 
     <Style TargetType="ComboBoxItem">

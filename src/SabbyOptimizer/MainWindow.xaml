@@ -136,7 +136,7 @@
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Panel.ZIndex="1900"
-                Width="58"
+                Width="226"
                 HorizontalAlignment="Left"
                 MouseEnter="SidebarHost_MouseEnter"
                 MouseLeave="SidebarHost_MouseLeave"
@@ -145,6 +145,9 @@
                 BorderThickness="0,0,1,0"
                 ClipToBounds="True"
                 Tag="False">
+            <Border.Clip>
+                <RectangleGeometry x:Name="SidebarClipGeometry" Rect="0,0,58,10000" />
+            </Border.Clip>
             <Grid>
                 <!-- Blood Bath lives over nav icons, but under the Settings control. Every drop starts above the clipped rail. -->
                 <Canvas Panel.ZIndex="0"
@@ -462,7 +465,7 @@
                               Grid.Row="1"
                               RequestBringIntoView="MainScrollViewer_RequestBringIntoView"
                               CanContentScroll="False"
-                              IsDeferredScrollingEnabled="True"
+                              IsDeferredScrollingEnabled="False"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled"
                               Background="Transparent">

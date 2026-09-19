@@ -4,18 +4,19 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.22-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.23-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.22
+## Latest update — 0.23.23
 
-### Installer restart hotfix
-🩷 **✓** Fixed Windows Setup error **740** when Sabby tried to reopen after an install/update.  
-🟢 **+** Setup now relaunches the administrator-required Sabby executable through Windows' elevated **runas** path.  
-🟢 **+** App-driven updates still download and verify first, close only for replacement, then automatically reopen the newly installed build.
+### Smooth scrolling & sidebar
+🩷 **✓** Scrollbar dragging now updates the page continuously instead of waiting for mouse release.  
+🟢 **+** The main scrollbar is easier to grab across its full track.  
+🩷 **✓** Sidebar hover no longer animates layout width every frame; it uses a lightweight clip plus compositor workspace transforms.  
+🟢 **+** Faster, cleaner edge-hover opening while keeping the push/squish effect.
 
 ## Change legend
 

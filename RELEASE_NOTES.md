@@ -1,11 +1,15 @@
-## Sabby Optimizer 0.23.22
+## Sabby Optimizer 0.23.23
 
-### Installer restart hotfix
-🩷 **✓** Fixed Setup error **740 — “The requested operation requires elevation”** after installation.  
-🩷 **✓** Removed the non-elevated `runasoriginaluser` launch path that conflicted with Sabby's `requireAdministrator` application manifest.  
-🟢 **+** Normal installs now relaunch Sabby through Windows ShellExecute using the **runas** verb.  
-🟢 **+** App-driven silent updates use the same elevated relaunch path with `--post-update`.  
-🟢 **+** Expected flow is now: **download over Sabby → verify → close Sabby → install → relaunch the newly installed version**.
+### Scrolling
+🩷 **✓** Disabled deferred workspace scrolling, so the page now moves **while the scrollbar thumb is being dragged** instead of jumping only after release.  
+🟢 **+** Main scrollbar hit width increased to **14 px** and the thumb now stretches across the usable track instead of exposing only a narrow center grab area.  
+🟢 **+** Clicking the scrollbar track can move directly toward the clicked position for faster navigation.
 
-### Why this version is 0.23.22
-0.23.21 was already published with a fixed installer hash. The restart correction is shipped as a new immutable release instead of silently replacing the existing 0.23.21 installer.
+### Sidebar performance
+🩷 **✓** Removed the animated sidebar Width change that forced WPF to remeasure the navigation tree every frame.  
+🟢 **+** Sidebar reveal now uses a lightweight animated clip while the workspace push/squish remains compositor-based.  
+🟢 **+** Hover-open timing is shorter and branding fades are synchronized with the new reveal animation.  
+🟢 **+** Exact-edge hover behavior and the workspace push/squish behavior are preserved.
+
+### Update/restart
+🟢 **+** The verified 0.23.22 installer/restart path remains intact: download over the app → verify → close Sabby → install → automatically relaunch the installed build.

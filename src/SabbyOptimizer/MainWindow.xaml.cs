@@ -780,32 +780,37 @@ public partial class MainWindow : Window
 
     private void SetSidebarExpanded(bool expanded)
     {
-        var targetWidth = expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth;
-        var currentWidth = SidebarHost.ActualWidth > 0 ? SidebarHost.ActualWidth : SidebarHost.Width;
-        if (_sidebarExpanded == expanded && Math.Abs(currentWidth - targetWidth) < 0.5)
+        var targetClipWidth = expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth;
+        var currentRect = SidebarClipGeometry.Rect;
+        var currentClipWidth = currentRect.Width;
+        if (_sidebarExpanded == expanded && Math.Abs(currentClipWidth - targetClipWidth) < 0.5)
             return;
 
         _sidebarExpanded = expanded;
         SidebarHost.Tag = expanded ? "True" : "False";
         AnimateSidebarBranding(expanded);
 
+        // Keep the sidebar at its full logical width and reveal it with a geometry clip.
+        // This avoids a Width animation, which forced WPF to remeasure the whole navigation tree
+        // on every frame and made the edge-hover animation visibly stutter.
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
-        SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, null);
+        SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
         WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
 
-        var distance = Math.Abs(targetWidth - currentWidth);
-        var durationMs = Math.Clamp(90d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 40d), 90d, 130d);
+        var distance = Math.Abs(targetClipWidth - currentClipWidth);
+        var durationMs = Math.Clamp(82d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 34d), 82d, 116d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var generation = ++_sidebarAnimationGeneration;
-        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
 
         var delta = ExpandedSidebarWidth - CollapsedSidebarWidth;
         var workspaceWidth = Math.Max(1d, WorkspaceHost.ActualWidth);
         var targetScale = expanded ? Math.Max(0.72, (workspaceWidth - delta) / workspaceWidth) : 1d;
         var targetShift = expanded ? delta : 0d;
 
-        var widthAnimation = new DoubleAnimation(currentWidth, targetWidth, duration)
+        var targetRect = new Rect(0, 0, targetClipWidth, Math.Max(10000, SidebarHost.ActualHeight + 8));
+        var clipAnimation = new RectAnimation(currentRect, targetRect, duration)
         {
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
@@ -821,18 +826,18 @@ public partial class MainWindow : Window
             FillBehavior = FillBehavior.Stop
         };
 
-        widthAnimation.Completed += (_, _) =>
+        clipAnimation.Completed += (_, _) =>
         {
             if (generation != _sidebarAnimationGeneration) return;
-            SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, null);
-            SidebarHost.Width = targetWidth;
+            SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
+            SidebarClipGeometry.Rect = targetRect;
             WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
             WorkspaceScale.ScaleX = targetScale;
             WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
             WorkspaceShift.X = targetShift;
         };
 
-        SidebarHost.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation, HandoffBehavior.SnapshotAndReplace);
+        SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, clipAnimation, HandoffBehavior.SnapshotAndReplace);
         WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation, HandoffBehavior.SnapshotAndReplace);
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, shiftAnimation, HandoffBehavior.SnapshotAndReplace);
     }
@@ -840,7 +845,7 @@ public partial class MainWindow : Window
     private void AnimateSidebarBranding(bool expanded)
     {
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-        var duration = TimeSpan.FromMilliseconds(expanded ? 145 : 105);
+        var duration = TimeSpan.FromMilliseconds(expanded ? 105 : 85);
         AnimateOpacity(CollapsedBrandPanel, expanded ? 0 : 1, duration, ease);
         AnimateOpacity(SidebarBrandPanel, expanded ? 1 : 0, duration, ease);
     }
