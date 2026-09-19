@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -16,7 +17,32 @@ namespace PCTweaker.Core.Services;
 public static class FastUpdateHelper
 {
     private const string HelperSwitch = "--sab-update-helper";
+    private const int WmClose = 0x0010;
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromMinutes(4) };
+
+    public static string UpdateInstallMarkerPath =>
+        Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "SabbyOptimizer",
+            "UserData",
+            "Updates",
+            "installing.flag");
+
+    public static bool IsInstallShutdownRequested()
+    {
+        try { return File.Exists(UpdateInstallMarkerPath); }
+        catch { return false; }
+    }
+
+    public static void ClearInstallMarker()
+    {
+        try
+        {
+            if (File.Exists(UpdateInstallMarkerPath))
+                File.Delete(UpdateInstallMarkerPath);
+        }
+        catch { }
+    }
 
     public static bool TryStart(SabbyReleaseInfo release, out string message)
     {
@@ -163,26 +189,33 @@ public static class FastUpdateHelper
 
             overlay.SetStage(
                 "Installing update…",
-                "Verified. Sabby will close for installation and reopen automatically when Setup finishes.",
+                "Verified. Closing Sabby safely, installing the update, then reopening it automatically.",
                 100,
                 true);
             await overlay.RenderAsync();
-            await Task.Delay(500).ConfigureAwait(false);
+
+            CreateInstallMarker(version);
+            await CloseRunningSabbyAsync(ownerProcessId).ConfigureAwait(false);
+
+            // Give the main process a brief moment to release files after its Closing/Closed handlers.
+            await Task.Delay(250).ConfigureAwait(false);
 
             Process.Start(new ProcessStartInfo
             {
                 FileName = destination,
                 UseShellExecute = true,
                 Verb = "runas",
-                Arguments = "/SABBYUPDATE=1 /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /NORESTART"
+                Arguments = "/SABBYUPDATE=1 /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /FORCECLOSEAPPLICATIONS /NORESTART"
             });
 
-            // The helper can leave now. Setup owns the close/replace/relaunch stage.
+            // Setup now owns replacement and relaunch. This helper exits immediately so it does
+            // not keep SabbyOptimizer.exe locked while Inno Setup replaces the installed files.
             overlay.CloseSafe();
         }
         catch (Exception ex)
         {
             WriteFailure(ex);
+            ClearInstallMarker();
 
             if (overlay is not null)
             {
@@ -197,6 +230,57 @@ public static class FastUpdateHelper
 
         return true;
     }
+
+    private static void CreateInstallMarker(string version)
+    {
+        var path = UpdateInstallMarkerPath;
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, $"{version}|{DateTimeOffset.UtcNow:O}");
+    }
+
+    private static async Task CloseRunningSabbyAsync(int processId)
+    {
+        if (processId <= 0 || processId == Environment.ProcessId)
+            return;
+
+        try
+        {
+            using var process = Process.GetProcessById(processId);
+            process.Refresh();
+
+            if (process.HasExited)
+                return;
+
+            var handle = process.MainWindowHandle;
+            if (handle != IntPtr.Zero)
+                PostMessage(handle, WmClose, IntPtr.Zero, IntPtr.Zero);
+            else
+                process.CloseMainWindow();
+
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(6));
+            try
+            {
+                await process.WaitForExitAsync(timeout.Token).ConfigureAwait(false);
+                return;
+            }
+            catch (OperationCanceledException)
+            {
+                // Update was explicitly accepted and the normal close path had time to persist
+                // settings. A stuck process must not block replacement forever.
+            }
+
+            process.Kill(entireProcessTree: false);
+            using var killTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+            await process.WaitForExitAsync(killTimeout.Token).ConfigureAwait(false);
+        }
+        catch (ArgumentException)
+        {
+            // Process already exited.
+        }
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     private static OverlayBounds GetVisibleSabbyBounds()
     {

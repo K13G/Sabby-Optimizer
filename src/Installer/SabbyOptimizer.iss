@@ -1,6 +1,6 @@
-; Sabby Optimizer 0.23.20 installer definition (Inno Setup 7/6)
+; Sabby Optimizer 0.23.21 installer definition (Inno Setup 7/6)
 #ifndef AppVersion
-  #define AppVersion "0.23.20"
+  #define AppVersion "0.23.21"
 #endif
 #ifndef SourceDir
   #define SourceDir "..\artifacts\publish\win-x64"
@@ -55,7 +55,7 @@ Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription:
 
 [Run]
 Filename: "{app}\SabbyOptimizer.exe"; Description: "Launch Sabby Optimizer"; Flags: nowait postinstall runasoriginaluser skipifsilent; Check: not IsSabbyUpdate
-Filename: "{app}\SabbyOptimizer.exe"; Flags: nowait runasoriginaluser; Check: IsSabbyUpdate
+Filename: "{app}\SabbyOptimizer.exe"; Parameters: "--post-update"; Flags: nowait; Check: IsSabbyUpdate
 
 [Code]
 function IsSabbyUpdate(): Boolean;

@@ -31,6 +31,10 @@ public partial class App : Application
             return;
         }
 
+        // A successfully installed update relaunches Sabby through the installer.
+        // Clear the shutdown marker now so ordinary future closes can use the user's tray preference.
+        FastUpdateHelper.ClearInstallMarker();
+
         if (TryRunNvApiHelperCommand(e.Args))
             return;
 

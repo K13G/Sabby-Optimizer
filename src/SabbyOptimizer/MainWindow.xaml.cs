@@ -240,6 +240,10 @@ public partial class MainWindow : Window
     {
         PersistWindowState();
 
+        var installingUpdate = FastUpdateHelper.IsInstallShutdownRequested();
+        if (installingUpdate)
+            _allowRealClose = true;
+
         if (!_allowRealClose && _settings.Current.CloseToTray)
         {
             // Create the tray icon BEFORE cancelling the close. If Windows refuses the icon,
