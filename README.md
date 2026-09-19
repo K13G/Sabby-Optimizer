@@ -4,19 +4,19 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.23-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.24-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.23
+## Latest update — 0.23.24
 
-### Smooth scrolling & sidebar
-🩷 **✓** Scrollbar dragging now updates the page continuously instead of waiting for mouse release.  
-🟢 **+** The main scrollbar is easier to grab across its full track.  
-🩷 **✓** Sidebar hover no longer animates layout width every frame; it uses a lightweight clip plus compositor workspace transforms.  
-🟢 **+** Faster, cleaner edge-hover opening while keeping the push/squish effect.
+### Sidebar responsiveness repair
+🩷 **✓** Settings is aligned correctly in the compact rail and no longer shifts right when Credits is hidden.  
+🩷 **✓** Hovering Settings/Credits keeps the expanded menu open.  
+🟢 **+** Replaced full-page scaling with a one-layout-pass FLIP transition for a much cleaner sidebar animation.  
+🟢 **+** Workspace text/cards remain at native 100% scale while the menu opens.
 
 ## Change legend
 

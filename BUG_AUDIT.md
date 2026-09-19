@@ -60,3 +60,13 @@ Concrete changes include: Debloat renders at most 32 result cards at once; anima
 | Scrollbar | The visual scrollbar was wider than the actual thumb/track grab area. | Track now fills the template width, thumb stretches across it, and the main scrollbar is 14 px wide. |
 | Sidebar | Sidebar Width was animated on hover, forcing WPF layout/measure work every frame. | Sidebar stays at full logical width and reveals through RectangleGeometry clipping; workspace remains compositor transformed. |
 | Sidebar | Branding fade outlasted the rail reveal and made the interaction feel sluggish. | Reduced branding fade timing to track the shorter reveal. |
+
+
+## 0.23.24 follow-up
+
+| Area | Issue found | Fix |
+| --- | --- | --- |
+| Settings footer | When Credits collapsed, the Settings button was centered inside a 96 px footer and appeared too far right. | Footer content is left-anchored so Settings stays centered on the compact 58 px rail. |
+| Sidebar hover | Settings/Credits lived outside SidebarHost, so entering them could let the close timer collapse the menu. | Footer is now included in hover retention and stops/restarts the same close timer. |
+| Sidebar performance | Workspace ScaleX animated the entire live WPF page, causing blur and expensive redraws. | Removed ScaleX entirely; workspace uses a one-pass margin layout plus TranslateX FLIP animation. |
+| Sidebar clarity | Scaling changed perceived text/card size during hover. | Workspace remains at 100% render scale throughout the transition. |

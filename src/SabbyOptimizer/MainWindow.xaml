@@ -304,17 +304,20 @@
         </Border>
 
         <!-- Settings/Credits live outside the clipped hover rail so both stay visible at every window size. -->
-        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+        <Border x:Name="SidebarFooterActions"
+                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                 Panel.ZIndex="2000"
-                Width="96" Height="48"
+                Width="104" Height="48"
                 Margin="8,0,0,22"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Background="Transparent"
                 BorderThickness="0"
                 CornerRadius="0"
-                ClipToBounds="False">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                ClipToBounds="False"
+                MouseEnter="SidebarFooterActions_MouseEnter"
+                MouseLeave="SidebarFooterActions_MouseLeave">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Button Command="{Binding OpenSettingsCommand}"
                         Width="42" Height="42" MinHeight="42" Padding="0"
                         Background="Transparent" BorderThickness="0"
@@ -389,10 +392,7 @@
 
         <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10" ClipToBounds="True" RenderTransformOrigin="0,0">
             <Grid.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform x:Name="WorkspaceScale" ScaleX="1" ScaleY="1" />
-                    <TranslateTransform x:Name="WorkspaceShift" X="0" />
-                </TransformGroup>
+                <TranslateTransform x:Name="WorkspaceShift" X="0" />
             </Grid.RenderTransform>
             <Grid x:Name="MainBloodLayer"
                   Panel.ZIndex="0"

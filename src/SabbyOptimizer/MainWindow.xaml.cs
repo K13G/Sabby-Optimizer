@@ -78,7 +78,7 @@ public partial class MainWindow : Window
         _sidebarCloseTimer.Tick += (_, _) =>
         {
             _sidebarCloseTimer.Stop();
-            if (!SidebarHost.IsMouseOver && !SidebarEdgeHotspot.IsMouseOver)
+            if (!SidebarHost.IsMouseOver && !SidebarEdgeHotspot.IsMouseOver && !SidebarFooterActions.IsMouseOver)
                 SetSidebarExpanded(false);
         };
     }
@@ -145,7 +145,6 @@ public partial class MainWindow : Window
         UpdateResponsiveLayoutResources();
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
         WorkspaceShift.X = 0;
-        WorkspaceScale.ScaleX = 1;
         CollapsedBrandPanel.Opacity = 1;
         SidebarBrandPanel.Opacity = 0;
         SidebarHost.Tag = "False";
@@ -772,6 +771,18 @@ public partial class MainWindow : Window
         _sidebarCloseTimer.Start();
     }
 
+    private void SidebarFooterActions_MouseEnter(object sender, MouseEventArgs e)
+    {
+        _sidebarCloseTimer.Stop();
+        SetSidebarExpanded(true);
+    }
+
+    private void SidebarFooterActions_MouseLeave(object sender, MouseEventArgs e)
+    {
+        _sidebarCloseTimer.Stop();
+        _sidebarCloseTimer.Start();
+    }
+
     private void RootLayout_MouseLeave(object sender, MouseEventArgs e)
     {
         _sidebarCloseTimer.Stop();
@@ -790,24 +801,25 @@ public partial class MainWindow : Window
         SidebarHost.Tag = expanded ? "True" : "False";
         AnimateSidebarBranding(expanded);
 
-        // Keep the sidebar at its full logical width and reveal it with a geometry clip.
-        // This avoids a Width animation, which forced WPF to remeasure the whole navigation tree
-        // on every frame and made the edge-hover animation visibly stutter.
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
+
+        // FLIP layout: change the workspace to its final width exactly once, then animate only
+        // TranslateX back to zero. This keeps text at 100% scale, avoids blurry raster scaling,
+        // and eliminates per-frame remeasure/re-render work from the large page tree.
+        var currentVisualLeft = WorkspaceHost.Margin.Left + WorkspaceShift.X;
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
-        WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+
+        var delta = ExpandedSidebarWidth - CollapsedSidebarWidth;
+        var targetMarginLeft = expanded ? delta : 0d;
+        WorkspaceHost.Margin = new Thickness(targetMarginLeft, 0, 0, 0);
+        WorkspaceShift.X = currentVisualLeft - targetMarginLeft;
 
         var distance = Math.Abs(targetClipWidth - currentClipWidth);
-        var durationMs = Math.Clamp(82d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 34d), 82d, 116d);
+        var durationMs = Math.Clamp(72d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 28d), 72d, 100d);
         var duration = TimeSpan.FromMilliseconds(durationMs);
         var generation = ++_sidebarAnimationGeneration;
         var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
-
-        var delta = ExpandedSidebarWidth - CollapsedSidebarWidth;
-        var workspaceWidth = Math.Max(1d, WorkspaceHost.ActualWidth);
-        var targetScale = expanded ? Math.Max(0.72, (workspaceWidth - delta) / workspaceWidth) : 1d;
-        var targetShift = expanded ? delta : 0d;
 
         var targetRect = new Rect(0, 0, targetClipWidth, Math.Max(10000, SidebarHost.ActualHeight + 8));
         var clipAnimation = new RectAnimation(currentRect, targetRect, duration)
@@ -815,12 +827,7 @@ public partial class MainWindow : Window
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
         };
-        var scaleAnimation = new DoubleAnimation(WorkspaceScale.ScaleX, targetScale, duration)
-        {
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-        var shiftAnimation = new DoubleAnimation(WorkspaceShift.X, targetShift, duration)
+        var shiftAnimation = new DoubleAnimation(WorkspaceShift.X, 0, duration)
         {
             EasingFunction = ease,
             FillBehavior = FillBehavior.Stop
@@ -831,21 +838,18 @@ public partial class MainWindow : Window
             if (generation != _sidebarAnimationGeneration) return;
             SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
             SidebarClipGeometry.Rect = targetRect;
-            WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
-            WorkspaceScale.ScaleX = targetScale;
             WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
-            WorkspaceShift.X = targetShift;
+            WorkspaceShift.X = 0;
         };
 
         SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, clipAnimation, HandoffBehavior.SnapshotAndReplace);
-        WorkspaceScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation, HandoffBehavior.SnapshotAndReplace);
         WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, shiftAnimation, HandoffBehavior.SnapshotAndReplace);
     }
 
     private void AnimateSidebarBranding(bool expanded)
     {
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-        var duration = TimeSpan.FromMilliseconds(expanded ? 105 : 85);
+        var duration = TimeSpan.FromMilliseconds(expanded ? 90 : 72);
         AnimateOpacity(CollapsedBrandPanel, expanded ? 0 : 1, duration, ease);
         AnimateOpacity(SidebarBrandPanel, expanded ? 1 : 0, duration, ease);
     }
@@ -908,6 +912,9 @@ public partial class MainWindow : Window
             Opacity = 1;
             MainContentHost.BeginAnimation(OpacityProperty, null);
             MainContentHost.Opacity = 1;
+
+            WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
+            WorkspaceShift.X = 0;
 
             if (MainContentHost.RenderTransform is TranslateTransform pageTransform)
             {
