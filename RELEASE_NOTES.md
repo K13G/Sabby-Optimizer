@@ -1,13 +1,11 @@
-## Sabby Optimizer 0.23.21
+## Sabby Optimizer 0.23.22
 
-### Update reliability
-🩷 **✓** Fixed the update path where Sabby could hide to the notification area instead of actually closing for installation.  
-🟢 **+** The updater now creates a short-lived install marker only after the installer has downloaded and passed SHA-256 verification.  
-🟢 **+** When installation starts, Sabby's normal close handler recognizes that marker and performs a real close instead of Close-to-Tray.  
-🟢 **+** The updater waits for the existing Sabby process to exit before launching Inno Setup, preventing the running app from keeping its own files locked.  
-🟢 **+** A stuck old process gets a bounded close timeout so an accepted update cannot hang forever.  
-🟢 **+** Inno Setup launches the newly installed Sabby executable automatically after replacement completes.  
-🩷 **✓** The update marker is cleared on the next normal startup, restoring the user's normal tray-close preference.
+### Installer restart hotfix
+🩷 **✓** Fixed Setup error **740 — “The requested operation requires elevation”** after installation.  
+🩷 **✓** Removed the non-elevated `runasoriginaluser` launch path that conflicted with Sabby's `requireAdministrator` application manifest.  
+🟢 **+** Normal installs now relaunch Sabby through Windows ShellExecute using the **runas** verb.  
+🟢 **+** App-driven silent updates use the same elevated relaunch path with `--post-update`.  
+🟢 **+** Expected flow is now: **download over Sabby → verify → close Sabby → install → relaunch the newly installed version**.
 
-### Expected flow
-**Download over the open app → verify → close Sabby → install 0.23.21 → automatically reopen Sabby 0.23.21.**
+### Why this version is 0.23.22
+0.23.21 was already published with a fixed installer hash. The restart correction is shipped as a new immutable release instead of silently replacing the existing 0.23.21 installer.

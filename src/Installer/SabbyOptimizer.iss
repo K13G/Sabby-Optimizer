@@ -1,6 +1,6 @@
-; Sabby Optimizer 0.23.21 installer definition (Inno Setup 7/6)
+; Sabby Optimizer 0.23.22 installer definition (Inno Setup 7/6)
 #ifndef AppVersion
-  #define AppVersion "0.23.21"
+  #define AppVersion "0.23.22"
 #endif
 #ifndef SourceDir
   #define SourceDir "..\artifacts\publish\win-x64"
@@ -54,8 +54,11 @@ Name: "{autodesktop}\Sabby Optimizer"; Filename: "{app}\SabbyOptimizer.exe"; Tas
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"; Flags: unchecked
 
 [Run]
-Filename: "{app}\SabbyOptimizer.exe"; Description: "Launch Sabby Optimizer"; Flags: nowait postinstall runasoriginaluser skipifsilent; Check: not IsSabbyUpdate
-Filename: "{app}\SabbyOptimizer.exe"; Parameters: "--post-update"; Flags: nowait; Check: IsSabbyUpdate
+; SabbyOptimizer.exe has requireAdministrator in its application manifest.
+; Use ShellExecute + the runas verb for BOTH normal installs and silent app-driven updates.
+; This avoids CreateProcess error 740 ("The requested operation requires elevation").
+Filename: "{app}\SabbyOptimizer.exe"; Description: "Launch Sabby Optimizer"; Verb: "runas"; Flags: shellexec nowait postinstall skipifsilent; Check: not IsSabbyUpdate
+Filename: "{app}\SabbyOptimizer.exe"; Parameters: "--post-update"; Verb: "runas"; Flags: shellexec nowait; Check: IsSabbyUpdate
 
 [Code]
 function IsSabbyUpdate(): Boolean;
