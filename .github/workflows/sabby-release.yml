@@ -49,6 +49,22 @@ jobs:
           overwrite_files: true
           files: |
             src/artifacts/installer/SabbyOptimizer-${{ steps.version.outputs.version }}-Setup.exe
+      - name: Remove superseded releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $currentTag = "v$version"
+          $oldTags = gh release list --limit 100 --json tagName --jq '.[].tagName'
+          foreach ($tag in $oldTags) {
+            $tag = $tag.Trim()
+            if ($tag -and $tag -ne $currentTag) {
+              Write-Host "Removing superseded release $tag"
+              gh release delete $tag --yes --cleanup-tag
+              if ($LASTEXITCODE -ne 0) { throw "Could not remove superseded release $tag" }
+            }
+          }
       - name: Publish stable update manifest
         shell: pwsh
         run: |
