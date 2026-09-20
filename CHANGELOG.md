@@ -1,5 +1,26 @@
 # Sabby Optimizer Changelog
 
+## Sabby Optimizer 0.23.26
+
+### Shell and UI cleanup
+🩷 **✓** Rebuilt the sidebar as a real layout column instead of a clipped floating rail. Hover no longer animates a large WPF tree, eliminating the old menu lag and the Settings hover-collapse race.
+🩷 **✓** Settings is now centered in a fixed 72 px compact rail; Credits is physically clipped until the menu is expanded, removing duplicate/stray footer controls.
+🟢 **+** Sidebar expansion is immediate and deterministic: the workspace reflows once instead of running clip/transform animations every frame.
+🟢 **+** Removed the old sidebar animation timer, clip geometry, workspace transform, and footer hover race.
+🟢 **+** Default window size increased to 1480 × 900 with a 1100 × 700 minimum.
+🟢 **+** Main page content and header content are centered with a 1500 px maximum width on large displays.
+🩷 **✓** Removed unused sidebar visual elements and duplicate footer markup.
+
+### Performance
+🟢 **+** Sidebar hover no longer creates animation clocks or repeatedly changes geometry.
+🟢 **+** The main workspace remains at normal render scale during menu interaction, keeping text and cards sharp.
+🟢 **+** The shell now uses one predictable layout path for collapsed and expanded navigation, reducing input/render churn.
+
+### Audit status
+The shell was re-audited after the 0.23.25 performance pass. The remaining persistent menu issues were traced to the floating clipped sidebar architecture rather than another page-specific animation.
+
+
+
 Legend: 🟢 **+** added/improved · 🔴 **−** removed · 🩷 **✓** fixed
 
 ## Sabby Optimizer 0.23.25
