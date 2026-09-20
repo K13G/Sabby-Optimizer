@@ -457,8 +457,8 @@ public partial class MainWindow : Window
 
     public void EnsureVisibleAndActivated()
     {
-        // Startup safety: never allow a healthy main process to remain invisible because of a
-        // stale tray/window-state value, an off-screen saved position, or a half-finished reveal.
+        // Startup safety: keep the restored shell visible even when saved tray/window state is stale
+        // or a previous session left an off-screen position.
         ShowInTaskbar = true;
         if (!IsVisible)
             Show();
