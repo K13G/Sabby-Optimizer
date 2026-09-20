@@ -15,7 +15,7 @@
     <AssemblyName>SabbyOptimizer</AssemblyName>
     <RootNamespace>PCTweaker</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.23.25</Version>
+    <Version>0.23.26</Version>
     <FileVersion>0.23.25.0</FileVersion>
     <InformationalVersion>0.23.25</InformationalVersion>
     <Product>Sabby Optimizer</Product>
