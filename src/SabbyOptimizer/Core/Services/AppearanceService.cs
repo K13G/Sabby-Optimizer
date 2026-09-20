@@ -45,7 +45,7 @@ public sealed class AppearanceService : IAppearanceService
         var speedChanged = Math.Abs(AnimationSpeed - clampedSpeed) > 0.001;
 
         if (_hasPalette && _activePalette.Animated)
-            AdvancePhase();
+            AdvanceCycle();
 
         if (styleChanged)
         {
@@ -103,7 +103,7 @@ public sealed class AppearanceService : IAppearanceService
 
         try
         {
-            AdvancePhase();
+            AdvanceCycle();
             RenderFrame(_cyclePosition);
         }
         catch (InvalidOperationException ex)
@@ -132,7 +132,7 @@ public sealed class AppearanceService : IAppearanceService
         }
     }
 
-    private void AdvancePhase()
+    private void AdvanceCycle()
     {
         var now = _animationClock.Elapsed.TotalSeconds;
         var elapsed = Math.Max(0, now - _lastTickSeconds);
