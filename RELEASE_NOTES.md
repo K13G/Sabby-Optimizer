@@ -1,3 +1,17 @@
+# Sabby Optimizer Release Notes
+
+## Sabby Optimizer 0.23.27
+
+### Shell restored and repaired
+🩷 **✓** Restored the complete pre-0.23.26 shell layout so the dashboard, page header, navigation, Settings, Credits, workspace, scrolling, and visual-style layers are present again.
+🩷 **✓** Removed the 0.23.26 floating-column shell rewrite that caused the UI to appear missing or displaced.
+🩷 **✓** Preserved the 0.23.25 performance work instead of replacing the whole shell with a new layout model.
+🟢 **+** Kept live scrollbar dragging, exact-left-edge menu opening, workspace push/squish, centered Settings, hidden Credits while collapsed, Blood Bath resources, and the existing update overlay/restart path.
+
+### Cleanup
+🩷 **✓** Removed remaining internal development “phase” terminology from source-facing names and user-visible messages.
+🟢 **+** Kept the application versioning and stable update pipeline aligned at 0.23.27.
+
 ## Sabby Optimizer 0.23.26
 
 ### Shell and UI cleanup
