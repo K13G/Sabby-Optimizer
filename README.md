@@ -4,13 +4,13 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.25-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.27-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.25
+## Latest update — 0.23.27
 
 ### Deep performance cleanup
 🟢 **+** Background-batched logging removes synchronous disk writes from the UI thread.  
