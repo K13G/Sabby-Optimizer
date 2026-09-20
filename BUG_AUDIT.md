@@ -1,3 +1,28 @@
+# Sabby Optimizer — 0.23.26 Bug Audit
+
+This audit records the additional shell/UI issues found after the 0.23.25 performance pass and the fixes shipped in 0.23.26.
+
+| Area | Issue found | 0.23.26 fix |
+| --- | --- | --- |
+| Sidebar architecture | The sidebar was a 226 px floating Border clipped to a 58 px RectangleGeometry while the workspace was separately translated. This created overlapping hit-test regions and extra render/layout work. | Replaced it with a real Grid column whose width is 72/240 px and whose child width follows the column. |
+| Sidebar hover | The shell needed a close timer and several separate MouseEnter/MouseLeave regions to keep Settings/Credits open. | Removed the timer and put navigation + Settings + Credits inside one sidebar hover region. |
+| Settings alignment | Settings was rendered in a wider footer than the compact rail, so its center was visually offset. | Settings owns the full 72 px compact cell and its icon bubble is centered in that cell. |
+| Credits visibility | Credits depended on a hover-state trigger outside the main sidebar and could remain/appear at the wrong time. | Credits is inside the sidebar and is naturally clipped while collapsed. |
+| Sidebar animation | Clip/FLIP animations changed geometry and transforms during every open/close. | Removed sidebar animation clocks and use one immediate column resize. |
+| Workspace rendering | The previous menu transition temporarily transformed the live workspace. | Workspace stays at 1:1 render scale; only its layout column changes. |
+| Edge hover | Full-window PreviewMouseMove handled the entire pointer stream for edge detection. | Edge detection is limited to the first 6 px and only while the sidebar is collapsed. |
+| Presentation clutter | Duplicate legacy footer markup and hidden sidebar controls remained in the shell XAML. | Removed the duplicate footer/legacy controls entirely. |
+| Large-window layout | Content used nearly the entire width on wide displays, making settings and cards look offset rather than centered. | Header/content hosts use a centered 1500 px maximum width. |
+| Startup presentation | Default shell size was only 1240 × 800. | Default shell size is now 1480 × 900 while retaining a safe 1100 × 700 minimum. |
+
+## Static performance audit notes
+
+A repository-wide source inventory was checked across the WPF shell, views, view models, services, tweak handlers, update path, and release workflow. The highest-confidence interaction hotspots found in the shell were the floating clipped sidebar, its animation/timer machinery, and the duplicated footer hit-test path; those are removed in 0.23.26.
+
+The broader application still contains intentional background `Task.Run` use around blocking Windows/CIM/PowerShell work. Those worker hops are not automatically bugs and were not removed merely because they appear in static search results. Exact CPU/RAM improvement depends on the active page and Windows workload, so no unmeasured percentage is claimed.
+
+---
+
 # Sabby Optimizer — 0.23.19 Bug Audit
 
 This document records the static code/UI audit completed for 0.23.19. Items below are issues found during the audit and the change made for each one.
