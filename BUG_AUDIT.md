@@ -1,3 +1,17 @@
+# Sabby Optimizer — 0.23.27 Bug Audit
+
+This audit records the regression found in the 0.23.26 shell rewrite and the targeted cleanup applied for 0.23.27.
+
+| Area | Regression / issue | 0.23.27 correction |
+| --- | --- | --- |
+| Shell | The 0.23.26 shell rewrite replaced the complete pre-existing navigation/workspace composition, leaving the UI displaced or effectively missing. | Restored the known-good 0.23.25 `MainWindow.xaml` and `MainWindow.xaml.cs` shell and kept the established performance fixes. |
+| Navigation | Replacing the previous shell architecture discarded the established edge-hover, workspace push/squish, Credits visibility, and Settings placement behavior. | Restored those existing behaviors without reintroducing the old high-cost per-item hover machinery. |
+| Settings | The shell rewrite moved the content origin and broke the expected centered layout. | Restored the previous content host/header/sidebar geometry and centered footer controls. |
+| Scrolling | The regression was tied to the replacement shell rather than the existing live-scroll implementation. | Restored the 0.23.25 scrollbar host and drag path. |
+| Themes | Blood Bath/event layers disappeared with the replaced shell composition. | Restored the existing event layer and appearance hooks. |
+| Update flow | The updater/restart implementation should not be coupled to shell layout changes. | Left the verified download → verify → close → install → relaunch path intact. |
+| Internal naming | Remaining `Phase` names/messages exposed implementation-era terminology. | Renamed the remaining phase-specific catalog aliases and removed the user-visible “current phase” wording. |
+
 # Sabby Optimizer — 0.23.26 Bug Audit
 
 This audit records the additional shell/UI issues found after the 0.23.25 performance pass and the fixes shipped in 0.23.26.
