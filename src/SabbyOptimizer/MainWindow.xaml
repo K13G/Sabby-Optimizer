@@ -4,10 +4,10 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="Sabby Optimizer"
         Icon="Resources/AppIcon.ico"
-        Width="1480"
-        Height="900"
-        MinWidth="1100"
-        MinHeight="700"
+        Width="1240"
+        Height="800"
+        MinWidth="1000"
+        MinHeight="650"
         ResizeMode="CanResize"
         WindowStyle="None"
         SizeToContent="Manual"
@@ -28,9 +28,9 @@
                             UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
-    <Grid x:Name="RootLayout" PreviewMouseMove="RootLayout_PreviewMouseMove">
+    <Grid x:Name="RootLayout" PreviewMouseMove="RootLayout_PreviewMouseMove" MouseLeave="RootLayout_MouseLeave">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="SidebarColumn" Width="72" />
+            <ColumnDefinition x:Name="SidebarColumn" Width="58" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -121,148 +121,279 @@
             </Grid>
         </Border>
 
-        <!-- Lightweight sidebar: the column itself expands instantly. No animated clipping,
-             layout transforms, or floating footer are used, so hover never competes with the page. -->
+        <!-- Tiny screen-edge trigger that never covers the navigation icons. -->
+        <Border x:Name="SidebarEdgeHotspot"
+                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                Panel.ZIndex="2100"
+                Width="22"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                MouseEnter="SidebarEdgeHotspot_MouseEnter" />
+
+        <!-- Compact icon rail that expands only while hovered. -->
         <Border x:Name="SidebarHost"
                 Grid.Row="1"
                 Grid.Column="0"
-                Width="{Binding ElementName=SidebarColumn, Path=ActualWidth}"
+                Grid.ColumnSpan="2"
                 Panel.ZIndex="1900"
+                Width="226"
+                HorizontalAlignment="Left"
                 MouseEnter="SidebarHost_MouseEnter"
                 MouseLeave="SidebarHost_MouseLeave"
                 Background="{DynamicResource SidebarBrush}"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,0,1,0"
-                ClipToBounds="True">
+                ClipToBounds="True"
+                Tag="False">
+            <Border.Clip>
+                <RectangleGeometry x:Name="SidebarClipGeometry" Rect="0,0,58,10000" />
+            </Border.Clip>
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="86" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="68" />
-                </Grid.RowDefinitions>
+                <!-- Blood Bath lives over nav icons, but under the Settings control. Every drop starts above the clipped rail. -->
+                <Canvas Panel.ZIndex="0"
+                        IsHitTestVisible="False"
+                        Visibility="Collapsed"
+                        Opacity="{DynamicResource BloodBathEffectOpacity}"
+                        ClipToBounds="True">
+                    <Grid x:Name="SideDrop1" Canvas.Left="7" Canvas.Top="0" Width="11" Height="20" Opacity="0.84">
+                        <Grid.RenderTransform><TranslateTransform Y="-320" /></Grid.RenderTransform>
+                        <Path Stretch="Fill" Fill="{DynamicResource AccentBrush}" Data="M5.5,0 C4.5,3.7 1,7.2 0.6,11.7 C0.2,16.7 2.7,20 5.5,20 C8.3,20 10.8,16.7 10.4,11.7 C10,7.2 6.5,3.7 5.5,0 Z" />
+                        <Ellipse Width="2" Height="3.4" Margin="2.7,4.5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Fill="#32FFFFFF" />
+                    </Grid>
+                    <Grid x:Name="SideDrop2" Canvas.Left="22" Canvas.Top="0" Width="8" Height="15" Opacity="0.72">
+                        <Grid.RenderTransform><TranslateTransform Y="-320" /></Grid.RenderTransform>
+                        <Path Stretch="Fill" Fill="{DynamicResource AccentBrush}" Data="M4,0 C3.2,2.8 0.7,5.4 0.4,8.7 C0.1,12.4 1.9,15 4,15 C6.1,15 7.9,12.4 7.6,8.7 C7.3,5.4 4.8,2.8 4,0 Z" />
+                    </Grid>
+                    <Grid x:Name="SideDrop3" Canvas.Right="7" Canvas.Top="0" Width="12" Height="22" Opacity="0.86">
+                        <Grid.RenderTransform><TranslateTransform Y="-320" /></Grid.RenderTransform>
+                        <Path Stretch="Fill" Fill="{DynamicResource AccentBrush}" Data="M6,0 C4.9,4.1 1.1,7.7 0.6,12.8 C0.2,18.3 3,22 6,22 C9,22 11.8,18.3 11.4,12.8 C10.9,7.7 7.1,4.1 6,0 Z" />
+                        <Ellipse Width="2.1" Height="3.6" Margin="3,4.9,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Fill="#36FFFFFF" />
+                    </Grid>
+                    <Grid x:Name="SideDrop4" Canvas.Right="23" Canvas.Top="0" Width="7" Height="13" Opacity="0.68">
+                        <Grid.RenderTransform><TranslateTransform Y="-320" /></Grid.RenderTransform>
+                        <Path Stretch="Fill" Fill="{DynamicResource AccentBrush}" Data="M3.5,0 C2.8,2.4 0.6,4.7 0.35,7.5 C0.1,10.8 1.7,13 3.5,13 C5.3,13 6.9,10.8 6.65,7.5 C6.4,4.7 4.2,2.4 3.5,0 Z" />
+                    </Grid>
+                </Canvas>
 
-                <Grid Grid.Row="0" Width="232" HorizontalAlignment="Left" Margin="0,0,0,0" IsHitTestVisible="False">
-                    <StackPanel x:Name="CollapsedBrandPanel" Orientation="Horizontal"
-                                Width="72" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <TextBlock Text="S" FontSize="20" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource BrandAccentBrush}"
-                                   HorizontalAlignment="Center" />
-                        <TextBlock Text="O" FontSize="20" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel x:Name="SidebarBrandPanel" Width="232" HorizontalAlignment="Left"
-                                VerticalAlignment="Center" Opacity="0">
-                        <StackPanel Orientation="Horizontal" Height="24" Margin="18,0,0,0">
-                            <TextBlock Text="SABBY" FontSize="19" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource BrandAccentBrush}" />
-                            <TextBlock Text="OPTIMIZER" Margin="9,0,0,0" FontSize="19" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                <Grid Panel.ZIndex="10">
+                    <Grid.RowDefinitions>
+                        <!-- These two rows always keep their height so nav icons never move when the rail expands. -->
+                        <RowDefinition Height="84" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="0" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Panel.ZIndex="50" Margin="17,18,12,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
+                        <StackPanel x:Name="CollapsedBrandPanel" Orientation="Horizontal" VerticalAlignment="Top" Opacity="1">
+                            <TextBlock Text="S" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource BrandAccentBrush}" />
+                            <TextBlock Text="O" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
                         </StackPanel>
-                        <TextBlock Text="Windows tuning, your way" Margin="18,4,0,0"
-                                   Foreground="{DynamicResource TextMutedBrush}" FontSize="10.5" />
-                    </StackPanel>
-                </Grid>
 
-                <ListBox Grid.Row="1"
-                         ItemsSource="{Binding NavigationItems}"
-                         SelectedItem="{Binding SelectedSidebarItem, Mode=TwoWay}"
-                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         Style="{StaticResource SidebarListBoxStyle}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="44" Width="232" HorizontalAlignment="Left">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="72" />
-                                    <ColumnDefinition Width="160" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Glyph}"
-                                           FontFamily="Segoe MDL2 Assets"
-                                           FontSize="16"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center"
-                                           ToolTip="{Binding Label}" />
-                                <TextBlock Grid.Column="1"
-                                           Text="{Binding Label}"
-                                           Margin="6,0,10,0"
-                                           VerticalAlignment="Center"
-                                           FontSize="12.5"
-                                           FontWeight="Medium"
-                                           TextTrimming="CharacterEllipsis"
-                                           IsHitTestVisible="False" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                        <StackPanel x:Name="SidebarBrandPanel" VerticalAlignment="Top" Opacity="0">
+                            <StackPanel Orientation="Horizontal" Height="24">
+                                <TextBlock Text="SABBY" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource BrandAccentBrush}" />
+                                <TextBlock Text="OPTIMIZER" Margin="10,0,0,0" FontSize="20" LineHeight="24" LineStackingStrategy="BlockLineHeight" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            </StackPanel>
+                            <TextBlock Text="Windows tuning, your way" Margin="0,5,0,0" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+                        </StackPanel>
+                    </Grid>
 
-                <Grid Grid.Row="2" Width="232" HorizontalAlignment="Left">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                        <Button Command="{Binding OpenSettingsCommand}"
-                                Width="72" Height="48" Padding="0"
-                                Background="Transparent" BorderThickness="0"
-                                ToolTip="Settings"
-                                shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="Root" Width="72" Height="48" Background="Transparent">
-                                        <Border x:Name="Bubble" Width="38" Height="38" CornerRadius="19"
-                                                Background="{DynamicResource SurfaceBrush}"
-                                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="15"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-                                            <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                                        </Trigger>
-                                        <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
-                                            <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                                        </DataTrigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                    <Border Grid.Row="1" Height="0" Visibility="Collapsed" />
 
-                        <Button Command="{Binding OpenCreditsCommand}"
-                                Width="72" Height="48" Padding="0"
-                                Background="Transparent" BorderThickness="0"
-                                ToolTip="Credits"
-                                shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="Root" Width="72" Height="48" Background="Transparent">
-                                        <Border x:Name="Bubble" Width="38" Height="38" CornerRadius="19"
-                                                Background="{DynamicResource SurfaceBrush}"
-                                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="15"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-                                            <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                                        </Trigger>
-                                        <DataTrigger Binding="{Binding IsCreditsSelected}" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
-                                            <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                                        </DataTrigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                    </StackPanel>
+                    <ListBox Grid.Row="2"
+                             Tag="{Binding ElementName=SidebarHost, Path=Tag}"
+                             ItemsSource="{Binding NavigationItems}"
+                             SelectedItem="{Binding SelectedSidebarItem, Mode=TwoWay}"
+                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             Style="{StaticResource SidebarListBoxStyle}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="46">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="58" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Glyph}"
+                                               FontFamily="Segoe MDL2 Assets"
+                                               FontSize="16"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               ToolTip="{Binding Label}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Label}"
+                                               Margin="8,0,14,0"
+                                               VerticalAlignment="Center"
+                                               FontSize="12.5"
+                                               FontWeight="Medium"
+                                               TextTrimming="CharacterEllipsis"
+                                               IsHitTestVisible="False"
+                                               Opacity="1" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Compact footer actions stay visible in fullscreen and remain side-by-side. -->
+                    <Border Grid.Row="3" Panel.ZIndex="150" Height="0" Visibility="Collapsed"
+                            Background="{DynamicResource SidebarBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+                        <Grid Width="216" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Margin="8,0,0,0" VerticalAlignment="Center">
+                                <Button Command="{Binding OpenSettingsCommand}"
+                                        Width="40" Height="40" MinHeight="40" Padding="0"
+                                        Background="Transparent" BorderThickness="0" ToolTip="Settings">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
+                                                <Border x:Name="IconBubble" Width="34" Height="34" CornerRadius="17"
+                                                        Background="{DynamicResource SurfaceHoverBrush}"
+                                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                                    <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                                </Trigger>
+                                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
+                                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
+                                                    <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
+                                <Button Command="{Binding OpenCreditsCommand}"
+                                        Width="40" Height="40" MinHeight="40" Padding="0" Margin="8,0,0,0"
+                                        Background="Transparent" BorderThickness="0" ToolTip="Credits">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
+                                                <Border x:Name="IconBubble" Width="34" Height="34" CornerRadius="17"
+                                                        Background="{DynamicResource SurfaceHoverBrush}"
+                                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                                    <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                                </Trigger>
+                                                <DataTrigger Binding="{Binding IsCreditsSelected}" Value="True">
+                                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
+                                                    <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </Grid>
             </Grid>
         </Border>
 
+        <!-- Settings/Credits live outside the clipped hover rail so both stay visible at every window size. -->
+        <Border x:Name="SidebarFooterActions"
+                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                Panel.ZIndex="2000"
+                Width="104" Height="48"
+                Margin="8,0,0,22"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Background="Transparent"
+                BorderThickness="0"
+                CornerRadius="0"
+                ClipToBounds="False"
+                MouseEnter="SidebarFooterActions_MouseEnter"
+                MouseLeave="SidebarFooterActions_MouseLeave">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Command="{Binding OpenSettingsCommand}"
+                        Width="42" Height="42" MinHeight="42" Padding="0"
+                        Background="Transparent" BorderThickness="0"
+                        ToolTip="Settings"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
+                                <Border x:Name="Bubble" Width="34" Height="34" CornerRadius="17"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Command="{Binding OpenCreditsCommand}"
+                        Width="42" Height="42" MinHeight="42" Padding="0" Margin="8,0,0,0"
+                        Background="Transparent" BorderThickness="0"
+                        ToolTip="Credits"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=SidebarHost, Path=Tag}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
+                                <Border x:Name="Bubble" Width="34" Height="34" CornerRadius="17"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsCreditsSelected}" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
+                                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Border>
+
         <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10" ClipToBounds="True" RenderTransformOrigin="0,0">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="WorkspaceShift" X="0" />
+            </Grid.RenderTransform>
             <Grid x:Name="MainBloodLayer"
                   Panel.ZIndex="0"
                   IsHitTestVisible="False"
@@ -306,7 +437,7 @@
 
                 <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" MinHeight="72" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
                     <Grid>
-                        <Grid Margin="24,0" MaxWidth="1500" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid Margin="24,0" VerticalAlignment="Center">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Center" Margin="0,2,0,0">
                                 <TextBlock Text="{Binding CurrentPageTitle}" FontSize="20" FontWeight="SemiBold" />
@@ -335,7 +466,6 @@
                               RequestBringIntoView="MainScrollViewer_RequestBringIntoView"
                               CanContentScroll="False"
                               IsDeferredScrollingEnabled="False"
-                              ScrollViewer.PanningMode="VerticalOnly"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled"
                               Background="Transparent">
