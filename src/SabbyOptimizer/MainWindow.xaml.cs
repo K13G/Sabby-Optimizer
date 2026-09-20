@@ -32,8 +32,8 @@ public partial class MainWindow : Window
     private const uint TpmReturnCmd = 0x0100;
     private const uint TpmNonotify = 0x0080;
     private const int IdiApplication = 32512;
-    private const double CollapsedSidebarWidth = 58;
-    private const double ExpandedSidebarWidth = 226;
+    private const double CollapsedSidebarWidth = 72;
+    private const double ExpandedSidebarWidth = 240;
 
     private readonly ISettingsService _settings;
     private readonly IAppearanceService _appearance;
@@ -47,11 +47,6 @@ public partial class MainWindow : Window
     private bool _allowRealClose;
     private bool _handlingTrayMinimize;
     private bool _sidebarExpanded;
-    private int _sidebarAnimationGeneration;
-    private readonly DispatcherTimer _sidebarCloseTimer = new()
-    {
-        Interval = TimeSpan.FromMilliseconds(170)
-    };
     private WindowState _lastNonMinimizedState = WindowState.Normal;
 
     public MainWindow(ShellViewModel viewModel, ISettingsService settings, IAppearanceService appearance, IAppLogger logger)
@@ -75,12 +70,6 @@ public partial class MainWindow : Window
         LocationChanged += OnWindowBoundsChanged;
         SizeChanged += OnWindowBoundsChanged;
         UiNotificationHub.Published += OnUiNotificationPublished;
-        _sidebarCloseTimer.Tick += (_, _) =>
-        {
-            _sidebarCloseTimer.Stop();
-            if (!SidebarHost.IsMouseOver && !SidebarEdgeHotspot.IsMouseOver && !SidebarFooterActions.IsMouseOver)
-                SetSidebarExpanded(false);
-        };
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -144,8 +133,8 @@ public partial class MainWindow : Window
     {
         UpdateResponsiveLayoutResources();
         SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
-        WorkspaceShift.X = 0;
         CollapsedBrandPanel.Opacity = 1;
+        SidebarBrandPanel.Opacity = 0;
         SidebarBrandPanel.Opacity = 0;
         SidebarHost.Tag = "False";
 
@@ -541,7 +530,6 @@ public partial class MainWindow : Window
         _appearance.AppearanceChanged -= OnAppearanceChanged;
         Activated -= OnWindowActivityChanged;
         Deactivated -= OnWindowActivityChanged;
-        _sidebarCloseTimer.Stop();
         LocationChanged -= OnWindowBoundsChanged;
         SizeChanged -= OnWindowBoundsChanged;
         UiNotificationHub.Published -= OnUiNotificationPublished;
@@ -744,137 +732,36 @@ public partial class MainWindow : Window
 
     private void RootLayout_PreviewMouseMove(object sender, MouseEventArgs e)
     {
-        // A simple edge check is more reliable than depending on a clipped flyout's hit testing.
-        // SetSidebarExpanded is state-gated, so this does not create animations on every mouse move.
-        if (e.GetPosition(RootLayout).X <= 24)
-        {
-            _sidebarCloseTimer.Stop();
+        // Only inspect the first few pixels while the rail is collapsed. Once expanded,
+        // the sidebar owns its entire hit area, so there is no per-move animation work.
+        if (!_sidebarExpanded && e.GetPosition(RootLayout).X <= 6)
             SetSidebarExpanded(true);
-        }
-    }
-
-    private void SidebarEdgeHotspot_MouseEnter(object sender, MouseEventArgs e)
-    {
-        _sidebarCloseTimer.Stop();
-        SetSidebarExpanded(true);
     }
 
     private void SidebarHost_MouseEnter(object sender, MouseEventArgs e)
     {
-        _sidebarCloseTimer.Stop();
         SetSidebarExpanded(true);
     }
 
     private void SidebarHost_MouseLeave(object sender, MouseEventArgs e)
     {
-        _sidebarCloseTimer.Stop();
-        _sidebarCloseTimer.Start();
-    }
-
-    private void SidebarFooterActions_MouseEnter(object sender, MouseEventArgs e)
-    {
-        _sidebarCloseTimer.Stop();
-        SetSidebarExpanded(true);
-    }
-
-    private void SidebarFooterActions_MouseLeave(object sender, MouseEventArgs e)
-    {
-        _sidebarCloseTimer.Stop();
-        _sidebarCloseTimer.Start();
-    }
-
-    private void RootLayout_MouseLeave(object sender, MouseEventArgs e)
-    {
-        _sidebarCloseTimer.Stop();
         SetSidebarExpanded(false);
     }
 
     private void SetSidebarExpanded(bool expanded)
     {
-        var targetClipWidth = expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth;
-        var currentRect = SidebarClipGeometry.Rect;
-        var currentClipWidth = currentRect.Width;
-        if (_sidebarExpanded == expanded && Math.Abs(currentClipWidth - targetClipWidth) < 0.5)
+        if (_sidebarExpanded == expanded)
             return;
 
         _sidebarExpanded = expanded;
         SidebarHost.Tag = expanded ? "True" : "False";
-        AnimateSidebarBranding(expanded);
 
-        SidebarColumn.Width = new GridLength(CollapsedSidebarWidth);
-        SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
-
-        // FLIP layout: change the workspace to its final width exactly once, then animate only
-        // TranslateX back to zero. This keeps text at 100% scale, avoids blurry raster scaling,
-        // and eliminates per-frame remeasure/re-render work from the large page tree.
-        var currentVisualLeft = WorkspaceHost.Margin.Left + WorkspaceShift.X;
-        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
-
-        var delta = ExpandedSidebarWidth - CollapsedSidebarWidth;
-        var targetMarginLeft = expanded ? delta : 0d;
-        WorkspaceHost.Margin = new Thickness(targetMarginLeft, 0, 0, 0);
-        WorkspaceShift.X = currentVisualLeft - targetMarginLeft;
-
-        var distance = Math.Abs(targetClipWidth - currentClipWidth);
-        var durationMs = Math.Clamp(72d + (distance / (ExpandedSidebarWidth - CollapsedSidebarWidth) * 28d), 72d, 100d);
-        var duration = TimeSpan.FromMilliseconds(durationMs);
-        var generation = ++_sidebarAnimationGeneration;
-        var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
-
-        var targetRect = new Rect(0, 0, targetClipWidth, Math.Max(10000, SidebarHost.ActualHeight + 8));
-        var clipAnimation = new RectAnimation(currentRect, targetRect, duration)
-        {
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-        var shiftAnimation = new DoubleAnimation(WorkspaceShift.X, 0, duration)
-        {
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-
-        clipAnimation.Completed += (_, _) =>
-        {
-            if (generation != _sidebarAnimationGeneration) return;
-            SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, null);
-            SidebarClipGeometry.Rect = targetRect;
-            WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
-            WorkspaceShift.X = 0;
-        };
-
-        SidebarClipGeometry.BeginAnimation(RectangleGeometry.RectProperty, clipAnimation, HandoffBehavior.SnapshotAndReplace);
-        WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, shiftAnimation, HandoffBehavior.SnapshotAndReplace);
-    }
-
-    private void AnimateSidebarBranding(bool expanded)
-    {
-        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-        var duration = TimeSpan.FromMilliseconds(expanded ? 90 : 72);
-        AnimateOpacity(CollapsedBrandPanel, expanded ? 0 : 1, duration, ease);
-        AnimateOpacity(SidebarBrandPanel, expanded ? 1 : 0, duration, ease);
-    }
-
-    private static void AnimateOpacity(UIElement element, double target, TimeSpan duration, IEasingFunction ease)
-    {
-        var animation = new DoubleAnimation(element.Opacity, target, duration)
-        {
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-        animation.Completed += (_, _) =>
-        {
-            element.BeginAnimation(OpacityProperty, null);
-            element.Opacity = target;
-        };
-        element.BeginAnimation(OpacityProperty, animation, HandoffBehavior.SnapshotAndReplace);
-    }
-
-    private void MainContentHost_TargetUpdated(object sender, DataTransferEventArgs e)
-    {
-        // Kept for compatibility with older cached XAML. Current navigation swaps content
-        // without animating the entire page tree, which avoids tab-click stutter/crashes.
-        MainContentHost.BeginAnimation(OpacityProperty, null);
-        MainContentHost.Opacity = 1;
+        // Instant, deterministic layout. The old animated clip/FLIP path repeatedly invalidated
+        // a large WPF tree and also created a race where the footer could fall outside the hover
+        // region. The sidebar column now owns its width and the workspace reflows once.
+        SidebarColumn.Width = new GridLength(expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth);
+        CollapsedBrandPanel.Opacity = expanded ? 0 : 1;
+        SidebarBrandPanel.Opacity = expanded ? 1 : 0;
     }
 
     private static void ApplyMonitorWorkArea(IntPtr hwnd, IntPtr lParam)
@@ -912,9 +799,6 @@ public partial class MainWindow : Window
             Opacity = 1;
             MainContentHost.BeginAnimation(OpacityProperty, null);
             MainContentHost.Opacity = 1;
-
-            WorkspaceShift.BeginAnimation(TranslateTransform.XProperty, null);
-            WorkspaceShift.X = 0;
 
             if (MainContentHost.RenderTransform is TranslateTransform pageTransform)
             {
