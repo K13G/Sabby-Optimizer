@@ -255,7 +255,7 @@ public sealed class GameDetectionService : IGameDetectionService
             ? "Game detected. No linked preset is assigned."
             : changed > 0
                 ? $"Applied {changed} supported setting{(changed == 1 ? string.Empty : "s")}; {skipped} unsupported or unavailable."
-                : $"No supported changes were needed yet; {skipped} requested setting{(skipped == 1 ? string.Empty : "s")} are unavailable in the current phase.";
+                : $"No supported changes were needed yet; {skipped} requested setting{(skipped == 1 ? string.Empty : "s")} are unavailable with the current configuration.";
 
         if (smartPlan is not null)
             detail += $" Smart tuning test classified this PC as {smartPlan.Tier}.";
