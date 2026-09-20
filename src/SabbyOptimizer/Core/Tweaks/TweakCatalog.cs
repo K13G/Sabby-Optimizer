@@ -450,14 +450,14 @@ public static class TweakCatalog
     public static IReadOnlyList<ITweakHandler> CreateCompatibleCatalog(IAppPaths paths, HardwareInfo hardware) =>
         CreateCatalog(paths, hardware);
 
-    public static IReadOnlyList<ITweakHandler> CreatePhase12Catalog(IAppPaths paths, HardwareInfo hardware) =>
+    public static IReadOnlyList<ITweakHandler> CreateCompatibilityCatalog(IAppPaths paths, HardwareInfo hardware) =>
         CreateCatalog(paths, hardware);
 
     public static IReadOnlyList<ITweakHandler> CreatePhase10Catalog(IAppPaths paths, HardwareInfo hardware) =>
         CreateCatalog(paths, hardware);
 
-    // Compatibility aliases for older internal call sites. New startup code uses Phase 10.
-    public static IReadOnlyList<ITweakHandler> CreatePhase9Catalog(IAppPaths paths, HardwareInfo hardware) =>
+    // Compatibility aliases for older internal call sites. New startup code uses the standard catalog.
+    public static IReadOnlyList<ITweakHandler> CreateLegacyCatalog(IAppPaths paths, HardwareInfo hardware) =>
         CreateCatalog(paths, hardware);
 
     public static IReadOnlyList<ITweakHandler> CreatePhase8Catalog(IAppPaths paths, HardwareInfo hardware) =>
