@@ -79,7 +79,20 @@ jobs:
           if (-not (git diff --cached --quiet)) {
             git commit -m "Publish Sabby ${{ steps.version.outputs.version }} stable manifest"
             # main may have received docs-only commits while the Windows build was running.
-            # Rebase the generated manifest commit before pushing so releases do not fail at the final step.
+            # Rebase the generated manifest commit before pushing.
             git pull --rebase origin main
-            git push
+            $pushed = $false
+            for ($attempt = 1; $attempt -le 4 -and -not $pushed; $attempt++) {
+              git push
+              if ($LASTEXITCODE -eq 0) {
+                $pushed = $true
+                break
+              }
+              if ($attempt -lt 4) {
+                Write-Warning "GitHub rejected the manifest push on attempt $attempt. Retrying..."
+                Start-Sleep -Seconds 8
+                git pull --rebase origin main
+              }
+            }
+            if (-not $pushed) { throw "Could not publish the stable manifest after 4 attempts." }
           }
