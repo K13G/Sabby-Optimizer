@@ -42,6 +42,13 @@
             </Grid>
         </Border>
 
+        <Border Style="{StaticResource SubtlePanelStyle}" Padding="10" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="GPU TOOLSET" Style="{StaticResource EyebrowTextStyle}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Text="Detect • apply supported quality-safe profile • restore exact prior state" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
         <ProgressBar Height="5" Value="{Binding Progress, Mode=OneWay}"
                      Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
                      Margin="0,0,0,12"/>
