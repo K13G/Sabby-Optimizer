@@ -18,7 +18,7 @@ public sealed class StartupUpdateCoordinator
 
     public async Task CheckAndEnforceAsync(Window owner, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(2200, cancellationToken);
+        await Task.Delay(700, cancellationToken);
 
         var feed = SabbyUpdateDefaults.NormalizeStableFeed(_settings.Current.StableUpdateFeedUrl);
         if (!string.Equals(_settings.Current.StableUpdateFeedUrl, feed, StringComparison.Ordinal))
