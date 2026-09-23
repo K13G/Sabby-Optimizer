@@ -1,9 +1,9 @@
 {
-  "version": "0.23.30",
-  "downloadUrl": "https://github.com/K13G/Sabby-Optimizer/releases/download/v0.23.30/SabbyOptimizer-0.23.30-Setup.exe",
-  "sha256": "9596B3BAB530CA935B78C164706F04BD9797B2952A27E74CA049914099B348A4",
+  "version": "0.23.31",
+  "downloadUrl": "https://github.com/K13G/Sabby-Optimizer/releases/download/v0.23.31/SabbyOptimizer-0.23.31-Setup.exe",
+  "sha256": "E79DFED968C9F926FEAA1FEA21BFC1D472AD1244D64043BE27889122F2CB4C27",
   "signerThumbprint": null,
-  "releaseNotes": "Sabby Optimizer 0.23.30 (Stable)",
+  "releaseNotes": "Sabby Optimizer 0.23.31 (Stable) — Dashboard graphs, UI cleanup, broader Debloat classification, Fix rename, and new privacy/safety controls.",
   "mandatory": true,
-  "publishedAt": "2026-09-23T01:23:10.2860406Z"
+  "publishedAt": "2026-09-23T14:01:02Z"
 }
