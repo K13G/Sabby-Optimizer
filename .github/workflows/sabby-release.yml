@@ -58,7 +58,7 @@ jobs:
           $currentTag = "v$version"
           # Keep 0.23.30 as the rollback/reference release. Future releases may supersede
           # other old builds, but this known-good baseline is intentionally never deleted.
-          $keepTags = @($currentTag, "v0.23.30")
+          $keepTags = @($currentTag, "v0.23.30", "v0.23.31")
           $oldTags = gh release list --limit 100 --json tagName --jq '.[].tagName'
           foreach ($tag in $oldTags) {
             $tag = $tag.Trim()
