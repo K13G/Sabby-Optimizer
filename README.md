@@ -4,30 +4,19 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.27-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.30-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.27
+## Latest update — 0.23.30
 
-### Deep performance cleanup
-🟢 **+** Background-batched logging removes synchronous disk writes from the UI thread.  
-🟢 **+** Hardware discovery starts after the first interactive frame instead of competing with startup.  
-🟢 **+** Tweaks renders 24 rich cards at a time while filters/search still cover the full catalog.  
-🩷 **✓** Tweak-state UI updates are coalesced instead of repeatedly recounting/rebinding the page.  
-🩷 **✓** Appearance sliders debounce full-app resource refreshes while dragging.  
-🟢 **+** Settings writes are coalesced, style lists recycle containers, animated gradients are reused, and optional NVIDIA sensor polling is less aggressive.  
-🔴 **−** Removed unnecessary per-item hover Storyboards from navigation.
+### Stable 0.23.27 baseline
 
-## Change legend
+This build intentionally uses the **0.23.27 codebase as its functional baseline**. The 0.23.28/0.23.29 shell/settings changes are not included.
 
-🟢 **+** Added or improved  
-🔴 **−** Removed  
-🩷 **✓** Bug fix
-
-See **[CHANGELOG.md](CHANGELOG.md)** for version history.
+The release number is 0.23.30 so the updater can correctly recognize it as newer than 0.23.28/0.23.29.
 
 ## Automatic updates
 
