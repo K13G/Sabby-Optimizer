@@ -211,7 +211,11 @@ public sealed class UpdateExtensionService : IUpdateExtensionService
 
         try
         {
-            var json = await ReadTextFromUrlOrFileAsync(feedUrl.Trim(), cancellationToken).ConfigureAwait(false);
+            // GitHub's raw-content CDN may cache a stable manifest briefly. Add a cache-busting
+            // query parameter for HTTP feeds so a newly published release is detected on the next
+            // automatic check instead of waiting for the CDN cache to expire.
+            var manifestSource = AddCacheBuster(feedUrl.Trim());
+            var json = await ReadTextFromUrlOrFileAsync(manifestSource, cancellationToken).ConfigureAwait(false);
             var manifest = JsonSerializer.Deserialize<ReleaseManifest>(json, JsonOptions) ?? throw new InvalidDataException("Update manifest was empty.");
             if (!Version.TryParse(manifest.Version, out var latest))
                 throw new InvalidDataException("Update manifest version is invalid.");
@@ -394,6 +398,21 @@ public sealed class UpdateExtensionService : IUpdateExtensionService
                 try { return ReadManifest(path).Id.Equals(extensionId, StringComparison.OrdinalIgnoreCase); }
                 catch { return false; }
             });
+    }
+
+    private static string AddCacheBuster(string source)
+    {
+        if (!Uri.TryCreate(source, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+            return source;
+
+        // Only the official stable feed needs this because it is intentionally a mutable
+        // manifest URL. Release installer URLs remain immutable and are never cache-busted.
+        if (!uri.Host.Equals("raw.githubusercontent.com", StringComparison.OrdinalIgnoreCase))
+            return source;
+
+        var separator = string.IsNullOrEmpty(uri.Query) ? "?" : "&";
+        return source + separator + "sab_sync=" + DateTimeOffset.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture);
     }
 
     private static async Task<string> ReadTextFromUrlOrFileAsync(string source, CancellationToken cancellationToken)
