@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using PCTweaker.Core.Services;
 using PCTweaker.Models;
@@ -10,8 +11,8 @@ public sealed class DashboardViewModel : ViewModelBase
     private HardwareInfo _hardware;
     private string _hardwareStatus = "Detecting hardware quietly in the background…";
     private readonly SystemMonitoringService? _monitoring;
-    private double _cpuPercent, _memoryPercent, _gpuPercent, _performanceReadiness, _networkReadiness, _privacyReadiness;
-    private string _cpuText = "—", _memoryText = "—", _gpuText = "—", _networkText = "Waiting for sample…";
+    private double _cpuPercent, _memoryPercent, _gpuPercent, _performanceReadiness, _networkReadiness, _privacyReadiness, _storagePercent, _systemReadiness;
+    private string _cpuText = "—", _memoryText = "—", _gpuText = "—", _networkText = "Waiting for sample…", _storageText = "—";
 
     public ObservableCollection<double> CpuBars { get; } = CreateBars();
     public ObservableCollection<double> MemoryBars { get; } = CreateBars();
@@ -32,6 +33,9 @@ public sealed class DashboardViewModel : ViewModelBase
     public string MemoryText { get => _memoryText; private set => SetProperty(ref _memoryText, value); }
     public string GpuText { get => _gpuText; private set => SetProperty(ref _gpuText, value); }
     public string NetworkText { get => _networkText; private set => SetProperty(ref _networkText, value); }
+    public double StoragePercent { get => _storagePercent; private set => SetProperty(ref _storagePercent, value); }
+    public double SystemReadiness { get => _systemReadiness; private set => SetProperty(ref _systemReadiness, value); }
+    public string StorageText { get => _storageText; private set => SetProperty(ref _storageText, value); }
 
     public DashboardViewModel(IAppPaths paths, HardwareInfo initialHardware, SystemMonitoringService? monitoring = null)
     {
@@ -89,6 +93,8 @@ public sealed class DashboardViewModel : ViewModelBase
         PushBar(MemoryBars, MemoryPercent);
         PushBar(GpuBars, GpuPercent);
         PushBar(NetworkBars, Math.Clamp(snapshot.DownloadMbps + snapshot.UploadMbps, 0, 100));
+        UpdateStorage();
+        SystemReadiness = Math.Round((PerformanceReadiness + NetworkReadiness + PrivacyReadiness + (100 - StoragePercent)) / 4d, 0);
     }
 
     private void UpdateReadiness(HardwareInfo hardware)
@@ -98,6 +104,27 @@ public sealed class DashboardViewModel : ViewModelBase
         PerformanceReadiness = detected >= 5 ? 92 : Math.Clamp(detected * 16, 18, 88);
         NetworkReadiness = IsPlaceholder(hardware.Network) ? 35 : 91;
         PrivacyReadiness = 78;
+        UpdateStorage();
+        SystemReadiness = Math.Round((PerformanceReadiness + NetworkReadiness + PrivacyReadiness + (100 - StoragePercent)) / 4d, 0);
+    }
+
+    private void UpdateStorage()
+    {
+        try
+        {
+            var root = Path.GetPathRoot(Environment.SystemDirectory);
+            if (string.IsNullOrWhiteSpace(root)) return;
+            var drive = new DriveInfo(root);
+            if (!drive.IsReady || drive.TotalSize <= 0) return;
+            var used = Math.Clamp(100d - ((double)drive.AvailableFreeSpace / drive.TotalSize * 100d), 0, 100);
+            StoragePercent = used;
+            StorageText = $"{used:0}% used • {drive.AvailableFreeSpace / 1_073_741_824d:0.0} GB free";
+        }
+        catch
+        {
+            StoragePercent = 0;
+            StorageText = "Storage sensor unavailable";
+        }
     }
 
     private static bool IsPlaceholder(string? value) =>
