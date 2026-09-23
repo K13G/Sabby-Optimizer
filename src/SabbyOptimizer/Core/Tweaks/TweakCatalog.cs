@@ -420,6 +420,76 @@ public static class TweakCatalog
             "smb-insecure-guest.json", "Insecure SMB guest denied", "SMB guest policy not hardened",
             new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation", "AllowInsecureGuestAuth", 0)));
 
+        handlers.Add(Policy(paths,
+            "privacy.consumer-features", "Windows Consumer Features",
+            "Stop Windows from automatically promoting selected consumer apps and experiences.",
+            TweakSafetyLevel.Moderate,
+            "Disables the documented Cloud Content consumer-features policy. Existing apps are not uninstalled.",
+            @"HKLM\Software\Policies\Microsoft\Windows\CloudContent\DisableWindowsConsumerFeatures = 1.",
+            "Undo restores the previous policy state.", true, false,
+            "consumer-features.json", "Consumer features off", "Consumer features allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\CloudContent", "DisableWindowsConsumerFeatures", 1)));
+
+        handlers.Add(Policy(paths,
+            "privacy.cloud-optimized-content", "Cloud Optimized Windows Content",
+            "Disable cloud-optimized promotional and suggested Windows content.",
+            TweakSafetyLevel.Moderate,
+            "Disables the documented DisableCloudOptimizedContent policy. This is a privacy/experience preference, not an FPS guarantee.",
+            @"HKLM\Software\Policies\Microsoft\Windows\CloudContent\DisableCloudOptimizedContent = 1.",
+            "Undo restores the previous policy state.", true, false,
+            "cloud-optimized-content.json", "Cloud content off", "Cloud content allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\CloudContent", "DisableCloudOptimizedContent", 1)));
+
+        handlers.Add(Policy(paths,
+            "privacy.location-services", "Windows Location Services",
+            "Disable machine-level Windows location services.",
+            TweakSafetyLevel.Advanced,
+            "Disables the documented Location and Sensors policy. Location-aware apps may stop receiving system location data.",
+            @"HKLM\Software\Policies\Microsoft\Windows\LocationAndSensors\DisableLocation = 1.",
+            "Undo restores the previous location policy state.", true, false,
+            "location-services.json", "Location services off", "Location services allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors", "DisableLocation", 1)));
+
+        handlers.Add(Policy(paths,
+            "privacy.camera", "Camera App Access",
+            "Force-deny Microsoft Store apps access to the camera.",
+            TweakSafetyLevel.Advanced,
+            "Windows App Privacy policy supports a Force Deny value for LetAppsAccessCamera. This can break camera apps and video calls.",
+            @"HKLM\Software\Policies\Microsoft\Windows\AppPrivacy\LetAppsAccessCamera = 2.",
+            "Undo restores the previous camera-access policy state.", true, false,
+            "camera-access.json", "Camera access denied", "Camera access allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\AppPrivacy", "LetAppsAccessCamera", 2)));
+
+        handlers.Add(Policy(paths,
+            "privacy.microphone", "Microphone App Access",
+            "Force-deny Microsoft Store apps access to the microphone.",
+            TweakSafetyLevel.Advanced,
+            "Windows App Privacy policy supports a Force Deny value for LetAppsAccessMicrophone. This can break voice chat and recording apps.",
+            @"HKLM\Software\Policies\Microsoft\Windows\AppPrivacy\LetAppsAccessMicrophone = 2.",
+            "Undo restores the previous microphone-access policy state.", true, false,
+            "microphone-access.json", "Microphone access denied", "Microphone access allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\AppPrivacy", "LetAppsAccessMicrophone", 2)));
+
+        handlers.Add(Policy(paths,
+            "privacy.location-apps", "Location App Access",
+            "Force-deny Microsoft Store apps access to location.",
+            TweakSafetyLevel.Advanced,
+            "Windows App Privacy policy supports a Force Deny value for LetAppsAccessLocation. Location-aware Store apps may stop functioning.",
+            @"HKLM\Software\Policies\Microsoft\Windows\AppPrivacy\LetAppsAccessLocation = 2.",
+            "Undo restores the previous app-location policy state.", true, false,
+            "location-apps.json", "App location denied", "App location allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\AppPrivacy", "LetAppsAccessLocation", 2)));
+
+        handlers.Add(Policy(paths,
+            "privacy.widgets-and-news", "Widgets & News",
+            "Disable the Windows News and Interests/Widgets policy surface.",
+            TweakSafetyLevel.Moderate,
+            "Windows exposes AllowNewsAndInterests for the News and Interests/Widgets experience. This changes the surface without modifying core Windows services.",
+            @"HKLM\Software\Policies\Microsoft\Dsh\AllowNewsAndInterests = 0.",
+            "Undo restores the previous Widgets/News policy state.", true, false,
+            "widgets-and-news.json", "Widgets/News off", "Widgets/News allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Dsh", "AllowNewsAndInterests", 0)));
+
         if (includeDefenderCapabilityProbe && DefenderPuaProtectionTweakHandler.IsSupported())
             handlers.Add(new DefenderPuaProtectionTweakHandler(paths));
     }

@@ -113,6 +113,30 @@
             </Border>
         </UniformGrid>
 
+        <Grid Margin="0,16,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="14">
+                <StackPanel><DockPanel><TextBlock Text="LIVE CPU" Style="{StaticResource EyebrowTextStyle}"/><TextBlock Text="{Binding CpuPercent, StringFormat={}{0:0}%}" DockPanel.Dock="Right" FontSize="20" FontWeight="SemiBold"/></DockPanel><TextBlock Text="{Binding CpuText}" Margin="0,3,0,0" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/><ItemsControl ItemsSource="{Binding CpuBars}" Height="54" Margin="0,9,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Height="{Binding}" VerticalAlignment="Bottom" Margin="1,0" Background="{DynamicResource AccentBrush}" CornerRadius="2"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="14">
+                <StackPanel><DockPanel><TextBlock Text="LIVE MEMORY" Style="{StaticResource EyebrowTextStyle}"/><TextBlock Text="{Binding MemoryPercent, StringFormat={}{0:0}%}" DockPanel.Dock="Right" FontSize="20" FontWeight="SemiBold"/></DockPanel><TextBlock Text="{Binding MemoryText}" Margin="0,3,0,0" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/><ItemsControl ItemsSource="{Binding MemoryBars}" Height="54" Margin="0,9,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Height="{Binding}" VerticalAlignment="Bottom" Margin="1,0" Background="{DynamicResource AccentGradientBrush}" CornerRadius="2"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
+            </Border>
+            <Border Grid.Column="4" Style="{StaticResource CardStyle}" Padding="14">
+                <StackPanel><DockPanel><TextBlock Text="LIVE GPU" Style="{StaticResource EyebrowTextStyle}"/><TextBlock Text="{Binding GpuPercent, StringFormat={}{0:0}%}" DockPanel.Dock="Right" FontSize="20" FontWeight="SemiBold"/></DockPanel><TextBlock Text="{Binding GpuText}" Margin="0,3,0,0" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/><ItemsControl ItemsSource="{Binding GpuBars}" Height="54" Margin="0,9,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Height="{Binding}" VerticalAlignment="Bottom" Margin="1,0" Background="{DynamicResource AccentBrush}" CornerRadius="2"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Margin="0,12,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource SubtlePanelStyle}" Padding="12"><StackPanel><DockPanel><TextBlock Text="Performance readiness" FontWeight="SemiBold"/><TextBlock Text="{Binding PerformanceReadiness, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><ProgressBar Value="{Binding PerformanceReadiness}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,8,0,0"/></StackPanel></Border>
+            <Border Grid.Column="2" Style="{StaticResource SubtlePanelStyle}" Padding="12"><StackPanel><DockPanel><TextBlock Text="Network readiness" FontWeight="SemiBold"/><TextBlock Text="{Binding NetworkReadiness, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><ProgressBar Value="{Binding NetworkReadiness}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,8,0,0"/></StackPanel></Border>
+            <Border Grid.Column="4" Style="{StaticResource SubtlePanelStyle}" Padding="12"><StackPanel><DockPanel><TextBlock Text="Privacy coverage" FontWeight="SemiBold"/><TextBlock Text="{Binding PrivacyReadiness, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><ProgressBar Value="{Binding PrivacyReadiness}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,8,0,0"/></StackPanel></Border>
+        </Grid>
+
+        <Border Style="{StaticResource CardStyle}" Padding="14" Margin="0,12,0,0">
+            <StackPanel><DockPanel><TextBlock Text="NETWORK ACTIVITY" Style="{StaticResource EyebrowTextStyle}"/><TextBlock Text="{Binding NetworkText}" DockPanel.Dock="Right" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/></DockPanel><ItemsControl ItemsSource="{Binding NetworkBars}" Height="46" Margin="0,8,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Height="{Binding}" VerticalAlignment="Bottom" Margin="1,0" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,1,0,0" CornerRadius="2"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
+        </Border>
+
         <Grid Margin="0,18,0,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <Border Grid.Column="0" Style="{StaticResource CardStyle}">

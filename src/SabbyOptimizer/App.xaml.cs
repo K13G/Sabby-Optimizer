@@ -16,6 +16,17 @@ namespace PCTweaker;
 
 public partial class App : Application
 {
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        try
+        {
+            if (_monitoringService is not null) await _monitoringService.StopAsync();
+        }
+        catch { }
+        base.OnExit(e);
+    }
+
+
     private IAppLogger? _logger;
     private Mutex? _singleInstanceMutex;
     private IGameDetectionService? _gameDetectionService;
@@ -124,8 +135,9 @@ public partial class App : Application
             var pingService = new PingOptimizationService();
             var systemRestoreService = new SystemRestoreService(_logger);
             var updateService = new UpdateCenterService(_logger);
+            _monitoringService = new SystemMonitoringService(quickHardware, _logger);
 
-            var dashboardViewModel = new DashboardViewModel(paths, quickHardware);
+            var dashboardViewModel = new DashboardViewModel(paths, quickHardware, _monitoringService);
             var navigation = new NavigationService();
             navigation.Register(AppPage.Dashboard, () => dashboardViewModel);
             navigation.Register(AppPage.Tweaks, () => new TweaksViewModel(quickEngine, quickSelfCheck, quickHardware, quickBackupService));
@@ -141,8 +153,7 @@ public partial class App : Application
                 _ = vm.InitializeAsync();
                 return vm;
             });
-            var quickMonitoring = new SystemMonitoringService(quickHardware, _logger);
-            navigation.Register(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, quickHardware, pingService, _logger), quickMonitoring, settings));
+            navigation.Register(AppPage.Benchmark, () => new BenchmarkViewModel(new BenchmarkService(paths, quickHardware, pingService, _logger), _monitoringService!, settings));
             navigation.Register(AppPage.Backups, () =>
             {
                 var vm = new BackupsViewModel(quickBackupService);

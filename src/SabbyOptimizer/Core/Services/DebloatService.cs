@@ -122,6 +122,8 @@ exit 4";
         if (ContainsAny(n,
             "clipchamp", "bingnews", "bingsports", "bingfinance", "bingfoodanddrink",
             "gethelp", "getstarted", "solitaire", "windowsfeedbackhub",
+            "skypeapp", "3dviewer", "3dbuilder", "microsoft.windowscommunicationsapps",
+            "windowsalarms", "windowscamera", "microsoft.microsoftsticky",
             "king.com.candycrush", "candycrush", "bubblewitch", "marchofempires"))
         {
             return Make(row,
@@ -136,8 +138,9 @@ exit 4";
         if (ContainsAny(n,
             "microsoft.people", "bingweather", "windowsmaps", "mixedreality", "microsoftofficehub", "todos",
             "windowssoundrecorder", "quickassist", "powerautomatedesktop", "549981c3f5f10",
-            "communicationsapps", "windowsalarms", "yourphone", "zunemusic", "zunevideo",
-            "msteams", "teams"))
+            "communicationsapps", "windowsalarms", "windowscamera", "microsoft.windowscamera",
+            "yourphone", "zunemusic", "zunevideo", "msteams", "teams",
+            "onenote", "microsoftsticky", "stickynotes", "microsoft.microsoftsolitairecollection"))
         {
             return Make(row,
                 FriendlyName(row.Name),
@@ -233,6 +236,14 @@ exit 4";
         if (n.Contains("windowsfeedbackhub")) return "Feedback Hub";
         if (n.Contains("peopleexperiencehost")) return "Windows People Experience";
         if (n.Contains("people")) return "Microsoft People";
+        if (n.Contains("skypeapp")) return "Skype";
+        if (n.Contains("3dviewer")) return "3D Viewer";
+        if (n.Contains("3dbuilder")) return "3D Builder";
+        if (n.Contains("windowscamera") || n.Contains("microsoft.windowscamera")) return "Camera";
+        if (n.Contains("microsoftsticky") || n.Contains("stickynotes")) return "Sticky Notes";
+        if (n.Contains("windowscalculator")) return "Calculator";
+        if (n.Contains("windowsnotepad")) return "Notepad";
+        if (n.Contains("windowsphotos") || n.Contains("microsoft.photos")) return "Photos";
         if (n.Contains("windowsmaps")) return "Windows Maps";
         if (n.Contains("mixedreality")) return "Mixed Reality Portal";
         if (n.Contains("microsoftofficehub")) return "Microsoft 365 / Office Hub";

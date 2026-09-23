@@ -140,9 +140,9 @@
                 HorizontalAlignment="Left"
                 MouseEnter="SidebarHost_MouseEnter"
                 MouseLeave="SidebarHost_MouseLeave"
-                Background="{DynamicResource SidebarBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="0,0,1,0"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="Transparent"
+                BorderThickness="0"
                 ClipToBounds="True"
                 Tag="False">
             <Border.Clip>
@@ -243,11 +243,11 @@
                             <StackPanel Orientation="Horizontal" Margin="8,0,0,0" VerticalAlignment="Center">
                                 <Button Command="{Binding OpenSettingsCommand}"
                                         Width="40" Height="40" MinHeight="40" Padding="0"
-                                        Background="Transparent" BorderThickness="0" ToolTip="Settings">
+                                        Background="Transparent" BorderThickness="0" ToolTip="Settings" Tag="{Binding ElementName=SidebarHost, Path=Tag}">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
-                                                <Border x:Name="IconBubble" Width="34" Height="34" CornerRadius="17"
+                                                <Border x:Name="IconBubble" Width="28" Height="28" CornerRadius="14"
                                                         Background="{DynamicResource SurfaceHoverBrush}"
                                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -260,6 +260,11 @@
                                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
                                                     <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                                                 </Trigger>
+                                                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <Setter TargetName="IconBubble" Property="Width" Value="34"/>
+                                                    <Setter TargetName="IconBubble" Property="Height" Value="34"/>
+                                                    <Setter TargetName="IconBubble" Property="CornerRadius" Value="17"/>
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
                                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
                                                     <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
@@ -271,11 +276,11 @@
 
                                 <Button Command="{Binding OpenCreditsCommand}"
                                         Width="40" Height="40" MinHeight="40" Padding="0" Margin="8,0,0,0"
-                                        Background="Transparent" BorderThickness="0" ToolTip="Credits">
+                                        Background="Transparent" BorderThickness="0" ToolTip="Credits" Tag="{Binding ElementName=SidebarHost, Path=Tag}">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
-                                                <Border x:Name="IconBubble" Width="34" Height="34" CornerRadius="17"
+                                                <Border x:Name="IconBubble" Width="28" Height="28" CornerRadius="14"
                                                         Background="{DynamicResource SurfaceHoverBrush}"
                                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">

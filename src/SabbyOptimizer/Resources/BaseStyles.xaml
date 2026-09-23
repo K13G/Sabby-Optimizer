@@ -621,16 +621,9 @@
                             <ControlTemplate TargetType="ListBoxItem">
                                 <Border x:Name="Root" Background="Transparent" CornerRadius="11" SnapsToDevicePixels="True">
                                     <Grid>
-                                        <Border x:Name="HoverGlow" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" Opacity="0" />
+                                        <Border x:Name="HoverGlow" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
                                         <Border x:Name="SelectedGlow" CornerRadius="11" Background="{DynamicResource AccentSubtleBrush}" Opacity="0" />
                                         <ContentPresenter x:Name="NavContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                                        <Border x:Name="Indicator"
-                                                Width="3"
-                                                Margin="2,9,0,9"
-                                                HorizontalAlignment="Left"
-                                                CornerRadius="2"
-                                                Background="{DynamicResource AccentBrush}"
-                                                Opacity="0" />
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -640,7 +633,6 @@
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter TargetName="SelectedGlow" Property="Opacity" Value="1" />
-                                        <Setter TargetName="Indicator" Property="Opacity" Value="1" />
                                         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>

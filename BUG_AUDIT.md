@@ -126,3 +126,16 @@ Concrete changes include: Debloat renders at most 32 result cards at once; anima
 | Appearance | Animated frame updates allocated/replaced a new LinearGradientBrush each tick. | Existing gradient stops are mutated when possible; identical Color resources are skipped. |
 | Navigation hover | Sidebar-item hover templates created short Storyboards/animation clocks. | Hover feedback is now direct state styling without per-item animation clocks. |
 | Monitoring | Optional NVIDIA monitoring could spawn nvidia-smi every 2 seconds. | GPU sensor result is cached for 5 seconds and helper priority is lowered when supported. |
+
+
+## 0.23.31 follow-up
+
+| Area | Issue/change | Fix |
+| --- | --- | --- |
+| Dashboard | No live graphs or percentage readouts. | Added bounded CPU/RAM/GPU/network graphs and readiness percentages. |
+| Sidebar | Left rail looked visually separate and had an unwanted line. | Same workspace surface color; selection indicator removed. |
+| Sidebar footer | Settings/Credits circles stayed large while collapsed. | Compact/expanded sizes now differ. |
+| Debloat | More optional Appx packages were displayed as generic entries. | Expanded classification and friendly descriptions. |
+| Navigation | User-facing Fixify name. | Renamed to Fix while keeping the internal enum. |
+| Tweaks | Missing several documented privacy/safety opt-in controls. | Added seven reversible policy controls. |
+| Versioning | Prior release must remain available. | Workflow now explicitly preserves v0.23.30. |

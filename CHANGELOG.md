@@ -1,5 +1,35 @@
 # Sabby Optimizer Changelog
 
+Legend: 🟢 **+** added/improved · 🔴 **−** removed · 🩷 **✓** fixed
+
+## Sabby Optimizer 0.23.31
+
+### Dashboard
+🟢 **+** Live CPU, memory, GPU, and network mini-graphs with percentage readouts.  
+🟢 **+** Performance, network, and privacy readiness percentages.  
+🟢 **+** One shared low-frequency monitor with bounded 24-sample history.
+
+### Navigation & UI
+🟢 **+** Sidebar now matches the workspace surface color.  
+🔴 **−** Removed the thin left navigation selection line.  
+🟢 **+** Settings/Credits icon bubbles shrink in collapsed mode and grow when expanded.
+
+### Debloat
+🟢 **+** Expanded optional Appx classification for legacy Skype, 3D Viewer, 3D Builder, Camera, Sticky Notes, Calculator, Notepad, Photos, and more Microsoft consumer packages.  
+🟢 **+** More packages receive useful names and descriptions instead of generic unknown entries.
+
+### Fix
+🔴 **−** Renamed the user-facing **Fixify** page to **Fix**.  
+🟢 **+** Fix now covers repair, recovery, cleanup, and diagnostics.
+
+### Tweaks
+🟢 **+** Added 7 opt-in privacy/safety controls: Consumer Features, Cloud Optimized Content, Windows Location Services, Camera App Access, Microphone App Access, Location App Access, and Widgets/News.
+
+### Versioning
+🟢 **+** 0.23.30 remains a separate preserved rollback/reference release.
+
+# Sabby Optimizer Changelog
+
 ## Sabby Optimizer 0.23.26
 
 ### Shell and UI cleanup
