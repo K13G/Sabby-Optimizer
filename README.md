@@ -4,15 +4,15 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.32-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.31-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.32
+## Latest update — 0.23.31
 
-## Sabby Optimizer 0.23.32
+## Sabby Optimizer 0.23.31
 
 ### Dashboard
 🩷 **✓** CPU, GPU, memory, and network graphs are embedded inside their original hardware cards instead of appearing as a separate live-monitoring section.
@@ -30,7 +30,7 @@
 🟢 **+** Unknown packages can be reviewed and manually removed when Windows permits it; they remain excluded from SAFE ONLY.
 
 ### Release
-🟢 **+** Version 0.23.32. Previous releases, including 0.23.30 and 0.23.31, remain preserved on GitHub.
+🟢 **+** Version 0.23.31. Previous releases, including 0.23.30 and 0.23.31, remain preserved on GitHub.
 
 
 ## Automatic updates
@@ -45,7 +45,7 @@ This URL stays constant; each release updates the manifest contents and points i
 
 **K13G** — Developer / Owner
 
-## 0.23.31 audit/update
+## 0.23.31 update
 
 🟢 **+** Dashboard: live CPU/GPU/memory/network graphs plus System Readiness, Storage Used, CPU Load, and Memory Load percentages.  
 🩷 **✓** Navigation: removed the left divider, matched the navigation surface to the app surface, and made compact Settings/Credits circles smaller.  
