@@ -74,6 +74,16 @@
             </StackPanel>
         </Grid>
 
+        <Border Style="{StaticResource SubtlePanelStyle}" Padding="10" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="QUICK NETWORK TOOLS" Style="{StaticResource EyebrowTextStyle}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <Button Content="Find best endpoint" Command="{Binding FindBestEndpointCommand}" Padding="11,7"/>
+                <Button Content="Trace route" Command="{Binding TraceRouteCommand}" Padding="11,7" Margin="7,0,0,0"/>
+                <Button Content="Flush DNS" Command="{Binding FlushDnsCommand}" Padding="11,7" Margin="7,0,0,0"/>
+                <Button Content="Undo last optimization" Command="{Binding UndoLastOptimizationCommand}" Padding="11,7" Margin="7,0,0,0"/>
+            </StackPanel>
+        </Border>
+
         <!-- Non-blocking task feedback. This never covers or replaces the page. -->
         <Border Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
