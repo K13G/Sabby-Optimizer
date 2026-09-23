@@ -36,7 +36,7 @@
     </UserControl.Resources>
     <StackPanel>
         <StackPanel Margin="0,0,0,14">
-            <TextBlock Text="Fixify" Style="{StaticResource SectionHeadingTextStyle}" />
+            <TextBlock Text="Fix" Style="{StaticResource SectionHeadingTextStyle}" />
             <TextBlock Text="Verified Windows repair tools for common system, servicing, storage, and network problems. Run only the repair that matches the issue you are troubleshooting."
                        Margin="0,5,0,0"
                        Foreground="{DynamicResource TextSecondaryBrush}"
@@ -51,7 +51,7 @@
         <Grid Margin="0,0,0,14">
             <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                      Style="{StaticResource SearchBoxStyle}"
-                     ToolTip="Search Fixify tools" />
+                     ToolTip="Search Fix tools" />
             <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}" />
         </Grid>
 
