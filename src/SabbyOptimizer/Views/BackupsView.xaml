@@ -121,6 +121,13 @@
             </Border>
         </Grid>
 
+        <Border Style="{StaticResource SubtlePanelStyle}" Padding="10" Margin="0,16,0,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="RESTORE TOOLSET" Style="{StaticResource EyebrowTextStyle}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Text="Create • refresh • restore originals • restore one entry • delete snapshots" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
         <Grid Margin="0,24,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
