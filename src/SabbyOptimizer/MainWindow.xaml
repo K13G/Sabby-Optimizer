@@ -220,6 +220,20 @@
                                             Background="{DynamicResource SurfaceBrush}"
                                             BorderBrush="Transparent" BorderThickness="1"
                                             HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Width" Value="30"/>
+                                                <Setter Property="Height" Value="30"/>
+                                                <Setter Property="CornerRadius" Value="15"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Tag}" Value="False">
+                                                        <Setter Property="Width" Value="26"/>
+                                                        <Setter Property="Height" Value="26"/>
+                                                        <Setter Property="CornerRadius" Value="13"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                         <TextBlock Text="{Binding Glyph}"
                                                    FontFamily="Segoe MDL2 Assets"
                                                    FontSize="15"
