@@ -517,7 +517,11 @@ public static class TweakCatalog
             "Microsoft documents DoNotShowFeedbackNotifications for Windows feedback prompts. This is an experience/privacy preference and does not disable crash reporting or Windows security protections.",
             @"HKLM\Software\Policies\Microsoft\Windows\DataCollection\DoNotShowFeedbackNotifications = 1.",
             "Undo restores the previous feedback-notification policy value.", true, false,
-            "feedback-notifications.json", "Feedback prompts off", "Feedback prompts allowed"));
+            "feedback-notifications.json", "Feedback prompts off", "Feedback prompts allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(
+                RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine,
+                @"SOFTWARE\Policies\Microsoft\Windows\DataCollection",
+                "DoNotShowFeedbackNotifications", 1)));
 
         if (includeDefenderCapabilityProbe && DefenderPuaProtectionTweakHandler.IsSupported())
             handlers.Add(new DefenderPuaProtectionTweakHandler(paths));
