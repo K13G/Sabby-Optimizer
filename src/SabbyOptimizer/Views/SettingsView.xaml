@@ -16,6 +16,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <Border Grid.Row="0" Style="{StaticResource SubtlePanelStyle}" Padding="10" Margin="0,0,0,14">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="APP CONTROLS" Style="{StaticResource EyebrowTextStyle}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Text="Theme • style • animation • startup • window behavior • game detection • automatic updates" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
         <StackPanel Grid.Row="0" HorizontalAlignment="Stretch">
             <TextBlock Text="Application settings" Style="{StaticResource PageHeadingTextStyle}" />
             <TextBlock Text="Customize how Sabby Optimizer looks and behaves. Appearance changes only affect this app."
