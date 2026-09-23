@@ -139,3 +139,16 @@ Concrete changes include: Debloat renders at most 32 result cards at once; anima
 | Navigation | User-facing Fixify name. | Renamed to Fix while keeping the internal enum. |
 | Tweaks | Missing several documented privacy/safety opt-in controls. | Added seven reversible policy controls. |
 | Versioning | Prior release must remain available. | Workflow now explicitly preserves v0.23.30. |
+
+## 0.23.31 audit/update
+
+🟢 **+** Dashboard: live CPU/GPU/memory/network graphs plus System Readiness, Storage Used, CPU Load, and Memory Load percentages.  
+🩷 **✓** Navigation: removed the left divider, matched the navigation surface to the app surface, and made compact Settings/Credits circles smaller.  
+🩷 **✓** Credits stays hidden while the rail is collapsed.  
+🟢 **+** Debloat scans a broader current-user Appx inventory and classifies unknown/core packages as protected instead of hiding them.  
+🟢 **+** Added more known removable Windows/OEM consumer packages.  
+🔴 **−** User-facing “Fixify” renamed to **Fix**.  
+🟢 **+** Added Windows Audio, Print Spooler, and DHCP repair actions.  
+🟢 **+** Added documented Windows privacy/experience tweaks plus quick-action strips across the main tool pages.  
+🩷 **✓** Existing release **0.23.30 remains intact**. This release is 0.23.31, not a deletion or replacement of 0.23.30.
+
