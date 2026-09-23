@@ -145,9 +145,10 @@ exit 4";
                 FriendlyName(row.Name),
                 Describe(row.Name),
                 "Removes this optional Windows/Store feature for the current user. You can normally reinstall it later from Microsoft Store if you want it back.",
-                "Good debloat candidate if you do not use the feature. Sabby leaves it out of bulk SAFE ONLY when it may still be useful to many PCs.",
+                "Good manual debloat candidate if you do not use the feature. It is not included in SAFE ONLY.",
                 76,
-                false);
+                false,
+                true);
         }
 
         if (ContainsAny(n,
@@ -159,9 +160,10 @@ exit 4";
                 n.Contains("xbox") || n.Contains("gamingapp")
                     ? "Removes this Xbox/gaming-facing app for the current user. This can remove UI/features you may need for Game Pass, Xbox sign-in, captures, or related gaming workflows."
                     : "Removes this normal Windows app for the current user. It does not remove the Windows shell, but you lose the app until you reinstall it.",
-                "Optional only. Remove it manually if you know you do not use it; Sabby will not include it in SAFE ONLY.",
+                "Optional manual removal. Sabby will not include it in SAFE ONLY because it may be useful for gaming or Windows features.",
                 58,
-                false);
+                false,
+                true);
         }
 
         // Common third-party promotional Store packages can be clutter, but do not assume they
@@ -172,18 +174,20 @@ exit 4";
                 FriendlyName(row.Name),
                 "Third-party Store app that may have been installed by you, the PC image, or a promotional recommendation.",
                 "Removes the app for the current user only. Account data stored online is not deleted, but local app data may be removed by Windows with the package.",
-                "Potential clutter, but Sabby requires manual removal because it may be an app you intentionally use.",
+                "Potential clutter. Sabby allows manual removal but keeps it out of SAFE ONLY because it may be intentional.",
                 62,
-                false);
+                false,
+                true);
         }
 
         return Make(row,
             FriendlyName(row.Name),
             "Installed current-user Windows Store/Appx package that Sabby does not classify as disposable.",
             "Removing an unknown package can remove an app or supporting feature. Sabby does not bulk-remove unclassified packages.",
-            "KEEP by default unless you recognize the package and know you do not need it.",
+            "Review this package before removing it. Sabby will not bulk-remove unclassified packages.",
             20,
-            false);
+            false,
+            true);
     }
 
     private static DebloatAppInfo Make(

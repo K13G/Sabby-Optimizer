@@ -152,3 +152,14 @@ Concrete changes include: Debloat renders at most 32 result cards at once; anima
 🟢 **+** Added documented Windows privacy/experience tweaks plus quick-action strips across the main tool pages.  
 🩷 **✓** Existing release **0.23.30 remains intact**. This release is 0.23.31, not a deletion or replacement of 0.23.30.
 
+
+
+## 0.23.32 follow-up
+
+| Area | Issue found | Fix |
+| --- | --- | --- |
+| Dashboard | Graphs were separated from the matching hardware cards. | CPU/GPU/memory/network graphs and percentages are now embedded in the original cards. |
+| Sidebar hover | Root mouse movement repeatedly restarted an in-flight sidebar animation. | Edge detection only opens the rail while it is collapsed; same-state calls are ignored. |
+| Sidebar | Navigation icons did not visually scale with the compact rail. | Navigation icons now use compact circular containers. |
+| Sidebar | Left divider visually separated the rail from the workspace. | Sidebar uses the same surface and no visible divider. |
+| Debloat | Optional packages were incorrectly shown as “Protected by Windows” because CanRemove was false. | Only actual Windows/core protection remains disabled; optional/manual and unknown packages can be removed when the OS permits it. |

@@ -4,19 +4,34 @@
 
 **Clean Windows performance tuning, latency diagnostics, rollback protection, and automatic updates.**
 
-![Version](https://img.shields.io/badge/stable-0.23.30-b00020?style=flat-square)
+![Version](https://img.shields.io/badge/stable-0.23.32-b00020?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011-111827?style=flat-square)
 ![Owner](https://img.shields.io/badge/owner-K13G-111827?style=flat-square)
 
 </div>
 
-## Latest update — 0.23.30
+## Latest update — 0.23.32
 
-### Stable 0.23.27 baseline
+## Sabby Optimizer 0.23.32
 
-This build intentionally uses the **0.23.27 codebase as its functional baseline**. The 0.23.28/0.23.29 shell/settings changes are not included.
+### Dashboard
+🩷 **✓** CPU, GPU, memory, and network graphs are embedded inside their original hardware cards instead of appearing as a separate live-monitoring section.
+🟢 **+** CPU/GPU/memory percentages sit in the matching card header next to the hardware name.
+🩷 **✓** Removed the duplicated live CPU/memory/GPU row that made the dashboard look like a second tab.
 
-The release number is 0.23.30 so the updater can correctly recognize it as newer than 0.23.28/0.23.29.
+### Sidebar
+🩷 **✓** Edge-hover no longer restarts the sidebar animation on every mouse movement.
+🟢 **+** Navigation icons use compact circular containers.
+🩷 **✓** The sidebar keeps the workspace surface color and has no visible divider.
+
+### Debloat
+🩷 **✓** Optional/manual packages that Windows allows to remove are no longer incorrectly presented as “Protected by Windows”.
+🟢 **+** Only actual Windows/core protection remains disabled.
+🟢 **+** Unknown packages can be reviewed and manually removed when Windows permits it; they remain excluded from SAFE ONLY.
+
+### Release
+🟢 **+** Version 0.23.32. Previous releases, including 0.23.30 and 0.23.31, remain preserved on GitHub.
+
 
 ## Automatic updates
 

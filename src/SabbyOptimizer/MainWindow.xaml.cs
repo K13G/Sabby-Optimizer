@@ -746,7 +746,7 @@ public partial class MainWindow : Window
     {
         // A simple edge check is more reliable than depending on a clipped flyout's hit testing.
         // SetSidebarExpanded is state-gated, so this does not create animations on every mouse move.
-        if (e.GetPosition(RootLayout).X <= 24)
+        if (!_sidebarExpanded && e.GetPosition(RootLayout).X <= 22)
         {
             _sidebarCloseTimer.Stop();
             SetSidebarExpanded(true);
@@ -794,7 +794,7 @@ public partial class MainWindow : Window
         var targetClipWidth = expanded ? ExpandedSidebarWidth : CollapsedSidebarWidth;
         var currentRect = SidebarClipGeometry.Rect;
         var currentClipWidth = currentRect.Width;
-        if (_sidebarExpanded == expanded && Math.Abs(currentClipWidth - targetClipWidth) < 0.5)
+        if (_sidebarExpanded == expanded)
             return;
 
         _sidebarExpanded = expanded;

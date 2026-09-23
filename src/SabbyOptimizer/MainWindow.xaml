@@ -215,12 +215,18 @@
                                         <ColumnDefinition Width="58" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding Glyph}"
-                                               FontFamily="Segoe MDL2 Assets"
-                                               FontSize="16"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"
-                                               ToolTip="{Binding Label}" />
+                                    <Border x:Name="NavIconBubble"
+                                            Width="30" Height="30" CornerRadius="15"
+                                            Background="{DynamicResource SurfaceBrush}"
+                                            BorderBrush="Transparent" BorderThickness="1"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Glyph}"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="15"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   ToolTip="{Binding Label}" />
+                                    </Border>
                                     <TextBlock Grid.Column="1"
                                                Text="{Binding Label}"
                                                Margin="8,0,14,0"
