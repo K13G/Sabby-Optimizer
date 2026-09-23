@@ -265,7 +265,12 @@
                                                     <Setter TargetName="IconBubble" Property="Height" Value="34"/>
                                                     <Setter TargetName="IconBubble" Property="CornerRadius" Value="17"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
+                                                <DataTrigger Binding="{Binding ElementName=SidebarHost, Path=Tag}" Value="True">
+                                    <Setter TargetName="Bubble" Property="Width" Value="34"/>
+                                    <Setter TargetName="Bubble" Property="Height" Value="34"/>
+                                    <Setter TargetName="Bubble" Property="CornerRadius" Value="17"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
                                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
                                                     <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                                                 </DataTrigger>
@@ -293,7 +298,12 @@
                                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
                                                     <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                                                 </Trigger>
-                                                <DataTrigger Binding="{Binding IsCreditsSelected}" Value="True">
+                                                <DataTrigger Binding="{Binding ElementName=SidebarHost, Path=Tag}" Value="True">
+                                    <Setter TargetName="Bubble" Property="Width" Value="34"/>
+                                    <Setter TargetName="Bubble" Property="Height" Value="34"/>
+                                    <Setter TargetName="Bubble" Property="CornerRadius" Value="17"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCreditsSelected}" Value="True">
                                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
                                                     <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                                                 </DataTrigger>
@@ -331,7 +341,7 @@
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
-                                <Border x:Name="Bubble" Width="34" Height="34" CornerRadius="17"
+                                <Border x:Name="Bubble" Width="28" Height="28" CornerRadius="14"
                                         Background="{DynamicResource SurfaceBrush}"
                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                                         HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -371,7 +381,7 @@
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Root" Width="40" Height="40" CornerRadius="20" Background="Transparent">
-                                <Border x:Name="Bubble" Width="34" Height="34" CornerRadius="17"
+                                <Border x:Name="Bubble" Width="28" Height="28" CornerRadius="14"
                                         Background="{DynamicResource SurfaceBrush}"
                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                                         HorizontalAlignment="Center" VerticalAlignment="Center">
