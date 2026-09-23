@@ -1,48 +1,36 @@
-## Sabby Optimizer 0.23.31
+# Sabby Optimizer 0.23.31
 
 ### Dashboard
-🟢 **+** Live CPU, memory, GPU, and network mini-graphs with percentage readouts.  
-🟢 **+** Performance, network, and privacy readiness percentages.  
-🟢 **+** One shared low-frequency monitor with bounded 24-sample history.
+🟢 **+** Added a larger live dashboard health section with **System Readiness, Storage Used, CPU Load, and Memory Load** percentages.  
+🟢 **+** The existing CPU/GPU/memory/network graphs remain live and now sit alongside concrete readiness percentages.
 
-### Navigation & UI
-🟢 **+** Sidebar now matches the workspace surface color.  
-🔴 **−** Removed the thin left navigation selection line.  
-🟢 **+** Settings/Credits icon bubbles shrink in collapsed mode and grow when expanded.
+### Navigation & appearance
+🩷 **✓** Removed the vertical divider line from the left navigation.  
+🟢 **+** The left navigation surface now uses the same surface color as the main application panels.  
+🟢 **+** Settings/Credits circular buttons shrink in the compact rail and grow smoothly when the sidebar expands.  
+🩷 **✓** Credits remains hidden until the sidebar is expanded.
 
 ### Debloat
-🟢 **+** Expanded optional Appx classification for legacy Skype, 3D Viewer, 3D Builder, Camera, Sticky Notes, Calculator, Notepad, Photos, and more Microsoft consumer packages.  
-🟢 **+** More packages receive useful names and descriptions instead of generic unknown entries.
+🟢 **+** Debloat now scans a much broader set of current-user Appx packages instead of hiding large groups before classification.  
+🟢 **+** Added more Windows/OEM consumer packages to the known removable catalogue, including additional Weather, Maps, Calculator, Notepad, Photos, Sound Recorder, Journal, Family, Power BI and communications packages.  
+🩷 **✓** Unknown Appx packages default to protected/manual-only instead of being treated as removable.  
+🩷 **✓** Windows shell, Store, runtime, security and account components remain protected.
 
 ### Fix
-🔴 **−** Renamed the user-facing **Fixify** page to **Fix**.  
-🟢 **+** Fix now covers repair, recovery, cleanup, and diagnostics.
+🔴 **−** Renamed the user-facing **Fixify** tab to **Fix**.  
+🟢 **+** Added verified Windows Audio restart.  
+🟢 **+** Added Print Spooler restart and DHCP Client restart tools.  
+🟢 **+** Expanded the Fix page with cleaner repair categories and quick-action visibility.
 
 ### Tweaks
-🟢 **+** Added 7 opt-in privacy/safety controls: Consumer Features, Cloud Optimized Content, Windows Location Services, Camera App Access, Microphone App Access, Location App Access, and Widgets/News.
+🟢 **+** Added more documented Windows experience/privacy controls, including Get Started promotional content, app-promotion suggestions, and feedback notifications.  
+🟢 **+** Existing advanced network, CPU, FPS, privacy, security and input controls remain grouped separately so they do not get silently mixed into Apply Best.
 
-### Versioning
-🟢 **+** 0.23.30 remains a separate preserved rollback/reference release.
+### Other tabs
+🟢 **+** Ping now exposes best-endpoint scan, route tracing, DNS flush and undo actions together.  
+🟢 **+** Maintenance has a dedicated quick-action strip for TEMP analysis, cleanup and SAFE ONLY startup cleanup.  
+🟢 **+** Game Profiles, GPU Drivers, Updates, Benchmarks, Backups, PC Restore and Settings now expose clearer toolset/status strips without changing their existing data paths.  
+🩷 **✓** These changes retain the existing 0.23.30 release; **0.23.30 is not deleted or replaced**.
 
-# Sabby Optimizer Release Notes
-
-## Sabby Optimizer 0.23.30
-
-### 0.23.27 functional baseline
-
-- Restores the known-good 0.23.27 shell/application baseline.
-- Does **not** carry forward the 0.23.28/0.23.29 shell/settings rework that introduced the current regressions.
-- Keeps the release identity at 0.23.30 so an installed 0.23.28 or 0.23.29 can see the update.
-- Preserves the existing 0.23.27 application behavior, update path, settings persistence, and performance work.
-
-### Versioning
-
-The executable/installer version is 0.23.30 for correct update ordering. The implementation baseline is 0.23.27.
-
-## Sabby Optimizer 0.23.27
-
-### Shell restored and repaired
-🩷 **✓** Restored the complete pre-0.23.26 shell layout so the dashboard, page header, navigation, Settings, Credits, workspace, scrolling, and visual-style layers are present again.
-🩷 **✓** Removed the 0.23.26 floating-column shell rewrite that caused the UI to appear missing or displaced.
-🩷 **✓** Preserved the 0.23.25 performance work instead of replacing the whole shell with a new layout model.
-🟢 **+** Kept live scrollbar dragging, exact-left-edge menu opening, workspace push/squish, centered Settings, hidden Credits while collapsed, Blood Bath resources, and the existing update overlay/restart path.
+### Release hygiene
+🟢 **+** All user-facing release documentation now describes the additions specifically instead of vague “new stuff” text.
