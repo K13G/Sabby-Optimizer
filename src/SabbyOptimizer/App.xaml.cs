@@ -16,17 +16,6 @@ namespace PCTweaker;
 
 public partial class App : Application
 {
-    protected override async void OnExit(ExitEventArgs e)
-    {
-        try
-        {
-            if (_monitoringService is not null) await _monitoringService.StopAsync();
-        }
-        catch { }
-        base.OnExit(e);
-    }
-
-
     private IAppLogger? _logger;
     private Mutex? _singleInstanceMutex;
     private IGameDetectionService? _gameDetectionService;
