@@ -20,8 +20,7 @@ public sealed class DebloatService : IDebloatService
     {
         const string script = @"
 $items = @(Get-AppxPackage | Where-Object {
-  -not $_.IsFramework -and -not $_.IsResourcePackage -and
-  $_.Name -notmatch 'Microsoft\.WindowsStore|Microsoft\.StorePurchaseApp|Microsoft\.DesktopAppInstaller|Microsoft\.SecHealthUI|Microsoft\.Windows\.ShellExperienceHost|Microsoft\.Windows\.StartMenuExperienceHost|Microsoft\.WindowsAppRuntime|Microsoft\.AAD\.BrokerPlugin|Microsoft\.AccountsControl|Microsoft\.Windows\.CloudExperienceHost'
+  -not $_.IsFramework -and -not $_.IsResourcePackage
 } | ForEach-Object { [pscustomobject]@{Name=[string]$_.Name;PackageFullName=[string]$_.PackageFullName;Publisher=[string]$_.Publisher;NonRemovable=[bool]$_.NonRemovable} })
 ConvertTo-Json -InputObject $items -Compress -Depth 3";
         var result = await PowerShellUtility.RunAsync(script, 20000, cancellationToken).ConfigureAwait(false);
@@ -104,7 +103,7 @@ exit 4";
 
         // Windows 11 increasingly exposes shell-backed Appx packages in Get-AppxPackage even
         // though Remove-AppxPackage refuses to uninstall them. Never advertise those as removable.
-        if (row.NonRemovable || n.Contains("peopleexperiencehost", StringComparison.OrdinalIgnoreCase))
+        if (row.NonRemovable || ContainsAny(n, "windows.shell", "shellexperiencehost", "startmenuexperiencehost", "immersivecontrolpanel", "windowsapp.runtime", "aad.brokerplugin", "accountscontrol", "sechealthui", "desktopappinstaller", "windowsstore", "storepurchaseapp", "cloudexperiencehost", "microsoft.ui.xaml", "microsoft.vclibs", "microsoft.net.native", "services.store.engagement", "windows.cbs", "windows.client.cbs", "windows.client.core", "windows.client.startmenu", "windows.client.fileexp"))
         {
             return Make(row,
                 FriendlyName(row.Name),
@@ -120,10 +119,10 @@ exit 4";
         // deliberately current-user Appx removals only; Sabby never removes Store, shell,
         // installer, security, runtime, or servicing components from SAFE ONLY.
         if (ContainsAny(n,
-            "clipchamp", "bingnews", "bingsports", "bingfinance", "bingfoodanddrink",
+            "clipchamp", "bingnews", "bingsports", "bingfinance", "bingfoodanddrink", "bingweather", "microsoftjournal", "microsoftfamily", "microsoftpowerbi",
             "gethelp", "getstarted", "solitaire", "windowsfeedbackhub",
             "skypeapp", "3dviewer", "3dbuilder", "microsoft.windowscommunicationsapps",
-            "windowsalarms", "windowscamera", "microsoft.microsoftsticky",
+            "windowsalarms", "windowscamera", "microsoft.microsoftsticky", "windowsmaps", "windowscommunicationsapps",
             "king.com.candycrush", "candycrush", "bubblewitch", "marchofempires"))
         {
             return Make(row,
@@ -140,7 +139,7 @@ exit 4";
             "windowssoundrecorder", "quickassist", "powerautomatedesktop", "549981c3f5f10",
             "communicationsapps", "windowsalarms", "windowscamera", "microsoft.windowscamera",
             "yourphone", "zunemusic", "zunevideo", "msteams", "teams",
-            "onenote", "microsoftsticky", "stickynotes", "microsoft.microsoftsolitairecollection"))
+            "onenote", "microsoftsticky", "stickynotes", "microsoft.microsoftsolitairecollection", "windowscalculator", "windowsnotepad", "windowsphotos", "windowssoundrecorder", "windowsfeedbackhub"))
         {
             return Make(row,
                 FriendlyName(row.Name),
@@ -195,7 +194,7 @@ exit 4";
         string recommendation,
         int score,
         bool safeForBulk,
-        bool canRemove = true) =>
+        bool canRemove = false) =>
         new(row.Name, displayName, row.PackageFullName, row.Publisher, whatItIs, removalEffect, recommendation, score, safeForBulk, canRemove);
 
     private static string FriendlyRemovalError(string? raw)
@@ -233,6 +232,9 @@ exit 4";
         if (n.Contains("gethelp")) return "Get Help";
         if (n.Contains("getstarted")) return "Tips / Get Started";
         if (n.Contains("solitaire")) return "Microsoft Solitaire Collection";
+        if (n.Contains("microsoftjournal")) return "Microsoft Journal";
+        if (n.Contains("microsoftfamily")) return "Microsoft Family";
+        if (n.Contains("microsoftpowerbi")) return "Power BI";
         if (n.Contains("windowsfeedbackhub")) return "Feedback Hub";
         if (n.Contains("peopleexperiencehost")) return "Windows People Experience";
         if (n.Contains("people")) return "Microsoft People";

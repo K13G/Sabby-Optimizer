@@ -137,6 +137,22 @@
             <StackPanel><DockPanel><TextBlock Text="NETWORK ACTIVITY" Style="{StaticResource EyebrowTextStyle}"/><TextBlock Text="{Binding NetworkText}" DockPanel.Dock="Right" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/></DockPanel><ItemsControl ItemsSource="{Binding NetworkBars}" Height="46" Margin="0,8,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Height="{Binding}" VerticalAlignment="Bottom" Margin="1,0" Background="{DynamicResource AccentSubtleBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,1,0,0" CornerRadius="2"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
         </Border>
 
+        <Grid Margin="0,12,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource SubtlePanelStyle}" Padding="12">
+                <StackPanel><DockPanel><TextBlock Text="System readiness" FontWeight="SemiBold"/><TextBlock Text="{Binding SystemReadiness, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><ProgressBar Value="{Binding SystemReadiness}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,8,0,0"/></StackPanel>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource SubtlePanelStyle}" Padding="12">
+                <StackPanel><DockPanel><TextBlock Text="Storage used" FontWeight="SemiBold"/><TextBlock Text="{Binding StoragePercent, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><TextBlock Text="{Binding StorageText}" Margin="0,4,0,0" FontSize="9.5" Foreground="{DynamicResource TextMutedBrush}"/><ProgressBar Value="{Binding StoragePercent}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,6,0,0"/></StackPanel>
+            </Border>
+            <Border Grid.Column="4" Style="{StaticResource SubtlePanelStyle}" Padding="12">
+                <StackPanel><DockPanel><TextBlock Text="CPU load" FontWeight="SemiBold"/><TextBlock Text="{Binding CpuPercent, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><ProgressBar Value="{Binding CpuPercent}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,8,0,0"/></StackPanel>
+            </Border>
+            <Border Grid.Column="6" Style="{StaticResource SubtlePanelStyle}" Padding="12">
+                <StackPanel><DockPanel><TextBlock Text="Memory load" FontWeight="SemiBold"/><TextBlock Text="{Binding MemoryPercent, StringFormat={}{0:0}%}" DockPanel.Dock="Right" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></DockPanel><ProgressBar Value="{Binding MemoryPercent}" Style="{StaticResource PolishedProgressBarStyle}" Margin="0,8,0,0"/></StackPanel>
+            </Border>
+        </Grid>
+
         <Grid Margin="0,18,0,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <Border Grid.Column="0" Style="{StaticResource CardStyle}">
