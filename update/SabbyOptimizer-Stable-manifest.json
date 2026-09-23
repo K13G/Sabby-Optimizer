@@ -1,9 +1,9 @@
 {
   "version": "0.23.32",
   "downloadUrl": "https://github.com/K13G/Sabby-Optimizer/releases/download/v0.23.32/SabbyOptimizer-0.23.32-Setup.exe",
-  "sha256": "8E834D82ECB1F838383EB85D1D21CB6493F98CC6F78DDFE5C7444FCE4335A282",
+  "sha256": "29475F6685DD21B75EDA4DC78A80F98BE4F2033D2D63F06D9D00BC6C0B641FA0",
   "signerThumbprint": null,
   "releaseNotes": "Sabby Optimizer 0.23.32 (Stable)",
   "mandatory": true,
-  "publishedAt": "2026-09-23T18:47:51.5812843Z"
+  "publishedAt": "2026-09-23T19:03:28.4244650Z"
 }
