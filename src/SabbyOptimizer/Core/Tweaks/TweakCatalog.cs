@@ -490,6 +490,35 @@ public static class TweakCatalog
             "widgets-and-news.json", "Widgets/News off", "Widgets/News allowed",
             new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Dsh", "AllowNewsAndInterests", 0)));
 
+        handlers.Add(Policy(paths,
+            "privacy.get-started", "Windows Get Started Promotions",
+            "Disable Windows Get Started promotional content through the documented Cloud Content policy.",
+            TweakSafetyLevel.Safe,
+            "Microsoft documents DisableGetStarted as a Cloud Content policy that stops the Get Started experience from being shown. Existing apps are not removed.",
+            @"HKLM\Software\Policies\Microsoft\Windows\CloudContent\DisableGetStarted = 1.",
+            "Undo restores the previous Get Started policy value.", true, false,
+            "get-started.json", "Get Started off", "Get Started allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\CloudContent", "DisableGetStarted", 1)));
+
+        handlers.Add(Policy(paths,
+            "privacy.share-app-promotions", "Windows App Promotion Suggestions",
+            "Disable Windows Store/app promotion suggestions that are controlled by the documented Cloud Content policy.",
+            TweakSafetyLevel.Safe,
+            "Microsoft documents DisableShareAppPromotions as a Cloud Content policy. This changes suggestions/promotions and does not uninstall Store applications.",
+            @"HKLM\Software\Policies\Microsoft\Windows\CloudContent\DisableShareAppPromotions = 1.",
+            "Undo restores the previous app-promotion policy value.", true, false,
+            "share-app-promotions.json", "App promotions off", "App promotions allowed",
+            new RegistryPolicyBundleTweakHandler.DwordTarget(RegistryPolicyBundleTweakHandler.PolicyHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\CloudContent", "DisableShareAppPromotions", 1)));
+
+        handlers.Add(Policy(paths,
+            "privacy.feedback-notifications", "Feedback Notifications",
+            "Stop Windows from displaying periodic feedback-request notifications through the documented policy.",
+            TweakSafetyLevel.Safe,
+            "Microsoft documents DoNotShowFeedbackNotifications for Windows feedback prompts. This is an experience/privacy preference and does not disable crash reporting or Windows security protections.",
+            @"HKLM\Software\Policies\Microsoft\Windows\DataCollection\DoNotShowFeedbackNotifications = 1.",
+            "Undo restores the previous feedback-notification policy value.", true, false,
+            "feedback-notifications.json", "Feedback prompts off", "Feedback prompts allowed"));
+
         if (includeDefenderCapabilityProbe && DefenderPuaProtectionTweakHandler.IsSupported())
             handlers.Add(new DefenderPuaProtectionTweakHandler(paths));
     }
