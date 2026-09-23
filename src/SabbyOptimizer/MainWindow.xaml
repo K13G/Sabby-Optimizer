@@ -265,12 +265,7 @@
                                                     <Setter TargetName="IconBubble" Property="Height" Value="34"/>
                                                     <Setter TargetName="IconBubble" Property="CornerRadius" Value="17"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding ElementName=SidebarHost, Path=Tag}" Value="True">
-                                    <Setter TargetName="Bubble" Property="Width" Value="34"/>
-                                    <Setter TargetName="Bubble" Property="Height" Value="34"/>
-                                    <Setter TargetName="Bubble" Property="CornerRadius" Value="17"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
+                                                <DataTrigger Binding="{Binding IsSettingsSelected}" Value="True">
                                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSubtleBrush}"/>
                                                     <Setter TargetName="IconBubble" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                                                 </DataTrigger>
