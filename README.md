@@ -10,7 +10,12 @@
 
 </div>
 
-## Latest update — 0.23.31
+## Latest update — 0.23.32
+
+🩷 **✓** Stable update detection now cache-busts the official GitHub manifest, so newly published releases are detected reliably.
+🟢 **+** Startup stable-channel checking begins after a short interactive-shell grace period.
+🟢 **+** 0.23.31 dashboard graphs/percentages, borderless navigation, compact sidebar circles, expanded Debloat scan, **Fix** page, and expanded tab toolsets are retained.
+
 
 ## Sabby Optimizer 0.23.31
 
