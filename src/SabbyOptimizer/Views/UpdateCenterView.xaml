@@ -59,6 +59,13 @@
             </StackPanel>
         </Border>
 
+        <Border Style="{StaticResource SubtlePanelStyle}" Padding="10" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="UPDATE SCOPE" Style="{StaticResource EyebrowTextStyle}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Text="Windows • drivers • installed apps • optional updates" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
         <ItemsControl ItemsSource="{Binding Updates}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
